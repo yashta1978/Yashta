@@ -1,749 +1,784 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="scroll-smooth">
+<html lang="ku" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>درس اللغة العربية التفاعلي: العَاصِفَةُ</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
-                            900: '#064e3b',
-                        }
-                    },
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                        tajawal: ['Tajawal', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti Library for Quiz completion -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <style>
-        body {
-            font-family: 'Tajawal', 'Cairo', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .text-en {
-            direction: ltr;
-            text-align: left;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-        .speech-active {
-            animation: pulse-border 1.5s infinite;
-        }
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-        .tab-btn.active {
-            border-bottom: 3px solid #10b981;
-            color: #059669;
-            font-weight: 800;
-        }
-        .dark .tab-btn.active {
-            color: #34d399;
-            border-bottom-color: #34d399;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وانەیێن ئایینی</title>
+<style>
+:root{
+  --frame:#cfe0e0; --leaf:#f4faf9; --paper:#fffefb; --ink:#1d1d1d;
+  --blue:#3f82c4; --bar:#2f4a52; --orange:#c1693b; --teal:#1f7f7a;
+  --gold:#c9a45c; --ok:#1f7a3a; --okbg:#d9f2e0; --bad:#b3261e; --badbg:#fadad7;
+  --hl:#fff1b8; --line:#7a7a7a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{
+  margin:0; color:var(--ink); line-height:2.1; font-size:19px;
+  font-family:"Noto Naskh Arabic","Noto Sans Arabic","Segoe UI","Tahoma","Arial",sans-serif;
+  background-color:var(--frame);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'><g fill='%23f4faf9' opacity='0.85'><path d='M45 6c9 10 9 22 0 34-9-12-9-24 0-34z'/><path d='M45 6c9 10 9 22 0 34-9-12-9-24 0-34z' transform='rotate(72 45 45)'/><path d='M45 6c9 10 9 22 0 34-9-12-9-24 0-34z' transform='rotate(144 45 45)'/><path d='M45 6c9 10 9 22 0 34-9-12-9-24 0-34z' transform='rotate(216 45 45)'/><path d='M45 6c9 10 9 22 0 34-9-12-9-24 0-34z' transform='rotate(288 45 45)'/></g></svg>");
+}
+#progress{position:fixed;top:0;right:0;height:5px;background:var(--blue);width:0;z-index:30}
+header.top{
+  position:sticky;top:0;z-index:20;background:var(--bar);color:#fff;
+  padding:8px 12px;border-bottom:3px solid var(--gold);
+}
+header.top h1{margin:0 0 4px;font-size:18px;line-height:1.6;text-align:center}
+nav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+nav button{
+  font:inherit;font-size:15px;line-height:1.5;padding:4px 12px;border:2px solid var(--gold);
+  background:transparent;color:#fff;border-radius:18px;cursor:pointer;
+}
+nav button[aria-selected="true"]{background:var(--gold);color:#222;font-weight:700}
+#total{font-size:14px;text-align:center;margin-top:2px;line-height:1.6}
+main{padding:14px 10px 40px;max-width:820px;margin:0 auto}
+
+/* the book page */
+.sheet{
+  position:relative;background:var(--paper);border-radius:34px;margin:0 0 26px;
+  padding:18px 22px 54px;
+  border:1px solid #b9cccc;
+  box-shadow:0 0 0 6px rgba(255,255,255,.55), 0 3px 10px rgba(0,0,0,.18);
+}
+.orn{display:block;margin:0 auto 4px;width:min(360px,80%);height:auto}
+.sheet h2.lt{margin:0;text-align:center;color:var(--blue);font-size:22px;line-height:1.7}
+.sheet h3.lt{margin:0 0 10px;text-align:center;color:var(--blue);font-size:21px;line-height:1.8}
+.bar{
+  display:inline-block;background:var(--bar);color:#fff;border-radius:10px;
+  padding:0 16px;margin:10px 0 6px;font-weight:700;font-size:18px;line-height:2
+}
+.sheet p{margin:0 0 8px;text-align:justify}
+.sheet p.sub{margin:6px 0 2px}
+.sheet .lab{color:var(--orange);font-weight:700}
+.verse{
+  color:var(--teal);font-size:23px;line-height:2.3;text-align:center;margin:6px 0 8px;
+  font-family:"Amiri","Scheherazade New","Noto Naskh Arabic","Noto Sans Arabic","Traditional Arabic",serif;
+}
+.verse small{font-size:16px;color:#333;font-family:inherit}
+.item{margin:0 0 8px}
+.hl{background:var(--hl);border-bottom:2px solid var(--line);padding:0 2px}
+.hidehl .hl:not(.shown){filter:blur(7px);cursor:pointer;user-select:none}
+.pg{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:var(--bar);color:#fff;border-radius:20px;min-width:74px;text-align:center;
+  font-size:18px;line-height:1.7;padding:0 14px;border:2px solid #6b8a90
+}
+.pagenote{font-size:15px;color:#444;text-align:center;margin:0 0 6px}
+
+.tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 14px}
+button.act{
+  font:inherit;font-size:16px;line-height:1.6;padding:3px 14px;border-radius:10px;
+  background:#fff;color:var(--bar);border:2px solid var(--bar);cursor:pointer
+}
+button.act:hover{background:#eef5f5}
+
+
+/* guided mode */
+.gate textarea{
+  width:100%;min-height:90px;font:inherit;font-size:18px;line-height:1.9;padding:6px 10px;
+  border:2px solid #8aa;border-radius:12px;background:#fff;color:var(--ink);resize:vertical
+}
+.reveal{background:#eef6f6;border:2px solid var(--teal);border-radius:12px;padding:6px 14px;margin:8px 0}
+.step{border-top:2px dashed #9db8b8;margin-top:12px;padding-top:8px}
+.step h4{margin:0 0 4px;color:var(--orange);font-size:20px;line-height:1.8}
+.mine{font-size:17px;background:#f3f0e4;border-radius:10px;padding:4px 12px}
+.conf{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0}
+.conf .cl{font-size:16px;color:#333}
+.cbtn{
+  font:inherit;font-size:16px;line-height:1.6;padding:1px 12px;border-radius:14px;cursor:pointer;
+  background:#fff;border:2px solid var(--bar);color:var(--bar)
+}
+.cbtn.on{background:var(--bar);color:#fff}
+.cbtn:disabled{cursor:default}
+.hintbox{margin:4px 0;font-size:17px;color:#5b3a00;background:#fff4d6;border-radius:10px;padding:2px 12px}
+.opt:disabled.wait{opacity:.55}
+.why{margin:4px 0 8px;font-size:17px;line-height:1.9;padding:4px 12px;border-radius:10px}
+.why.ok{background:var(--okbg);color:#0b3d1a}
+.why.bad{background:var(--badbg);color:#5b0f0a}
+.gsum{background:#eef3fb;border:2px solid var(--blue);border-radius:12px;padding:6px 14px;margin:10px 0;line-height:2}
+
+/* exercises */
+.ex{border-top:2px dashed #9db8b8;margin-top:12px;padding-top:10px}
+.ex .qn{font-weight:700;color:var(--orange)}
+.q{margin:0 0 6px}
+.note{font-size:15px;color:#555;line-height:1.8}
+.opts{display:flex;flex-direction:column;gap:6px;margin:4px 0 4px}
+.opt{
+  font:inherit;font-size:18px;line-height:1.8;text-align:right;padding:2px 14px;
+  background:#fff;border:2px solid #8aa;border-radius:12px;cursor:pointer;color:var(--ink)
+}
+.opt.sel{border-color:var(--blue);background:#e6f0fa}
+.opt.ok{background:var(--okbg);border-color:var(--ok);color:#0b3d1a;font-weight:700}
+.opt.bad{background:var(--badbg);border-color:var(--bad);color:#5b0f0a}
+.opt:disabled{cursor:default}
+select{
+  font:inherit;font-size:17px;max-width:100%;padding:0 6px;border:2px solid #8aa;border-radius:8px;
+  background:#fff;color:var(--ink);line-height:1.8
+}
+select.ok{background:var(--okbg);border-color:var(--ok)}
+select.bad{background:var(--badbg);border-color:var(--bad)}
+.fix{color:var(--ok);font-weight:700;font-size:16px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0}
+.row .l{flex:1 1 200px;font-weight:700}
+.fb{font-size:16px;margin:0 0 8px;line-height:1.8}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.score{
+  position:sticky;bottom:8px;margin:12px auto 0;max-width:300px;background:var(--bar);color:#fff;
+  text-align:center;border-radius:14px;padding:2px 10px;font-weight:700;border:2px solid var(--gold);line-height:1.8
+}
+.final{background:var(--okbg);border:2px solid var(--ok);border-radius:12px;padding:6px 12px;margin:10px 0;font-weight:700;color:#0b3d1a}
+footer.src{font-size:14px;color:#2b3a3d;text-align:center;line-height:1.8;padding:0 14px 30px;max-width:820px;margin:0 auto}
+@media (max-width:480px){
+  body{font-size:18px}
+  .sheet{padding:14px 14px 52px;border-radius:26px}
+  .verse{font-size:21px}
+}
+</style>
 </head>
-<body class="bg-emerald-50/50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+<body>
+<div id="progress"></div>
+<header class="top">
+  <h1>وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ</h1>
+  <nav id="nav" role="tablist"></nav>
+  <div id="total"></div>
+</header>
+<main id="main"></main>
+<footer class="src">
+  دەقێ وانەیان ژ لاپەرێن کتێبێ هاتیە نڤیسین (لاپەرێن ٥، ٦، ٧، ٨، ١١). پرسیارێن ڕاهێنانێ ژ لایێ منڤەنە، نە ژ کتێبێ؛ ئەگەر پرسیارەك ڕاستەڕاست نەبوو ژ مامۆستای بپرسە.
+</footer>
 
-    <!-- Navigation / Header -->
-    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-emerald-100 dark:border-slate-700 shadow-sm transition-colors">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-            <!-- Title Branding -->
-            <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl shadow-md">
-                    1
-                </div>
-                <div>
-                    <h1 class="text-lg md:text-xl font-extrabold text-emerald-900 dark:text-emerald-300 leading-tight">
-                        العَاصِفَةُ <span class="text-xs bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full mr-1">فَهْمُ نَصٍّ مَسْمُوعٍ</span>
-                    </h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">الوحدة الأولى | الوصف</p>
-                </div>
-            </div>
+<script>
+"use strict";
+var AR = "٠١٢٣٤٥٦٧٨٩";
+function ar(n){ return String(n).replace(/[0-9]/g, function(d){ return AR[d]; }); }
+function el(tag, cls, text){
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+/* rich text: «...» = pen-marked part of the book */
+function rich(parent, s){
+  var parts = s.split(/(«[^»]*»)/);
+  parts.forEach(function(p){
+    if (!p) return;
+    if (p.charAt(0) === "«"){
+      var m = el("span", "hl", p.slice(1, -1));
+      m.addEventListener("click", function(){ m.classList.toggle("shown"); });
+      parent.appendChild(m);
+    } else parent.appendChild(document.createTextNode(p));
+  });
+}
 
-            <!-- Global Controls -->
-            <div class="flex items-center gap-2">
-                <!-- Speech Speed Selector -->
-                <div class="flex items-center bg-slate-100 dark:bg-slate-700 p-1 rounded-lg text-xs">
-                    <span class="px-2 text-slate-500 dark:text-slate-400 hidden sm:inline"><i class="fa-solid fa-gauge-high ml-1"></i>السرعة:</span>
-                    <button onclick="setSpeed(0.8)" id="speed-slow" class="px-2 py-1 rounded font-bold transition-all hover:bg-white dark:hover:bg-slate-600">بطيء 🐢</button>
-                    <button onclick="setSpeed(1.0)" id="speed-normal" class="px-2 py-1 rounded font-bold bg-emerald-600 text-white shadow-sm">عادي ⚡</button>
-                </div>
+var ORN = '<svg class="orn" viewBox="0 0 400 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+ + '<g fill="#c9a45c" stroke="none">'
+ + '<path d="M200 4c14 14 14 30 0 46-14-16-14-32 0-46z"/>'
+ + '<path d="M165 40c-8-18 6-32 30-30-4 14-14 26-30 30z"/>'
+ + '<path d="M235 40c8-18-6-32-30-30 4 14 14 26 30 30z"/>'
+ + '<path d="M120 36c-16 8-34 2-42-14 16-2 34 2 42 14z"/>'
+ + '<path d="M280 36c16 8 34 2 42-14-16-2-34 2-42 14z"/></g>'
+ + '<g fill="none" stroke="#c9a45c" stroke-width="2.5" stroke-linecap="round">'
+ + '<path d="M120 36C150 56 175 54 195 48"/><path d="M280 36C250 56 225 54 205 48"/>'
+ + '<path d="M78 22C60 10 40 20 48 34c6 8 18 2 14-6"/><path d="M322 22C340 10 360 20 352 34c-6 8-18 2-14-6"/>'
+ + '<path d="M62 34C40 50 20 44 12 34"/><path d="M338 34C360 50 380 44 388 34"/></g></svg>';
 
-                <!-- Theme Toggle -->
-                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all" title="تبديل المظهر">
-                    <i class="fa-solid fa-moon dark:hidden text-slate-700"></i>
-                    <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
-                </button>
-            </div>
-        </div>
+/* ---------------- CONTENT ---------------- */
+function Q(q,o,a,h,w){ return {q:q, opts:o, a:a, hints:h, why:w, right:"ڕاستە."}; }
+var LESSONS = [
+{
+ id:"w1", tab:"وانەیا ئێکێ", title:"وانەیا ئێکێ", sub:"بانگهلدێری و بنەمایێن وێ د ئیسلامێدا",
+ pages:[{num:5, blocks:[
+  {t:"p", s:"خەلک هەمی ژ ڕێڤە، ل سەر ئێکتاپەرستی و باوەر و پەرستنا خودێ، ئێک مللەت بوون، پاشی ژێک جوداببوون و ژێک چوونە پاش. خودایێ مەزن، پێغەمبەر هنارتن، «بۆ پەرستنا خودێ و گرتنا ڕێکا وی» گازی خەلکی کرن، گازیکرنا خەلکی ژ بۆ پەرستن و گرتنا ڕێکا خودێ و قەنجیکرن، ئێکە ژ کار و کریارێن پێغەمبەران، لەو فەرە ل سەر مە، ئەم ل سەر «هندەك کار و کریارێن پێغەمبەران» ڕاوەستین کو ئەڤە چەندەکن ژێ:"},
+  {t:"li", n:"١", s:"«گازیکرنا خەلکی ژ بۆ پەرستنا خودێ»: ئانکو گوهداریکرن و گرتنا ڕێکا خودێ و بجهئینانا هەر فەرمانەکێ وەك باوەر و گۆتن و کریار."},
+  {t:"li", n:"٢", s:"«گەهاندنا ئاشکەرا»: ڕۆنکرن و ئاشکەراکرنا وێ (وەحیێ)، ئەوا خودێ بۆ بەندەیێن خۆ هنارتی، چونکی پێغەمبەر چێتر مەرەم و ڕامانێن وێ دزانن."},
+  {t:"li", n:"٣", s:"«هاندان و ترساندن»: مزگێنیدان و ترساندنا مرۆڤان ب وێ ئاوایێ پێغەمبەر بۆ هاتینە هنارتن، کێلاگەکرنا دەروونێ مرۆڤاتیێ یە، ئەرکێ پێغەمبەران ئەوە، خەلکی ڕووباری ڕاستیا کارێن وان بکەن، دا بزانن، یێ خێرێ بکەت، خێرێ دێ بینت، و یێ خرابیێ ژی بکەت، جزایێ خرابیا خۆ دێ بینت."},
+  {t:"li", n:"٤", s:"«چێکرن و پاقژکرنا دەروونان»: خودایێ مەزن ب (وەحی)یا خۆ، خەلکی ژ تاریستانێ ڕزگار دکەت و بەرێ وان ددەتە ڕۆناهیێ، ئەڤە ژی ب هندێ ب جە دهێت، کو ڕێ و نیشانێن خودایێ خۆ فێربن و دەروونێ وان ب ناسینا وی پاقژ ببیت."}
+ ]}],
+ guided:{
+  gate:{
+   q:"بەری خواندنا دەقی: تو دزانی پێغەمبەر بۆ چ هاتینە هنارتن؟ هەر تشتەکێ دزانی بنڤێسە (یان ب هزرا خۆ بێژە)، پاشی بەرسڤێ ببینە.",
+   a:"ل دویڤ دەقێ کتێبێ: پێغەمبەر هنارتن بۆ گازیکرنا خەلکی ژ بۆ پەرستنا خودێ و گرتنا ڕێکا وی."
+  },
+  steps:[
+   {title:"ئەرکێ ئێکێ: گازیکرنا خەلکی ژ بۆ پەرستنا خودێ",
+    book:"«گازیکرنا خەلکی ژ بۆ پەرستنا خودێ»: ئانکو گوهداریکرن و گرتنا ڕێکا خودێ و بجهئینانا هەر فەرمانەکێ وەك باوەر و گۆتن و کریار.",
+    mine:"وشەیا «هەر» ئانکو ب تنێ نقێژ نینە: باوەر و گۆتن و کریار هەمی دگریت.",
+    q:{q:"کەسەک دبێژیت: «گازیکرنا خەلکی ئانکو ب تنێ بێژی نقێژێ بکەن.» ئەڤ گۆتنە چەوایە؟",
+     opts:["ڕاستە، چونکی ئەرک ب تنێ نقێژە","ناتەمامە، چونکی بجهئینانا هەر فەرمانەکێ دگریت (باوەر و گۆتن و کریار)","خەلەتە، چونکی گازیکرن ئەرکێ پێغەمبەران نینە"],a:1,
+     hints:["دووبارە دەقێ ببینە: «بجهئینانا هەر فەرمانەکێ».","وشەیا «هەر» ب تنێ نقێژ ناگریت."],
+     why:{0:"نقێژ پشکەکە، بەلێ دەق دبێژیت هەر فەرمانەکێ، وەك باوەر و گۆتن و کریار.",2:"دەق ڕوون دبێژیت گازیکرنا خەلکی ئێکە ژ کار و کریارێن پێغەمبەران."},
+     right:"ڕاستە: هەر فەرمانەکێ، نە ب تنێ نقێژ."}},
+   {title:"ئەرکێ دووی: گەهاندنا ئاشکەرا",
+    book:"«گەهاندنا ئاشکەرا»: ڕۆنکرن و ئاشکەراکرنا وێ (وەحیێ)، ئەوا خودێ بۆ بەندەیێن خۆ هنارتی.",
+    mine:"وەحی ژ خودێیە؛ ئەرکێ پێغەمبەری ئەوە ئەو ڕۆن و ئاشکەرا بگەهینیتە خەلکی.",
+    q:{q:"پێغەمبەر د گەهاندنا وەحیێ دا چ دکەت؟",
+     opts:["ڕۆن و ئاشکەرا دکەت و دگەهینیتە خەلکی","ڤەدشێریت","دگوهۆڕیت"],a:0,
+     hints:["ناڤێ ئەرکی بخوینە: «گەهاندنا ئاشکەرا».","وشەیا «ڕۆنکرن» د دەقی دا ببینە."],
+     why:{1:"ڤەشارتن پێچەوانەیێ «ئاشکەرا»یە.",2:"دەق ناهێلیت وەحی بهێتە گوهۆڕین؛ ئەرک ڕۆنکرن و ئاشکەراکرنە."},
+     right:"ڕاستە: ڕۆنکرن و ئاشکەراکرن."}},
+   {title:"ئەرکێ سێیێ: هاندان و ترساندن",
+    book:"«هاندان و ترساندن»: مزگێنیدان و ترساندنا مرۆڤان... یێ خێرێ بکەت، خێرێ دێ بینت، و یێ خرابیێ ژی بکەت، جزایێ خرابیا خۆ دێ بینت.",
+    mine:"ئەنجامێ کاری هەمیشە دهێتە دیتن: خێر ب خێرێ و خرابی ب جزایێ خۆ.",
+    q:{q:"یێ خرابیێ بکەت، دێ چ بینت؟",
+     opts:["خێرێ دێ بینت","جزایێ خرابیا خۆ دێ بینت","چ نابینت"],a:1,
+     hints:["دووماهیکا ڤی ئەرکی بخوینە.","دەق جودا دکەت: یێ خێرێ و یێ خرابیێ."],
+     why:{0:"خێر بۆ یێ خێرێ دکەت؛ بۆ یێ خرابیێ دەق دبێژیت جزایێ خرابیێ.",2:"دەق دبێژیت دێ جزایێ خۆ بینت، نە ئەوە چ نابینت."},
+     right:"ڕاستە: جزایێ خرابیا خۆ دێ بینت."}},
+   {title:"ئەرکێ چواری: چێکرن و پاقژکرنا دەروونان",
+    book:"«چێکرن و پاقژکرنا دەروونان»: خودایێ مەزن ب (وەحی)یا خۆ، خەلکی ژ تاریستانێ ڕزگار دکەت و بەرێ وان ددەتە ڕۆناهیێ.",
+    mine:"تاریستان و ڕۆناهی نموونەنە: ڕزگارکرن ب وەحیا خودێ دهێت.",
+    q:{q:"خودایێ مەزن خەلکی ژ تاریستانێ ب چ ڕزگار دکەت؟",
+     opts:["ب مالی","ب وەحیا خۆ","ب زۆرێ"],a:1,
+     hints:["د دەقی دا ناڤەکێ ناڤبەرا کەوانان هەیە.","ئەو ناڤ ئەوە یێ د ئەرکێ دووی دا ژی هاتی."],
+     why:{0:"دەق نابێژیت ب مالی؛ دبێژیت ب (وەحی)یا خودێ.",2:"زۆر د دەقی دا نینە؛ ڕزگارکرن ب وەحی و فێربوونا ڕێکا خودێ یە."},
+     right:"ڕاستە: ب (وەحی)یا خودێ."}}
+  ],
+  practice:[
+   {q:"خودایێ مەزن پێغەمبەر هنارتن، بۆ ___ خودێ و گرتنا ڕێکا وی.",opts:["پەرستنا","ڤەشارتنا","ترساندنا"],a:0,
+    hints:["ڕێکا ئێکێ د دەقی دا دووبارە بخوینە.","وشەیا «پەرستن» د ناڤ یا «گازیکرنا خەلکی ژ بۆ ...» دا هاتیە."],
+    why:{1:"ڤەشارتن ئەرکێ پێغەمبەران نینە.",2:"ترساندن ئەرکەکێ دیە، نە ئەڤ ئەرکێ ئێکێیە."},right:"ڕاستە."},
+   {q:"گازیکرنا خەلکی ژ بۆ پەرستنا خودێ، ئانکو ___ و گرتنا ڕێکا خودێ.",opts:["گوهداریکرن","مزگێنیدان","ترساندن"],a:0,
+    hints:["ڕوونکرنا ئەرکێ ئێکێ ببینە.","ئەو وشە یا بەری «و گرتنا ڕێکا خودێ» هاتی."],
+    why:{1:"مزگێنیدان پشکا ئەرکێ سێیێیە.",2:"ترساندن پشکا ئەرکێ سێیێیە."},right:"ڕاستە."},
+   {q:"یێ خرابیێ بکەت، جزایێ خرابیا خۆ دێ بینت.",opts:["ڕاستە","نەڕاستە"],a:0,
+    hints:["ئەرکێ سێیێ دووبارە بخوینە."],why:{1:"دەق ڕوون دبێژیت جزایێ خرابیا خۆ دێ بینت."},right:"ڕاستە."},
+   {q:"ئەرکێ پێغەمبەران د گەهاندنا وەحیێ دا چیە؟",opts:["ڕۆنکرن و ئاشکەراکرنا وێ","ڤەشارتنا وێ","گوهۆڕینا وێ"],a:0,
+    hints:["ناڤێ ئەرکێ دووی بخوینە."],why:{1:"ڤەشارتن پێچەوانەیا ئاشکەراکرنێیە.",2:"دەق ناڤێ گوهۆڕینێ ناکەت."},right:"ڕاستە."},
+   {q:"پاقژکرنا دەروونان ب چ دهێت؟",opts:["ب ناسینا خودێ و فێربوونا ڕێ و نیشانێن وی","ب کۆمکرنا مالی","ب ڤەشارتنا ژ خەلکی"],a:0,
+    hints:["دووماهیکا ئەرکێ چواری بخوینە.","دەق دبێژیت: «ب ناسینا وی»."],why:{1:"دەق ناڤێ کۆمکرنا مالی نایینیت.",2:"پاقژکرن ب ناسینا خودێ یە، نە ب ڤەشارتنێ."},right:"ڕاستە."},
+   {q:"کەسەک خێرێ بکەت، دێ چ بینت؟",opts:["خێرێ دێ بینت","چ نابینت","جزایێ خرابیێ دێ بینت"],a:0,
+    hints:["ئەرکێ سێیێ دووبارە ببینە."],why:{1:"دەق دبێژیت دێ خێرێ بینت.",2:"جزایێ خرابیێ بۆ یێ خرابیێ یە."},right:"ڕاستە."}
+  ]
+ },
+ ex:[
+  {k:"match", q:"ئەرکێ پێغەمبەران ب پەسنا وی ڤەگرێدە:",
+   left:["گازیکرنا خەلکی ژ بۆ پەرستنا خودێ","گەهاندنا ئاشکەرا","هاندان و ترساندن","چێکرن و پاقژکرنا دەروونان"],
+   right:["گوهداریکرن و گرتنا ڕێکا خودێ","ڕۆنکرن و ئاشکەراکرنا وەحیێ","مزگێنیدان و ترساندنا مرۆڤان","ڕزگارکرنا خەلکی ژ تاریستانێ و پاقژکرنا دەروونان"]}
+ ]
+},
+{
+ id:"w2", tab:"وانەیا دووی", title:"وانەیا دووی", sub:"بانگهلدێری ژ بۆ گرتنا ڕێکا خودێ دڤێت چەوابیت؟",
+ pages:[
+ {num:6, blocks:[
+  {t:"p", s:"بانگهلدێران بۆ گرتنا ڕێکا خودێ ب ئاوایەکی گشتی و د ناڤ خودان کتێباندا ب ئاوایەکی تایبەت، دڤێت ڕێکا نەرمی و ژیرێن بگریت، ڕێکا ئاراستەکرنەکا مفادار و بەرهەمدار، کو عەقلی و دلی پێکڤە باخێڤیت. خودایێ مەزن دبێژیت:"},
+  {t:"verse", s:"ٱدْعُ إِلَىٰ سَبِيلِ رَبِّكَ بِٱلْحِكْمَةِ وَٱلْمَوْعِظَةِ ٱلْحَسَنَةِ ۖ وَجَٰدِلْهُم بِٱلَّتِى هِىَ أَحْسَنُ ۚ إِنَّ رَبَّكَ هُوَ أَعْلَمُ بِمَن ضَلَّ عَن سَبِيلِهِۦ ۖ وَهُوَ أَعْلَمُ بِٱلْمُهْتَدِينَ", ref:"(النحل ١٢٥)"},
+  {t:"bar", s:"د چ دا بانگهلدێری دیار دبیت؟"},
+  {t:"p", s:"«بانگ و گازی د وان هەردو پشکێن شەهادەتێدا دیار دبیت» ئەوێن بۆ وەك دوو ستوینان."},
+  {t:"p", s:"«ستوینا ئێکێ: باوەری ب هەبوون و ئێکتایا خودێ». ئێکتاپەرستی د قورئانێدا وەك باوەر، هێزاترین و بلندترین زانستە کو مرۆڤ پێ سەرفراز و بلند دبیت، و ئەڤ ستوینە ئەو مەخسەدە، ئەوا «پشکا ئێکێ ژ شەهادەتێ» دگەهینیت:"},
+  {t:"verse", s:"أَشْهَدُ أَن لَّا إِلَٰهَ إِلَّا ٱللَّهُ", ref:""},
+  {t:"p", s:"«ستوینا دووی: باوەری ب پێغەمبەرێ خودێ موحەممەد (سلاڤ لێ بن) و وێ ڕامانێ ددەت»:"},
+  {t:"li", n:"ئ", s:"پێدڤیە باوەری پێ بهێتە ئینان، کو «پێغەمبەرێ خودێیە و دوماهی پێغەمبەرە»."},
+  {t:"li", n:"ب", s:"پێدڤیە باوەری ب وی تشتی بێتە ئینان ئەوێ پێ هاتی."}
+ ]},
+ {num:7, blocks:[
+  {t:"li", n:"پ", s:"پێدڤیە گوهداریا وی بهێتە کرن د هەر تشتەکێ گۆتی و کری و بریار پێ دایی، چ فەرمانا کرنێ بیت، چ ژی یا نەکرنێ بیت، و ئەڤ ستوینە، ئەو مەرەم و مەخسەدە، «ئەوا پشکا دووی ژ شەهادەتێ» دگەهینت:"},
+  {t:"verse", s:"أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ ٱللَّهِ", ref:""},
+  {t:"bar", s:"خەلک ب زۆریێ ناهێتە د ئیسلامێدا:"},
+  {t:"p", s:"خودایێ مەزن دبێژیت:"},
+  {t:"verse", s:"لَآ إِكْرَاهَ فِى ٱلدِّينِ ۖ قَد تَّبَيَّنَ ٱلرُّشْدُ مِنَ ٱلْغَىِّ", ref:"(البقرە ٢٥٦)"},
+  {t:"p", s:"«زۆریێ ل وان ناکەت ببنە موسلمان، بەلکو ڕێکا ئازادیێ ژی ل وان ناگریت، و دەلیڤەیێ ژی ل بەر وان ڤەکری دهێلیت، دا هزرێن خۆ باش بکەن و بریارا خۆ دویری ترس و زۆرلێکرنێ ل دویڤ دلێ خۆ بدەن.» «بنەمایێ گرنگێ خودایێ مەزن د قورئانێدا بریار پێ دای، ڕۆن و ئاشکەرایە»."},
+  {t:"bar", s:"دان و ستاندن"},
+  {t:"p", s:"– هەردوو ستوینێن بنیاتی یێن هەردوو پشکێن شەهادەتێ چنە؟ ڕۆن بکە."},
+  {t:"p", s:"ژ ڕامانا ڤان ئایەتان کاری پێغەمبەران دیار بکە، خودێ دبێژیت:"},
+  {t:"verse", s:"١- ٱللَّهُ وَلِىُّ ٱلَّذِينَ ءَامَنُوا۟ يُخْرِجُهُم مِّنَ ٱلظُّلُمَٰتِ إِلَى ٱلنُّورِ", ref:"(البقرة ٢٥٧)"},
+  {t:"verse", s:"٢- كَانَ ٱلنَّاسُ أُمَّةً وَٰحِدَةً فَبَعَثَ ٱللَّهُ ٱلنَّبِيِّۦنَ مُبَشِّرِينَ وَمُنذِرِينَ", ref:"(البقرة ٢١٣)"},
+  {t:"verse", s:"٣- يَٰٓأَيُّهَا ٱلرَّسُولُ بَلِّغْ مَآ أُنزِلَ إِلَيْكَ مِن رَّبِّكَ ۖ وَإِن لَّمْ تَفْعَلْ فَمَا بَلَّغْتَ رِسَالَتَهُۥ", ref:"(المائدة ٦٧)"}
+ ]}],
+ guided:{
+  gate:{q:"بەری خواندنا دەقی: شەهادەت ژ چەند پشکان پێک دهێت؟ و پشک چنە؟ هەر تشتەکێ دزانی بنڤێسە.",
+   a:"ل دویڤ دەقێ: بانگ و گازی د هەردو پشکێن شەهادەتێدا دیار دبیت، و ئەو بۆ وەك دوو ستوینان: پشکا ئێکێ (أشهد أن لا إله إلا الله) و پشکا دووی (أشهد أن محمداً رسول الله)."},
+  steps:[
+   {title:"ڕێکا بانگهلدێریێ",
+    book:"«دڤێت ڕێکا نەرمی و ژیرێن بگریت»، ڕێکا ئاراستەکرنەکا مفادار و بەرهەمدار، کو عەقلی و دلی پێکڤە باخێڤیت.",
+    mine:"بانگهلدێر ب نەرمی و ژیری دکەت، نە ب توندی.",
+    q:{q:"کەسەک دبێژیت: بانگهلدێر دڤێت ب توندی و ب زۆری ئاخڤتنێ بکەت. ئەڤە ل دویڤ دەقی چەوایە؟",
+     opts:["ڕاستە","نەڕاستە، دڤێت ڕێکا نەرمی و ژیریێ بگریت","نەڕاستە، دڤێت بێدەنگ بمینیت"],a:1,
+     hints:["دەقێ ڕێکا بانگهلدێریێ بخوینە.","دەق دبێژیت: «ڕێکا نەرمی و ژیرێن»."],
+     why:{0:"دەق ڕوون دبێژیت ڕێکا نەرمی و ژیریێ.",2:"بانگهلدێر گازی دکەت، نە بێدەنگ دمینیت."},right:"ڕاستە: نەرمی و ژیری."}},
+   {title:"ستوینا ئێکێ: باوەری ب هەبوون و ئێکتایا خودێ",
+    book:"«ستوینا ئێکێ: باوەری ب هەبوون و ئێکتایا خودێ». ئەڤ ستوینە پشکا ئێکێ ژ شەهادەتێ دگەهینیت.",
+    mine:"ستوینا ئێکێ ب پشکا ئێکێ یا شەهادەتێ ڤەگرێدایە.",
+    q:{q:"ستوینا ئێکێ ب کیژ پشکا شەهادەتێ ڤەگرێدایە؟",
+     opts:["أشهد أن لا إله إلا الله","أشهد أن محمداً رسول الله","ب هەردوویان"],a:0,
+     hints:["ناڤێ ستوینێ ببینە: ئێکتایا خودێ.","پشکا ئێکێ ب (الله) دماهی دهێت."],
+     why:{1:"ئەڤە پشکا دووییە، و ب ستوینا دووی ڤە دهێتە گرێدان.",2:"هەر ستوینەک ب پشکەکێ ڤەگرێدایە."},right:"ڕاستە."}},
+   {title:"ستوینا دووی: باوەری ب پێغەمبەرێ خودێ موحەممەد",
+    book:"«ستوینا دووی: باوەری ب پێغەمبەرێ خودێ موحەممەد (سلاڤ لێ بن)»: پێدڤیە باوەری پێ بهێتە ئینان کو «پێغەمبەرێ خودێیە و دوماهی پێغەمبەرە»، و گوهداریا وی بهێتە کرن.",
+    mine:"ئەڤ ستوینە سێ تشتان دگریت: باوەری پێ، باوەری ب وی تشتی یێ پێ هاتی، و گوهداریا وی.",
+    q:{q:"ئەگەر ئەم باوەریێ ب موحەممەد (سلاڤ لێ بن) بینین، کیژ ژ ڤان ڕاستە؟",
+     opts:["پێدڤییە باوەری پێ بینین کو دوماهی پێغەمبەرە","پێدڤی نینە گوهداریا وی بکەین","ئەو خودایە"],a:0,
+     hints:["پشکا (ئ) یا ستوینا دووی ببینە.","پشکا (پ) ژی گوهداریێ دگریت."],
+     why:{1:"پشکا (پ) دبێژیت پێدڤییە گوهداریا وی بهێتە کرن.",2:"دەق دبێژیت ئەو پێغەمبەرێ خودێیە، نە خودا."},right:"ڕاستە."}},
+   {title:"خەلک ب زۆریێ ناهێتە د ئیسلامێدا",
+    book:"«لا إكراه في الدين»: «زۆریێ ل وان ناکەت ببنە موسلمان، بەلکو ڕێکا ئازادیێ ژی ل وان ناگریت.»",
+    mine:"ئیسلام زۆرێ ل کەسی ناکەت؛ هەر کەس ئازادە د باوەریا خۆ دا.",
+    q:{q:"ئایا ئیسلام زۆرێ ل کەسی دکەت دا ببیتە موسلمان؟",
+     opts:["بەلێ","نەخێر، ئایەتا (لا إكراه في الدين) ڕوون دبێژیت","ب شەرتەکێ"],a:1,
+     hints:["ئایەتا بقەرە ٢٥٦ ببینە.","وشەیا (لا) ئانکو نینە."],
+     why:{0:"ئایەت دبێژیت (لا إكراه في الدين).",2:"ئایەت چ شەرتەکێ ناکەت."},right:"ڕاستە: زۆر ناهێتە کرن."}}
+  ],
+  practice:[
+   Q("أشهد أن لا إله إلا ___",["الله","محمد","الرسول"],0,["پشکا ئێکێ یا شەهادەتێ ببینە."],{1:"محمد د پشکا دووی دا هاتیە.",2:"پشکا ئێکێ ب (الله) دماهی دهێت."}),
+   Q("أشهد أن محمداً ___ الله",["رسول","عبد","نور"],0,["پشکا دووی یا شەهادەتێ دووبارە بخوینە."],{1:"ل دویڤ دەقێ کتێبێ: (رسول الله).",2:"ل دویڤ دەقێ کتێبێ: (رسول الله)."}),
+   Q("ستوینا ئێکێ چیە؟",["باوەری ب هەبوون و ئێکتایا خودێ","باوەری ب پێغەمبەرێ خودێ موحەممەد","زەکات دان"],0,["دەقێ ستوینا ئێکێ ببینە."],{1:"ئەڤە ستوینا دووییە.",2:"زەکات د دەقێ ستوینان دا نینە."}),
+   Q("ستوینا دووی چیە؟",["باوەری ب هەبوون و ئێکتایا خودێ","باوەری ب پێغەمبەرێ خودێ موحەممەد (سلاڤ لێ بن)","ڕۆژی گرتن"],1,["دەقێ ستوینا دووی ببینە."],{0:"ئەڤە ستوینا ئێکێیە.",2:"ڕۆژی گرتن د دەقێ ستوینان دا نینە."}),
+   Q("زۆری ل کەسێ ناهێتە کرن کو ببیتە موسلمان.",["ڕاستە","نەڕاستە"],0,["بەشێ «خەلک ب زۆریێ ناهێتە د ئیسلامێدا» ببینە."],{1:"ئایەتا (لا إكراه في الدين) ڕوون دبێژیت زۆر نینە."}),
+   Q("ڕامانا (لا إكراه في الدين) چیە؟",["زۆر ل کەسی ناهێتە کرن د ئایینی دا","هەمی دبیت ب زۆرێ ببنە موسلمان","ئایین بۆ کەسی نینە"],0,["ڕامانا وێ د دەقی دا ببینە: «زۆریێ ل وان ناکەت»."],{1:"ئەڤە پێچەوانەیا ئایەتێیە.",2:"ئایەت دبێژیت زۆر نینە، نە ئایین نینە."})
+  ]
+ },
+ ex:[
+  {k:"match", q:"هەر ستوینەکێ ب پشکا شەهادەتێ ڤەگرێدە:",
+   left:["ستوینا ئێکێ","ستوینا دووی"],
+   right:["أشهد أن لا إله إلا الله","أشهد أن محمداً رسول الله"]},
+  {k:"fill", q:"ٱدْعُ إِلَىٰ سَبِيلِ رَبِّكَ بِٱلْحِكْمَةِ وَٱلْ___ ٱلْحَسَنَةِ", blanks:["مَوْعِظَةِ"], opts:["مَوْعِظَةِ","غَفْلَةِ","قَسْوَةِ"]},
+  {k:"fill", q:"لَآ إِكْرَاهَ فِى ___", blanks:["ٱلدِّينِ"], opts:["ٱلدِّينِ","ٱلْبَيْتِ","ٱلنَّاسِ"]},
+  {k:"fill", q:"يُخْرِجُهُم مِّنَ ٱلظُّلُمَٰتِ إِلَى ___", blanks:["ٱلنُّورِ"], opts:["ٱلنُّورِ","ٱلظُّلُمَٰتِ","ٱلنَّارِ"]}
+ ]
 
-        <!-- Navigation Tabs -->
-        <div class="max-w-6xl mx-auto px-4 flex border-t border-slate-100 dark:border-slate-700/50 overflow-x-auto text-sm font-medium gap-1 md:gap-6 no-scrollbar">
-            <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active py-2.5 px-3 whitespace-nowrap flex items-center gap-2">
-                <i class="fa-solid fa-book-open"></i> تمهيد الدرس
-            </button>
-            <button onclick="switchTab('listening')" id="tab-listening" class="tab-btn py-2.5 px-3 whitespace-nowrap flex items-center gap-2">
-                <i class="fa-solid fa-headphones"></i> الاستماع والموضوع
-            </button>
-            <button onclick="switchTab('vocab')" id="tab-vocab" class="tab-btn py-2.5 px-3 whitespace-nowrap flex items-center gap-2">
-                <i class="fa-solid fa-language"></i> المرادفات والمعاني
-            </button>
-            <button onclick="switchTab('matching')" id="tab-matching" class="tab-btn py-2.5 px-3 whitespace-nowrap flex items-center gap-2">
-                <i class="fa-solid fa-draw-polygon"></i> الربط والإكمال
-            </button>
-            <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn py-2.5 px-3 whitespace-nowrap flex items-center gap-2 text-amber-600 dark:text-amber-400">
-                <i class="fa-solid fa-trophy"></i> الاختبار التفاعلي
-            </button>
-        </div>
-    </header>
+},
+{
+ id:"w3", tab:"وانەیا سێیێ", title:"وانەیا سێیێ", sub:"پەرستنا خودێ",
+ pages:[{num:8, blocks:[
+  {t:"bar", s:"ڕامانا پەرستنێ:"},
+  {t:"p", s:"پەرستن، گوهداری و خۆشکاندنە بۆ فەرمانێن خودایێ مەزن، «ب ڕێکا بجهئینانا وان»، وەکی: «کرنا نقێژێ، گرتنا ڕۆژیێ، دانا زەکاتێ، چوونا حەجێ، دوعاکرنێ، خواندنا قورئانێ، گوهدارییا دایکوبابان، خێردانێ، ڕاستگۆتنێ، سپارتنا ئەمانەتێ و ئاخڤتنا خۆش»."},
+  {t:"p", s:"بێ گۆمان، چارچۆڤ و بازنێ پەرستنێ د ئیسلامێدا د بجهئینانا چەند فەرمانەکان ب تنێ ڕاناوەستیت، بەلکو هێژ فرەهترە، هەمی کار و کریارێن مرۆڤێ موسلمان دگریت."}
+ ]}],
+ pagenote:"لاپەرێن ٩ و ١٠ د وێنەیێن هاتی دا نینن، لەو پشتی لاپەرێ ٨ دێ چینە لاپەرێ ١١.",
+ guided:{
+  gate:{q:"بەری خواندنێ: ل دەف تە پەرستن چیە؟ چەند نموونەیان بێژە.",
+   a:"ل دویڤ دەقێ: پەرستن، گوهداری و خۆشکاندنە بۆ فەرمانێن خودایێ مەزن، ب ڕێکا بجهئینانا وان، وەکی نقێژ، ڕۆژی، زەکات، حەج، دوعا، خواندنا قورئانێ و ڕاستگۆتن."},
+  steps:[
+   {title:"ڕامانا پەرستنێ",
+    book:"پەرستن، «گوهداری و خۆشکاندنە بۆ فەرمانێن خودایێ مەزن»، «ب ڕێکا بجهئینانا وان».",
+    mine:"دوو وشە گرنگن: گوهداری و بجهئینان.",
+    q:{q:"کەسەک دبێژیت: پەرستن ب تنێ نقێژە. ئەڤە ل دویڤ کتێبێ چەوایە؟",
+     opts:["ڕاستە","ناتەمامە، چونکی چارچۆڤێ پەرستنێ فرەهترە","خەلەتە، چونکی نقێژ پەرستن نینە"],a:1,
+     hints:["دەقێ ڕامانا پەرستنێ دووبارە بخوینە.","دەق دبێژیت نقێژ یەک ژ نموونانە."],
+     why:{0:"دەق دبێژیت پەرستن ب تنێ ل چەند فەرمانەکان ناوەستیت.",2:"نقێژ د ناڤ نموونێن پەرستنێ دا هاتیە."},right:"ڕاستە: نقێژ پشکەکە ژ پەرستنێ."}},
+   {title:"نموونێن پەرستنێ",
+    book:"«کرنا نقێژێ، گرتنا ڕۆژیێ، دانا زەکاتێ، چوونا حەجێ، دوعاکرنێ، خواندنا قورئانێ، گوهدارییا دایکوبابان، خێردانێ، ڕاستگۆتنێ، سپارتنا ئەمانەتێ و ئاخڤتنا خۆش».",
+    mine:"هندەک ژ ڤان کریارێن لەشی نە، و هندەک ڕەوشتن.",
+    q:{q:"کیژ ژ ڤان د لیستا دەقی دا نینە؟",
+     opts:["گرتنا ڕۆژیێ","گوهدارییا دایکوبابان","دزیکرن"],a:2,
+     hints:["لیستا نموونان ب هێدی بخوینە.","دزیکرن نە چاکییە."],
+     why:{0:"گرتنا ڕۆژیێ د لیستێ دا هاتیە.",1:"گوهدارییا دایکوبابان د لیستێ دا هاتیە."},right:"ڕاستە: دزیکرن د لیستێ دا نینە."}},
+   {title:"چارچۆڤێ پەرستنێ فرەهترە",
+    book:"چارچۆڤ و بازنێ پەرستنێ د ئیسلامێدا ب تنێ ل سەر چەند فەرمانەکان ناوەستیت، «بەلکو هێژ فرەهترە، هەمی کار و کریارێن مرۆڤێ موسلمان دگریت».",
+    mine:"پەرستن ب تنێ د دەمەکێ دیارکری دا نینە.",
+    q:{q:"ل دویڤ دەقێ، چارچۆڤێ پەرستنێ چەندە؟",
+     opts:["ب تنێ د مزگەفتێ دا","هێژ فرەهترە و هەمی کار و کریارێن مرۆڤێ موسلمان دگریت","ب تنێ پێنج نقێژێن ڕۆژانە"],a:1,
+     hints:["دووماهیکا دەقی ببینە: «هێژ فرەهترە».","هەمی کار و کریار."],
+     why:{0:"دەق ناڤێ مزگەفتێ ناکەت.",2:"دەق دبێژیت نقێژ ب تنێ نینە."},right:"ڕاستە."}}
+  ],
+  practice:[
+   Q("پەرستن، ___ و خۆشکاندنە بۆ فەرمانێن خودایێ مەزن.",["گوهداری","ڤەشارتن","ئاخڤتن"],0,["دەقێ ڕامانا پەرستنێ ببینە."],{1:"ڤەشارتن د ڕامانا پەرستنێ دا نینە.",2:"ئاخڤتن ئێک ژ نموونانە، نە ڕامانا پەرستنێ."}),
+   Q("پەرستن ب ڕێکا ___ فەرمانێن خودێ دهێت.",["بجهئینانا","ڤەشارتنا","ڕەتکرنا"],0,["دەق دبێژیت: «ب ڕێکا ... وان»."],{1:"ڤەشارتن پەرستن نینە.",2:"ڕەتکرن پەرستن نینە."}),
+   Q("ڕاستگۆتن د ناڤ نموونێن پەرستنێ دا هاتیە.",["ڕاستە","نەڕاستە"],0,["لیستا نموونان ببینە."],{1:"ڕاستگۆتن د لیستێ دا هاتیە."}),
+   Q("پەرستن ب تنێ د کرنا نقێژێ و ڕۆژیێ دا دمینیت.",["ڕاستە","نەڕاستە"],1,["بەشێ «چارچۆڤێ پەرستنێ فرەهترە» ببینە."],{0:"دەق دبێژیت هێژ فرەهترە."}),
+   Q("گوهدارییا دایکوبابان ل دویڤ دەقێ:",["د ناڤ پەرستنێ دا هاتیە","د ناڤ پەرستنێ دا نەهاتیە"],0,["لیستا نموونان ببینە."],{1:"گوهدارییا دایکوبابان د لیستێ دا هاتیە."})
+  ]
+ },
+ ex:[
+  {k:"multi", q:"کانێ ل دویڤ دەقێ کتێبێ کیژ ژ ڤان د ناڤ پەرستنێ دا هاتینە؟ (هەمیان نیشان بکە)",
+   opts:["کرنا نقێژێ","گرتنا ڕۆژیێ","دزی","دانا زەکاتێ","چوونا حەجێ","ڕاستگۆتن","درەو","سپارتنا ئەمانەتێ"],
+   a:[0,1,3,4,5,7]}
+ ]
 
-    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+},
+{
+ id:"w4", tab:"وانەیا چواری", title:"وانەیا چواری", sub:"جۆرێن پەرستنان",
+ pages:[{num:11, blocks:[
+  {t:"bar", s:"پەرستن چوار جۆرن"},
+  {t:"li", n:"١", s:"«پەرستنا دلی»: ئەوە ڤیان و نەڤیان و ترس و هیڤیبا باوەرداری ژ بۆ خودێ بیت."},
+  {t:"li", n:"٢", s:"«پەرستنا گیانی»: ئەوە مرۆڤێ باوەردار نقێژێ بکەت و ڕۆژیێ بگریت و بچیتە حەجێ ئەگەر بشێت."},
+  {t:"li", n:"٣", s:"«پەرستنا گۆتنکی»: ئەوە مرۆڤێ باوەردار خودێ بینتە بیرا خۆ و دەستێن خۆ ڕابەری وی بکەت و قورئانا پیرۆز بخوینیت."},
+  {t:"li", n:"٤", s:"«پەرستنا مالی»: ئەوە مرۆڤێ باوەردار زەکاتا مالێ خۆ بدەت و خێرهاتنێ د گەل ژار و دەستتەنگان بکەت و دەستێ وان بگریت."},
+  {t:"bar", s:"شوینەوار و کاریگەریا پەرستشەکان"},
+  {t:"li", n:"١", s:"شوینەدەستێ پەرستنێ ل سەر گیانێ کەسێ باوەردار: ب ڕوو و سیمایێ باوەری، ڕۆناهیا خۆ ددەتە سەر و چاڤێن باوەرداران، خودایێ مەزن دبێژیت:"},
+  {t:"verse", s:"سِيمَاهُمْ فِى وُجُوهِهِم مِّنْ أَثَرِ ٱلسُّجُودِ", ref:"(الفتح ٢٩)"},
+  {t:"li", n:"٢", s:"شوینەدەستێ پەرستنێ ل سەر ڕەوشتێ کەسێ باوەردار: د بێنفرەهی و لێبۆرین و ڕاستگۆیی و ئێمنی و دلپێڤەیی و پاقژیا دلێ باوەرداریدا دیار دبیت. خودایێ مەزن د دەرهەقا دلان دا دبێژیت:"},
+  {t:"verse", s:"أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ", ref:"(الرعد ٢٨)"},
+  {t:"li", n:"٣", s:"شوینەدەستێ پەرستنێ ل سەر خێزانێ و جڤاکی: پەرستن دبیتە ئەگەرێ پەیدابوونا جڤاکەکێ ئێمن، یاکو برایێنی و تەناهی و هاریکاری دناڤدا."}
+ ]}],
+ guided:{
+  gate:{q:"بەری خواندنێ: پەرستن چەند جۆرن؟ ناڤێن وان چنە؟ ئەگەر نزانی بێژە «نزانم».",
+   a:"ل دویڤ دەقێ: پەرستن چوار جۆرن: پەرستنا دلی، پەرستنا گیانی، پەرستنا گۆتنکی، پەرستنا مالی."},
+  steps:[
+   {title:"پەرستنا دلی",
+    book:"«پەرستنا دلی»: ئەوە ڤیان و نەڤیان و ترس و هیڤیبا باوەرداری ژ بۆ خودێ بیت.",
+    mine:"ئەڤە د دلی دایە، ب چاڤان ناهێتە دیتن.",
+    q:{q:"ڤیان و ترس و هیڤی ژ بۆ خودێ، کیژ جۆرێ پەرستنێ نە؟",
+     opts:["پەرستنا دلی","پەرستنا گیانی","پەرستنا مالی"],a:0,
+     hints:["ڤیان و ترس د کێرێ دانە؟","ناڤێ جۆری ببینە."],
+     why:{1:"پەرستنا گیانی نقێژ و ڕۆژی و حەجە.",2:"پەرستنا مالی زەکات و خێرهاتنە."},right:"ڕاستە."}},
+   {title:"پەرستنا گیانی",
+    book:"«پەرستنا گیانی»: ئەوە مرۆڤێ باوەردار نقێژێ بکەت و ڕۆژیێ بگریت و بچیتە حەجێ ئەگەر بشێت.",
+    mine:"ئەڤ جۆرە کریارێن لەشی نە.",
+    q:{q:"نقێژ و ڕۆژی و حەج کیژ جۆرن؟",
+     opts:["پەرستنا گیانی","پەرستنا گۆتنکی","پەرستنا مالی"],a:0,
+     hints:["دەقێ جۆرێ دووی ببینە."],
+     why:{1:"پەرستنا گۆتنکی خودێ ئینانە بیر و قورئان خواندنە.",2:"پەرستنا مالی زەکاتە."},right:"ڕاستە."}},
+   {title:"پەرستنا گۆتنکی",
+    book:"«پەرستنا گۆتنکی»: ئەوە مرۆڤێ باوەردار خودێ بینتە بیرا خۆ و قورئانا پیرۆز بخوینیت.",
+    mine:"ئەڤ جۆرە ب زمانی دهێت.",
+    q:{q:"خواندنا قورئانا پیرۆز د کیژ جۆرێ پەرستنێ دایە؟",
+     opts:["پەرستنا دلی","پەرستنا گۆتنکی","پەرستنا مالی"],a:1,
+     hints:["دەقێ جۆرێ سێیێ ببینە."],
+     why:{0:"پەرستنا دلی ڤیان و ترسە.",2:"پەرستنا مالی زەکاتە."},right:"ڕاستە."}},
+   {title:"پەرستنا مالی",
+    book:"«پەرستنا مالی»: ئەوە مرۆڤێ باوەردار زەکاتا مالێ خۆ بدەت و خێرهاتنێ د گەل ژار و دەستتەنگان بکەت.",
+    mine:"ئەڤ جۆرە ب مالی دهێت.",
+    q:{q:"زەکات دان د کیژ جۆرێ پەرستنێ دایە؟",
+     opts:["پەرستنا مالی","پەرستنا گیانی","پەرستنا دلی"],a:0,
+     hints:["ناڤێ جۆری ب (مال) دهێت."],
+     why:{1:"پەرستنا گیانی نقێژ و ڕۆژی و حەجە.",2:"پەرستنا دلی ڤیان و ترسە."},right:"ڕاستە."}},
+   {title:"شوینەوارێن پەرستنێ ل سەر خێزانێ و جڤاکی",
+    book:"شوینەدەستێ پەرستنێ ل سەر خێزانێ و جڤاکی: «پەرستن دبیتە ئەگەرێ پەیدابوونا جڤاکەکێ ئێمن، یاکو برایێنی و تەناهی و هاریکاری دناڤدا».",
+    mine:"پەرستن نە ب تنێ بۆ کەسی، بەلکو بۆ جڤاکی ژی.",
+    q:{q:"شوینەدەستێ پەرستنێ ل سەر خێزانێ و جڤاکی چیە؟",
+     opts:["دبیتە ئەگەرێ جڤاکەکێ ئێمن و برایێنی و تەناهی و هاریکاری","جڤاک ژێک ڤەدقەتینیت","ب تنێ مالی زێدە دکەت"],a:0,
+     hints:["دەقێ بەشێ ٣ ببینە.","ئەو وشێن (ئێمن) و (هاریکاری)."],
+     why:{1:"پەرستن جڤاکی ڤەناقەتینیت، بەلکو دکەتە جڤاکەکێ ئێمن.",2:"دەق باسێ مالی زێدەکرنێ ناکەت."},right:"ڕاستە."}}
+  ],
+  practice:[
+   Q("پەرستن چەند جۆرن؟",["دوو","سێ","چوار"],2,["دەقێ «پەرستن چوار جۆرن» ببینە."],{0:"دەق دبێژیت چوار جۆرن.",1:"دەق دبێژیت چوار جۆرن."}),
+   Q("پەرستنا ___: ڤیان و نەڤیان و ترس و هیڤیبا باوەرداری ژ بۆ خودێ.",["دلی","مالی","گۆتنکی"],0,["جۆرێ ئێکێ ببینە."],{1:"پەرستنا مالی زەکاتە.",2:"پەرستنا گۆتنکی قورئان خواندنە."}),
+   Q("شوینەدەستێ پەرستنێ ل سەر ڕەوشتێ کەسێ باوەردار د چ دا دیار دبیت؟",["د لێبۆرین و ڕاستگۆیی و ئێمنی دا","د زێدەکرنا مالی دا","د ڤەشارتنا ژ خەلکی دا"],0,["دەقێ شوینەوارا ٢ ببینە."],{1:"دەق ناڤێ زێدەکرنا مالی ناکەت.",2:"دەق ناڤێ ڤەشارتنێ ناکەت."}),
+   Q("زەکات دان ل دویڤ کتێبێ د ناڤ پەرستنا مالی دا دهێت.",["ڕاستە","نەڕاستە"],0,["جۆرێ چواری ببینە."],{1:"زەکاتا مالی د پەرستنا مالی دا هاتیە."}),
+   Q("پەرستنا گیانی ب تنێ ڤیان و ترسە د دلێ دا.",["ڕاستە","نەڕاستە"],1,["جۆرێ دووی ببینە."],{0:"ڤیان و ترس پەرستنا دلییە؛ پەرستنا گیانی نقێژ و ڕۆژی و حەجە."})
+  ]
+ },
+ ex:[
+  {k:"match", q:"هەر جۆرەکێ پەرستنێ ب ڕاکرنا وی ڤەگرێدە:",
+   left:["پەرستنا دلی","پەرستنا گیانی","پەرستنا گۆتنکی","پەرستنا مالی"],
+   right:["ڤیان و نەڤیان و ترس و هیڤیبا باوەرداری ژ بۆ خودێ","نقێژ و ڕۆژی و حەج","خودێ ئینانە بیرا خۆ و خواندنا قورئانا پیرۆز","دانا زەکاتێ و خێرهاتن د گەل ژار و دەستتەنگان"]},
+  {k:"fill", q:"سِيمَاهُمْ فِى وُجُوهِهِم مِّنْ أَثَرِ ___", blanks:["ٱلسُّجُودِ"], opts:["ٱلسُّجُودِ","ٱلْمَالِ","ٱلنَّوْمِ"]},
+  {k:"fill", q:"أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ___", blanks:["ٱلْقُلُوبُ"], opts:["ٱلْقُلُوبُ","ٱلنَّاسُ","ٱلْبُيُوتُ"]}
+ ]
 
-        <!-- Banner Info Card -->
-        <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 text-white rounded-2xl p-5 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="space-y-1 text-center md:text-right">
-                <h2 class="text-xl font-bold flex items-center justify-center md:justify-start gap-2">
-                    <i class="fa-solid fa-volume-high text-amber-300"></i>
-                    دعم النطق الصوتي المزدوج (العربية & English)
-                </h2>
-                <p class="text-emerald-100 text-sm">
-                    اضغط على أي زر صوتي لسمَاع نطق الكلمات والجمل والنصوص باللغتين العربية والإيجليزية فوراً!
-                </p>
-            </div>
-            <div class="flex gap-2 shrink-0">
-                <button onclick="speakText('مرحباً بك في درس اللغة العربية: العاصفة', 'ar')" class="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-xl text-sm font-semibold border border-white/30 backdrop-blur-sm transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-play"></i> تجربة (عربي)
-                </button>
-                <button onclick="speakText('Welcome to the Arabic lesson: The Storm', 'en')" class="bg-amber-400 hover:bg-amber-300 text-slate-900 px-3 py-2 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-play"></i> Test (English)
-                </button>
-            </div>
-        </div>
+}
+];
 
-        <!-- TAB 1: OVERVIEW / PREPARATION -->
-        <div id="content-overview" class="tab-content space-y-6">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-100 dark:border-slate-700">
-                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700 mb-6">
-                    <span class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center justify-center font-bold">أولاً</span>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">التَّمْهِيدُ لِلدَّرْسِ (الصفحة 8)</h3>
-                </div>
+/* ---------------- RENDER ---------------- */
+var main = document.getElementById("main");
+var nav = document.getElementById("nav");
+var trackers = {};   // lesson id -> {total, correct}
 
-                <!-- Exercise 1: Describe the image -->
-                <div class="space-y-6">
-                    <div class="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg">
-                                1. أَصِفُ مَا أُشَاهِدُ فِي الصُّورَةِ مُسْتَعِينًا بِالأَلْفَاظِ الآتِيَةِ:
-                            </h4>
-                        </div>
+function updateTotal(){
+  var t = 0, c = 0, id;
+  for (id in trackers){ t += trackers[id].total; c += trackers[id].correct; }
+  document.getElementById("total").textContent = "ئەنجامێ گشتی: " + ar(c) + " ژ " + ar(t);
+}
 
-                        <!-- Provided Key Words Pills -->
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-emerald-100 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2">
-                                <span>عَاصِفَةٌ</span>
-                                <button onclick="speakText('عَاصِفَةٌ', 'ar')" class="text-emerald-700 hover:text-emerald-900" title="استمع بالعربية"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Storm', 'en')" class="text-amber-600 hover:text-amber-700" title="Listen in English"><i class="fa-solid fa-circle-play"></i></button>
-                            </span>
-                            <span class="bg-emerald-100 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2">
-                                <span>ضَبَابٌ</span>
-                                <button onclick="speakText('ضَبَابٌ', 'ar')" class="text-emerald-700 hover:text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Fog', 'en')" class="text-amber-600 hover:text-amber-700"><i class="fa-solid fa-circle-play"></i></button>
-                            </span>
-                            <span class="bg-emerald-100 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2">
-                                <span>مَطَرٌ</span>
-                                <button onclick="speakText('مَطَرٌ', 'ar')" class="text-emerald-700 hover:text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Rain', 'en')" class="text-amber-600 hover:text-amber-700"><i class="fa-solid fa-circle-play"></i></button>
-                            </span>
-                            <span class="bg-emerald-100 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2">
-                                <span>سُيُولٌ</span>
-                                <button onclick="speakText('سُيُولٌ', 'ar')" class="text-emerald-700 hover:text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Torrents or flash floods', 'en')" class="text-amber-600 hover:text-amber-700"><i class="fa-solid fa-circle-play"></i></button>
-                            </span>
-                            <span class="bg-emerald-100 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2">
-                                <span>رِيَاحٌ</span>
-                                <button onclick="speakText('رِيَاحٌ', 'ar')" class="text-emerald-700 hover:text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Winds', 'en')" class="text-amber-600 hover:text-amber-700"><i class="fa-solid fa-circle-play"></i></button>
-                            </span>
-                        </div>
+function renderSheet(L, pg, idx){
+  var sh = el("section", "sheet");
+  var o = el("div"); o.innerHTML = ORN; sh.appendChild(o.firstChild);
+  if (idx === 0){
+    sh.appendChild(el("h2", "lt", L.title));
+    sh.appendChild(el("h3", "lt", L.sub));
+  }
+  pg.blocks.forEach(function(b){
+    var e;
+    if (b.t === "p"){ e = el("p"); rich(e, b.s); }
+    else if (b.t === "bar"){ e = el("div"); e.appendChild(el("span", "bar", b.s)); }
+    else if (b.t === "verse"){ e = el("div", "verse"); e.setAttribute("lang","ar"); e.appendChild(document.createTextNode(b.s)); if (b.ref){ e.appendChild(document.createTextNode(" ")); e.appendChild(el("small","", b.ref)); } }
+    else if (b.t === "li"){ e = el("p", "item"); e.appendChild(el("span","lab", b.n + "- ")); rich(e, b.s); }
+    sh.appendChild(e);
+  });
+  sh.appendChild(el("div", "pg", ar(pg.num)));
+  return sh;
+}
 
-                        <!-- Ideal Answer Card -->
-                        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-emerald-200 dark:border-slate-600 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">الإجابة النموذجية (Ideal Answer)</span>
-                                <div class="flex gap-2">
-                                    <button onclick="speakText('أُشَاهِدُ فِي الصُّورَةِ عَاصِفَةً قَوِيَّةً تُصَاحِبُهَا رِيَاحٌ شَدِيدَةٌ و مَطَرٌ غَزِيرٌ يَتَسَاقَطُ، مِمَّا أَدَّى إِلَى تَشَكُّلِ سُيُولٍ، مَعَ انْتِشَارِ الضَّبَابِ.', 'ar')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg flex items-center gap-1 font-semibold">
-                                        <i class="fa-solid fa-volume-high"></i> نطق عربي
-                                    </button>
-                                    <button onclick="speakText('I see a strong storm accompanied by fierce winds, heavy rain causing torrents, and fog spreading in the air.', 'en')" class="text-xs bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-1 rounded-lg flex items-center gap-1 font-semibold">
-                                        <i class="fa-solid fa-volume-high"></i> English Audio
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="text-base font-bold text-slate-800 dark:text-slate-100 leading-relaxed">
-                                "أُشَاهِدُ فِي الصُّورَةِ <strong class="text-emerald-600 dark:text-emerald-400">عَاصِفَةً</strong> قَوِيَّةً تُصَاحِبُهَا <strong class="text-emerald-600 dark:text-emerald-400">رِيَاحٌ</strong> شَدِيدَةٌ وَ<strong class="text-emerald-600 dark:text-emerald-400">مَطَرٌ</strong> غَزِيرٌ، مِمَّا أَدَّى إِلَى تَشَكُّلِ <strong class="text-emerald-600 dark:text-emerald-400">سُيُولٍ</strong> عَلَى الأَرْضِ، مَعَ انْتِشَارِ <strong class="text-emerald-600 dark:text-emerald-400">الضَّبَابِ</strong>."
-                            </p>
-                            <p class="text-en text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-2">
-                                <strong>Translation:</strong> I see a strong storm accompanied by fierce winds and heavy rain, leading to torrents forming on the ground, along with fog spreading.
-                            </p>
-                        </div>
-                    </div>
+function renderExercises(L, host){
+  host.textContent = "";
+  var tr = { total:0, correct:0 };
+  trackers[L.id] = tr;
+  var scoreEl = el("div", "score");
+  function upd(){ scoreEl.textContent = "ڕاهێنان: " + ar(tr.correct) + " ژ " + ar(tr.total); updateTotal(); }
+  function report(ok){ if (ok) tr.correct++; upd(); }
 
-                    <!-- Exercise 2: House Stone Type -->
-                    <div class="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">
-                            2. أَتَأَمَّلُ البَيْتَ الَّذِي أُشَاهِدُهُ فِي الصُّورَةِ: مَا نَوْعُ حِجَارَتِهِ؟ إِذًا، هَلْ تَسْتَطِيعُ العَاصِفَةُ أَنْ تُدَمِّرَهُ؟
-                        </h4>
-                        
-                        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-emerald-200 dark:border-slate-600 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400">الإجابة (Answer)</span>
-                                <div class="flex gap-2">
-                                    <button onclick="speakText('حِجَارَةُ البَيْتِ قَوِيَّةٌ وَصَلْبَةٌ ومَتِينَةٌ، وَلِذَلِكَ لاَ تَسْتَطِيعُ العَاصِفَةُ تَدْمِيرَهُ بِسُهُولَةٍ.', 'ar')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg flex items-center gap-1 font-semibold">
-                                        <i class="fa-solid fa-volume-high"></i> نطق عربي
-                                    </button>
-                                    <button onclick="speakText('The house stones are strong, solid, and durable, so the storm cannot easily destroy it.', 'en')" class="text-xs bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-1 rounded-lg flex items-center gap-1 font-semibold">
-                                        <i class="fa-solid fa-volume-high"></i> English Audio
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="text-base font-bold text-slate-800 dark:text-slate-100 leading-relaxed">
-                                "حِجَارَةُ البَيْتِ <strong>صَخْرِيَّةٌ صَلْبَةٌ وَمَتِينَةٌ</strong>؛ لِذَلِكَ <strong>لاَ تَسْتَطِيعُ العَاصِفَةُ أَنْ تُدَمِّرَهُ بِسُهُولَةٍ</strong> لأنَّ البِنَاءَ قَوِيٌّ."
-                            </p>
-                            <p class="text-en text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-2">
-                                <strong>Translation:</strong> The stones of the house are solid and durable; therefore, the storm cannot easily destroy it because the building is strong.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  host.appendChild(el("h3", "lt", "ڕاهێنان – " + L.title));
+  host.appendChild(el("p", "note", "تنێ ل سەر بەشێن نیشانکری یێن د کتێبێدا. ئەگەر بەرسڤ خەلەت بیت، دێ سۆر ببیت و بەرسڤا ڕاست دێ سەوز ببیت."));
 
-        <!-- TAB 2: LISTENING & MAIN TOPIC -->
-        <div id="content-listening" class="tab-content hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-100 dark:border-slate-700">
-                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700 mb-6">
-                    <span class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center justify-center font-bold">ثانياً</span>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">الاسْتِمَاعُ إِلَى النَّصِّ (المَوْضُوعُ العَامُّ)</h3>
-                </div>
-
-                <div class="bg-amber-50 dark:bg-amber-950/40 border-r-4 border-amber-500 p-4 rounded-xl mb-6">
-                    <p class="text-amber-900 dark:text-amber-200 text-sm font-semibold">
-                        <i class="fa-solid fa-circle-question ml-2"></i>
-                        السؤال: أستمعُ مَرَّةً أُولَى إِلَى النَّصِّ، ثُمَّ أَخْتَارُ مَوْضُوعَهُ العَامَّ من الخيارات التالية:
-                    </p>
-                </div>
-
-                <!-- Options List -->
-                <div class="space-y-3">
-                    <!-- Option 1 -->
-                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex items-start gap-3 opacity-60">
-                        <div class="mt-1"><i class="fa-regular fa-square text-slate-400 text-xl"></i></div>
-                        <div class="flex-grow">
-                            <p class="font-bold text-slate-700 dark:text-slate-300">وَصْفُ العَاصِفَةِ القَوِيَّةِ فِي فَصْلِ الشِّتَاءِ.</p>
-                            <p class="text-en text-xs text-slate-500">Description of the strong storm in winter.</p>
-                        </div>
-                        <div class="flex gap-1 shrink-0">
-                            <button onclick="speakText('وَصْفُ العَاصِفَةِ القَوِيَّةِ فِي فَصْلِ الشِّتَاءِ.', 'ar')" class="p-2 text-slate-500 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
-                            <button onclick="speakText('Description of the strong storm in winter.', 'en')" class="p-2 text-slate-500 hover:text-amber-600"><i class="fa-solid fa-globe"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Option 2 -->
-                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex items-start gap-3 opacity-60">
-                        <div class="mt-1"><i class="fa-regular fa-square text-slate-400 text-xl"></i></div>
-                        <div class="flex-grow">
-                            <p class="font-bold text-slate-700 dark:text-slate-300">إِطْمِئْنَانُ الوَلَدِ وَقَلَقُ الوَالِدِ.</p>
-                            <p class="text-en text-xs text-slate-500">The boy's reassurance and the father's worry.</p>
-                        </div>
-                        <div class="flex gap-1 shrink-0">
-                            <button onclick="speakText('إِطْمِئْنَانُ الوَلَدِ وَقَلَقُ الوَالِدِ.', 'ar')" class="p-2 text-slate-500 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
-                            <button onclick="speakText('The boys reassurance and the fathers worry.', 'en')" class="p-2 text-slate-500 hover:text-amber-600"><i class="fa-solid fa-globe"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Option 3 -->
-                    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex items-start gap-3 opacity-60">
-                        <div class="mt-1"><i class="fa-regular fa-square text-slate-400 text-xl"></i></div>
-                        <div class="flex-grow">
-                            <p class="font-bold text-slate-700 dark:text-slate-300">حِوَارٌ بَيْنَ وَالِدٍ وَابْنِهِ حَوْلَ مَوْضُوعِ العَاصِفَةِ.</p>
-                            <p class="text-en text-xs text-slate-500">A dialogue between a father and his son about the storm.</p>
-                        </div>
-                        <div class="flex gap-1 shrink-0">
-                            <button onclick="speakText('حِوَارٌ بَيْنَ وَالِدٍ وَابْنِهِ حَوْلَ مَوْضُوعِ العَاصِفَةِ.', 'ar')" class="p-2 text-slate-500 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
-                            <button onclick="speakText('A dialogue between a father and his son about the storm.', 'en')" class="p-2 text-slate-500 hover:text-amber-600"><i class="fa-solid fa-globe"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Option 4 - CORRECT -->
-                    <div class="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 flex items-start gap-3 shadow-sm">
-                        <div class="mt-1 text-emerald-600 dark:text-emerald-400 text-xl"><i class="fa-solid fa-square-check"></i></div>
-                        <div class="flex-grow">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded font-bold">الإجابة الصحيحة ✓</span>
-                            </div>
-                            <p class="font-extrabold text-slate-900 dark:text-emerald-200 text-lg mt-1">قَلَقُ الوَالِدِ عَلَى الَّذِينَ لاَ يَسْتَطِيعُونَ تَجَنُّبَ أَضْرَارِ العَاصِفَةِ.</p>
-                            <p class="text-en text-xs text-emerald-700 dark:text-emerald-300 mt-1 font-medium">The father's worry/concern for those who cannot avoid the storm's damages.</p>
-                        </div>
-                        <div class="flex gap-1 shrink-0">
-                            <button onclick="speakText('قَلَقُ الوَالِدِ عَلَى الَّذِينَ لاَ يَسْتَطِيعُونَ تَجَنُّبَ أَضْرَارِ العَاصِفَةِ.', 'ar')" class="bg-emerald-600 text-white p-2 rounded-lg hover:bg-emerald-700"><i class="fa-solid fa-volume-high"></i></button>
-                            <button onclick="speakText('The fathers worry for those who cannot avoid the storms damage.', 'en')" class="bg-amber-500 text-slate-900 p-2 rounded-lg hover:bg-amber-400"><i class="fa-solid fa-globe"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: VOCABULARY & SYNONYMS -->
-        <div id="content-vocab" class="tab-content hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-100 dark:border-slate-700">
-                <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700 mb-6">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center justify-center font-bold">أ</span>
-                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">أَخْتَارُ المُرَادِفَ المُنَاسِبَ لِكُلِّ كَلِمَةٍ آتِيَةٍ (Page 9)</h3>
-                    </div>
-                    <span class="text-xs bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full font-bold">المرادف = المعنى المماثل</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                    <!-- Word 1: تهطل -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-2xl font-black text-emerald-800 dark:text-emerald-300">تَهْطِلُ</span>
-                                <div class="flex gap-1">
-                                    <button onclick="speakText('تَهْطِلُ', 'ar')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                                    <button onclick="speakText('Pours down or falls heavily like rain', 'en')" class="p-1.5 text-amber-600 hover:bg-amber-100 rounded-lg"><i class="fa-solid fa-globe"></i></button>
-                                </div>
-                            </div>
-                            <p class="text-en text-xs text-slate-500 mb-4">Meaning: Falls / Pours down heavily</p>
-
-                            <!-- Options -->
-                            <div class="space-y-2 text-sm font-bold">
-                                <div class="p-2.5 bg-emerald-600 text-white rounded-xl flex items-center justify-between shadow-sm">
-                                    <span>☑ تَسْقُطُ (المرادف الصحيح)</span>
-                                    <button onclick="speakText('تَسْقُطُ', 'ar')" class="text-white text-xs"><i class="fa-solid fa-volume-high"></i></button>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">تَرْوِي</span>
-                                    <span class="text-xs text-slate-400 font-normal">Waters / Irrigates</span>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">تَنْقَطِعُ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Stops / Cuts off</span>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">تَصْعَدُ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Rises / Ascends</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Word 2: الهوج -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-2xl font-black text-emerald-800 dark:text-emerald-300">الهَوْجُ</span>
-                                <div class="flex gap-1">
-                                    <button onclick="speakText('الهَوْجُ', 'ar')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                                    <button onclick="speakText('Violent, wild or fierce wind', 'en')" class="p-1.5 text-amber-600 hover:bg-amber-100 rounded-lg"><i class="fa-solid fa-globe"></i></button>
-                                </div>
-                            </div>
-                            <p class="text-en text-xs text-slate-500 mb-4">Meaning: Violent / Reckless wind</p>
-
-                            <!-- Options -->
-                            <div class="space-y-2 text-sm font-bold">
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">البَطِيئَةُ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Slow</span>
-                                </div>
-                                <div class="p-2.5 bg-emerald-600 text-white rounded-xl flex items-center justify-between shadow-sm">
-                                    <span>☑ الحَمْقَاءُ، الطَّائِشَةُ</span>
-                                    <button onclick="speakText('الحَمْقَاءُ، الطَّائِشَةُ', 'ar')" class="text-white text-xs"><i class="fa-solid fa-volume-high"></i></button>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">الخَفِيفَةُ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Light</span>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">النَّاعِمَةُ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Gentle / Soft</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Word 3: تلو -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-2xl font-black text-emerald-800 dark:text-emerald-300">تَلُو</span>
-                                <div class="flex gap-1">
-                                    <button onclick="speakText('تَلُو', 'ar')" class="p-1.5 text-emerald-600 hover:bg-emerald-100 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                                    <button onclick="speakText('To follow or come after', 'en')" class="p-1.5 text-amber-600 hover:bg-amber-100 rounded-lg"><i class="fa-solid fa-globe"></i></button>
-                                </div>
-                            </div>
-                            <p class="text-en text-xs text-slate-500 mb-4">Meaning: Follows / Comes after</p>
-
-                            <!-- Options -->
-                            <div class="space-y-2 text-sm font-bold">
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">ثُمَّ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Then</span>
-                                </div>
-                                <div class="p-2.5 bg-emerald-600 text-white rounded-xl flex items-center justify-between shadow-sm">
-                                    <span>☑ بَعْدَ</span>
-                                    <button onclick="speakText('بَعْدَ', 'ar')" class="text-white text-xs"><i class="fa-solid fa-volume-high"></i></button>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">قَبْلَ</span>
-                                    <span class="text-xs text-slate-400 font-normal">Before</span>
-                                </div>
-                                <div class="p-2 bg-white dark:bg-slate-800 text-slate-400 rounded-lg border dark:border-slate-700 flex justify-between">
-                                    <span class="line-through">مَعَ</span>
-                                    <span class="text-xs text-slate-400 font-normal">With</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: MATCHING & FILL IN BLANKS -->
-        <div id="content-matching" class="tab-content hidden space-y-6">
-            <!-- Exercise B: Matching -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-100 dark:border-slate-700">
-                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700 mb-6">
-                    <span class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center justify-center font-bold">ب</span>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">أَرْسُمُ سَهْمًا يَصِلُ كُلَّ تَعْبِيرٍ بِمَعْنَاهُ المُنَاسِبِ (التوصيل)</h3>
-                </div>
-
-                <div class="space-y-4">
-                    <!-- Pair 1 -->
-                    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/60 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-2 font-black text-emerald-900 dark:text-emerald-200 text-lg md:w-1/3">
-                            <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
-                            <span>مَعَالِمُ الأَرْضِ</span>
-                            <button onclick="speakText('مَعَالِمُ الأَرْضِ', 'ar')" class="text-xs text-emerald-700"><i class="fa-solid fa-volume-high"></i></button>
-                        </div>
-                        <div class="text-emerald-500 font-bold text-xl hidden md:block"><i class="fa-solid fa-arrow-left"></i></div>
-                        <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-emerald-300 dark:border-slate-600 w-full md:w-2/3 flex items-center justify-between">
-                            <div>
-                                <span class="font-extrabold text-slate-800 dark:text-slate-100">العَلاَمَاتُ الَّتِي تَدُلُّ عَلَيْهَا</span>
-                                <p class="text-en text-xs text-slate-500">Signs or landmarks that indicate land features.</p>
-                            </div>
-                            <div class="flex gap-1">
-                                <button onclick="speakText('العَلاَمَاتُ الَّتِي تَدُلُّ عَلَيْهَا', 'ar')" class="p-1.5 text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Landmarks or distinguishing signs', 'en')" class="p-1.5 text-amber-600"><i class="fa-solid fa-globe"></i></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pair 2 -->
-                    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/60 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-2 font-black text-emerald-900 dark:text-emerald-200 text-lg md:w-1/3">
-                            <i class="fa-solid fa-water text-emerald-600"></i>
-                            <span>السُّيُولُ</span>
-                            <button onclick="speakText('السُّيُولُ', 'ar')" class="text-xs text-emerald-700"><i class="fa-solid fa-volume-high"></i></button>
-                        </div>
-                        <div class="text-emerald-500 font-bold text-xl hidden md:block"><i class="fa-solid fa-arrow-left"></i></div>
-                        <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-emerald-300 dark:border-slate-600 w-full md:w-2/3 flex items-center justify-between">
-                            <div>
-                                <span class="font-extrabold text-slate-800 dark:text-slate-100">مَاءُ المَطَرِ المُمَّتَجَمِّعُ فَوْقَ سَطْحِ الأَرْضِ وَالجَارِي بِسُرْعَةٍ</span>
-                                <p class="text-en text-xs text-slate-500">Rainwater accumulated on the earth's surface running rapidly.</p>
-                            </div>
-                            <div class="flex gap-1">
-                                <button onclick="speakText('مَاءُ المَطَرِ المُمَّتَجَمِّعُ فَوْقَ سَطْحِ الأَرْضِ وَالجَارِي بِسُرْعَةٍ', 'ar')" class="p-1.5 text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Accumulated rainwater running rapidly', 'en')" class="p-1.5 text-amber-600"><i class="fa-solid fa-globe"></i></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pair 3 -->
-                    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/60 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-2 font-black text-emerald-900 dark:text-emerald-200 text-lg md:w-1/3">
-                            <i class="fa-solid fa-shield-halved text-emerald-600"></i>
-                            <span>تَشُنُّ الغَارَةَ عَلَيْهِ</span>
-                            <button onclick="speakText('تَشُنُّ الغَارَةَ عَلَيْهِ', 'ar')" class="text-xs text-emerald-700"><i class="fa-solid fa-volume-high"></i></button>
-                        </div>
-                        <div class="text-emerald-500 font-bold text-xl hidden md:block"><i class="fa-solid fa-arrow-left"></i></div>
-                        <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-emerald-300 dark:border-slate-600 w-full md:w-2/3 flex items-center justify-between">
-                            <div>
-                                <span class="font-extrabold text-slate-800 dark:text-slate-100">تُهَاجِمُهُ</span>
-                                <p class="text-en text-xs text-slate-500">Attacks it / Launches a raid on it.</p>
-                            </div>
-                            <div class="flex gap-1">
-                                <button onclick="speakText('تُهَاجِمُهُ', 'ar')" class="p-1.5 text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
-                                <button onclick="speakText('Launches a raid or attacks it', 'en')" class="p-1.5 text-amber-600"><i class="fa-solid fa-globe"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Exercise C: Fill in Blanks -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-100 dark:border-slate-700">
-                <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700 mb-6">
-                    <span class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded-full flex items-center justify-center font-bold">ج</span>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">أَمْلَأُ الفَرَاغَ بِكَلِمَةٍ واحِدَةٍ مِنَ النَّصِّ</h3>
-                </div>
-
-                <div class="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-xl border border-amber-200 dark:border-amber-800 mb-6">
-                    <p class="font-bold text-amber-900 dark:text-amber-200">
-                        النموذج فِي الكِتَابِ: <span class="bg-amber-200 dark:bg-amber-800 px-2 py-0.5 rounded text-slate-900 dark:text-amber-100">الضَّبَابُ يُخْفِي</span> (Fog hides)
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                        <div>
-                            <span class="text-slate-600 dark:text-slate-400 text-sm">البُرُوقُ (Lightning)</span>
-                            <div class="font-black text-xl text-emerald-700 dark:text-emerald-400 mt-1">يَلْمَعُ / تُضِيءُ</div>
-                        </div>
-                        <button onclick="speakText('البُروق تلمَع وتُضيء', 'ar')" class="p-2 bg-emerald-100 text-emerald-800 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                    </div>
-
-                    <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                        <div>
-                            <span class="text-slate-600 dark:text-slate-400 text-sm">الأَمْطَارُ (Rain)</span>
-                            <div class="font-black text-xl text-emerald-700 dark:text-emerald-400 mt-1">تَهْطِلُ / تَرْوِي</div>
-                        </div>
-                        <button onclick="speakText('الأمطار تهطِل وتروي', 'ar')" class="p-2 bg-emerald-100 text-emerald-800 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                    </div>
-
-                    <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                        <div>
-                            <span class="text-slate-600 dark:text-slate-400 text-sm">الرُّعُودُ (Thunder)</span>
-                            <div class="font-black text-xl text-emerald-700 dark:text-emerald-400 mt-1">تَدَوِّي / تَقْصَفُ</div>
-                        </div>
-                        <button onclick="speakText('الرّعود تدَوّي وتَقصف', 'ar')" class="p-2 bg-emerald-100 text-emerald-800 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                    </div>
-
-                    <div class="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                        <div>
-                            <span class="text-slate-600 dark:text-slate-400 text-sm">السُّيُولُ (Torrents)</span>
-                            <div class="font-black text-xl text-emerald-700 dark:text-emerald-400 mt-1">تَجْرِي / تُجْرِفُ</div>
-                        </div>
-                        <button onclick="speakText('السيول تجري وتجرُف', 'ar')" class="p-2 bg-emerald-100 text-emerald-800 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: INTERACTIVE QUIZ -->
-        <div id="content-quiz" class="tab-content hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-100 dark:border-slate-700">
-                <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700 mb-6">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-bold"><i class="fa-solid fa-star"></i></span>
-                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">الاِخْتِبَارُ التَّفَاعُلِيُّ - اختبر معلوماتك</h3>
-                    </div>
-                    <div class="text-sm font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-3 py-1 rounded-full">
-                        النتيجة: <span id="quiz-score">0</span> / 4
-                    </div>
-                </div>
-
-                <!-- Quiz Form Container -->
-                <div id="quiz-container" class="space-y-6">
-                    <!-- Quiz Question 1 -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                        <p class="font-bold text-slate-800 dark:text-slate-200">1. ما معنى كلمة "تَهْطِلُ"؟</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm font-semibold">
-                            <button onclick="checkAnswer(1, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">أ. تَنقَطِعُ</button>
-                            <button onclick="checkAnswer(1, true, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ب. تَسْقُطُ بغزارة ✓</button>
-                            <button onclick="checkAnswer(1, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ج. تَصْعَدُ</button>
-                            <button onclick="checkAnswer(1, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">د. تَرْوِي</button>
-                        </div>
-                    </div>
-
-                    <!-- Quiz Question 2 -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                        <p class="font-bold text-slate-800 dark:text-slate-200">2. مرادف الرياح "الهَوْج" هو:</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm font-semibold">
-                            <button onclick="checkAnswer(2, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">أ. البَطِيئَةُ</button>
-                            <button onclick="checkAnswer(2, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ب. الخَفِيفَةُ</button>
-                            <button onclick="checkAnswer(2, true, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ج. الحَمْقَاء الطَّائِشَة العنيفة ✓</button>
-                            <button onclick="checkAnswer(2, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">د. النَّاعِمَةُ</button>
-                        </div>
-                    </div>
-
-                    <!-- Quiz Question 3 -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                        <p class="font-bold text-slate-800 dark:text-slate-200">3. المَوضُوعُ العَامُّ لِلنَّصِّ هُوَ:</p>
-                        <div class="grid grid-cols-1 gap-2 text-sm font-semibold">
-                            <button onclick="checkAnswer(3, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">أ. وصف فصل الشتاء فقط</button>
-                            <button onclick="checkAnswer(3, true, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ب. قَلَقُ الوَالِدِ عَلَى الَّذِينَ لاَ يَسْتَطِيعُونَ تَجَنُّبَ أَضْرَارِ العَاصِفَةِ ✓</button>
-                            <button onclick="checkAnswer(3, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ج. حوار بين الجيران</button>
-                        </div>
-                    </div>
-
-                    <!-- Quiz Question 4 -->
-                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                        <p class="font-bold text-slate-800 dark:text-slate-200">4. معنى "تَشُنُّ الغَارَةَ عَلَيْهِ":</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm font-semibold">
-                            <button onclick="checkAnswer(4, true, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">أ. تُهَاجِمُهُ ✓</button>
-                            <button onclick="checkAnswer(4, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ب. تحميه</button>
-                            <button onclick="checkAnswer(4, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">ج. تبتعد عنه</button>
-                            <button onclick="checkAnswer(4, false, this)" class="q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500">د. تسقيه</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quiz Reset Button -->
-                <div class="mt-6 text-center">
-                    <button onclick="resetQuiz()" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-6 py-2 rounded-xl font-bold hover:bg-slate-300 transition-all">
-                        <i class="fa-solid fa-rotate-right ml-2"></i> إعَادَةُ الاِخْتِبَارِ
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- JavaScript Application Logic -->
-    <script>
-        // Global State Variables
-        let speechRate = 1.0;
-        let score = 0;
-        const answeredQuestions = new Set();
-
-        // Speech Synthesis Handler
-        function speakText(text, lang = 'ar') {
-            if (!('speechSynthesis' in window)) {
-                alert('المتصفح الخاص بك لا يدعم خاصية نطق النصوص الصوتية.');
-                return;
-            }
-
-            // Cancel any ongoing audio
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = speechRate;
-
-            if (lang === 'ar') {
-                utterance.lang = 'ar-SA';
-            } else {
-                utterance.lang = 'en-US';
-            }
-
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Set Audio Speed
-        function setSpeed(rate) {
-            speechRate = rate;
-            const btnSlow = document.getElementById('speed-slow');
-            const btnNormal = document.getElementById('speed-normal');
-
-            if (rate === 0.8) {
-                btnSlow.className = "px-2 py-1 rounded font-bold bg-emerald-600 text-white shadow-sm";
-                btnNormal.className = "px-2 py-1 rounded font-bold transition-all hover:bg-white dark:hover:bg-slate-600";
-            } else {
-                btnNormal.className = "px-2 py-1 rounded font-bold bg-emerald-600 text-white shadow-sm";
-                btnSlow.className = "px-2 py-1 rounded font-bold transition-all hover:bg-white dark:hover:bg-slate-600";
-            }
-        }
-
-        // Dark/Light Theme Toggle
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-        }
-
-        // Tab Navigation Switcher
-        function switchTab(tabId) {
-            // Hide all tab content
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            
-            // Remove active class from buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            // Show selected content
-            const target = document.getElementById(`content-${tabId}`);
-            if (target) target.classList.remove('hidden');
-
-            // Highlight button
-            const activeBtn = document.getElementById(`tab-${tabId}`);
-            if (activeBtn) activeBtn.classList.add('active');
-        }
-
-        // Interactive Quiz Answer Checking
-        function checkAnswer(qNum, isCorrect, btnElement) {
-            if (answeredQuestions.has(qNum)) return; // Prevent multi click
-
-            answeredQuestions.add(qNum);
-            const parentBlock = btnElement.parentElement;
-            const buttons = parentBlock.querySelectorAll('.q-btn');
-
-            // Disable all sibling buttons
-            buttons.forEach(btn => {
-                btn.disabled = true;
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
+  L.ex.forEach(function(x, i){
+    var box = el("div", "ex");
+    var q = el("p", "q");
+    q.appendChild(el("span", "qn", ar(i + 1) + ". "));
+    if (x.k === "fill"){
+      var parts = x.q.split("___");
+      var bi = 0;
+      parts.forEach(function(seg, si){
+        q.appendChild(document.createTextNode(seg));
+        if (si < parts.length - 1){
+          (function(ans){
+            tr.total++;
+            var s = el("select");
+            var ph = el("option", "", "..."); ph.value = ""; s.appendChild(ph);
+            x.opts.forEach(function(w){ var op = el("option", "", w); op.value = w; s.appendChild(op); });
+            s.addEventListener("change", function(){
+              if (!s.value) return;
+              s.disabled = true;
+              var ok = s.value === ans;
+              s.className = ok ? "ok" : "bad";
+              if (!ok){ var f = el("span", "fix", " ← " + ans); s.parentNode.insertBefore(f, s.nextSibling); }
+              report(ok);
             });
-
-            btnElement.classList.remove('opacity-50');
-
-            if (isCorrect) {
-                btnElement.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
-                btnElement.classList.remove('bg-white', 'dark:bg-slate-800');
-                score++;
-                document.getElementById('quiz-score').textContent = score;
-                speakText('إجابة صحيحة! أحسنت', 'ar');
-
-                // Trigger Confetti if all 4 are answered correctly
-                if (score === 4) {
-                    confetti({
-                        particleCount: 100,
-                        spread: 70,
-                        origin: { y: 0.6 }
-                    });
-                }
-            } else {
-                btnElement.classList.add('bg-rose-600', 'text-white', 'border-rose-600');
-                btnElement.classList.remove('bg-white', 'dark:bg-slate-800');
-                speakText('إجابة خاطئة، حاول مرة أخرى', 'ar');
-            }
+            q.appendChild(s);
+          })(x.blanks[bi++]);
         }
+      });
+      box.appendChild(q);
+    } else if (x.k === "mcq" || x.k === "tf"){
+      tr.total++;
+      q.appendChild(document.createTextNode(x.q));
+      box.appendChild(q);
+      var opts = x.k === "tf" ? ["ڕاستە","نەڕاستە"] : x.opts;
+      var ai = x.k === "tf" ? (x.a ? 0 : 1) : x.a;
+      var wrap = el("div", "opts"), btns = [];
+      opts.forEach(function(t, oi){
+        var b = el("button", "opt", t); b.type = "button";
+        b.addEventListener("click", function(){
+          btns.forEach(function(bb){ bb.disabled = true; });
+          if (oi === ai){ b.classList.add("ok"); report(true); }
+          else { b.classList.add("bad"); btns[ai].classList.add("ok"); report(false); }
+        });
+        btns.push(b); wrap.appendChild(b);
+      });
+      box.appendChild(wrap);
+    } else if (x.k === "multi"){
+      tr.total++;
+      q.appendChild(document.createTextNode(x.q));
+      box.appendChild(q);
+      var w2 = el("div", "opts"), bs = [], chosen = {};
+      x.opts.forEach(function(t, oi){
+        var b = el("button", "opt", t); b.type = "button";
+        b.addEventListener("click", function(){ chosen[oi] = !chosen[oi]; b.classList.toggle("sel", !!chosen[oi]); });
+        bs.push(b); w2.appendChild(b);
+      });
+      box.appendChild(w2);
+      var chk = el("button", "act", "بەرسڤێ بپشکنە"); chk.type = "button";
+      var fb = el("p", "fb");
+      chk.addEventListener("click", function(){
+        chk.disabled = true; var all = true;
+        bs.forEach(function(b, oi){
+          b.disabled = true; b.classList.remove("sel");
+          var should = x.a.indexOf(oi) >= 0, did = !!chosen[oi];
+          if (should) b.classList.add("ok");
+          else if (did) b.classList.add("bad");
+          if (should !== did) all = false;
+        });
+        fb.textContent = all ? "ڕاستە، هەمی دروستن." : "ئەوێن سەوز ڕاستن؛ ئەوێن سۆر خەلەتن.";
+        fb.className = "fb " + (all ? "ok" : "bad");
+        report(all);
+      });
+      box.appendChild(chk); box.appendChild(fb);
+    } else if (x.k === "match"){
+      q.appendChild(document.createTextNode(x.q));
+      box.appendChild(q);
+      x.left.forEach(function(lt, li){
+        tr.total++;
+        var r = el("div", "row"); r.appendChild(el("span", "l", lt));
+        var s = el("select");
+        var ph = el("option", "", "..."); ph.value = ""; s.appendChild(ph);
+        x.right.forEach(function(w, wi){ var op = el("option", "", w); op.value = String(wi); s.appendChild(op); });
+        s.addEventListener("change", function(){
+          if (!s.value) return;
+          s.disabled = true;
+          var ok = Number(s.value) === li;
+          s.className = ok ? "ok" : "bad";
+          if (!ok) r.appendChild(el("span", "fix", " ← " + x.right[li]));
+          report(ok);
+        });
+        r.appendChild(s); box.appendChild(r);
+      });
+    }
+    host.appendChild(box);
+  });
 
-        // Reset Quiz State
-        function resetQuiz() {
-            score = 0;
-            answeredQuestions.clear();
-            document.getElementById('quiz-score').textContent = score;
+  var again = el("button", "act", "ڕاهێنانان ژ نوی دەستپێ بکە"); again.type = "button";
+  again.addEventListener("click", function(){ renderExercises(L, host); });
+  host.appendChild(el("p")); host.lastChild.appendChild(again);
+  host.appendChild(scoreEl);
+  upd();
+}
 
-            const buttons = document.querySelectorAll('.q-btn');
-            buttons.forEach(btn => {
-                btn.disabled = false;
-                btn.className = "q-btn p-3 bg-white dark:bg-slate-800 rounded-lg border text-right hover:border-emerald-500";
-            });
-        }
-    </script>
+function askItem(x, gs, onDone){
+  var box = el("div", "ex");
+  var q = el("p", "q");
+  q.appendChild(document.createTextNode(x.q));
+  box.appendChild(q);
+  gs.total++;
+  var conf = -1;
+  var crow = el("div", "conf");
+  crow.appendChild(el("span", "cl", "بەری بەرسڤێ، تو چەند ب باوەرییە؟"));
+  var cl = [["پێ دلنیامە", 2], ["نیمچە", 1], ["نزانم", 0]];
+  var cb = [];
+  var wrap = el("div", "opts"), btns = [];
+  cl.forEach(function(c){
+    var b = el("button", "cbtn", c[0]); b.type = "button";
+    b.addEventListener("click", function(){
+      conf = c[1];
+      cb.forEach(function(bb){ bb.disabled = true; bb.classList.remove("on"); });
+      b.classList.add("on");
+      btns.forEach(function(ob){ ob.disabled = false; ob.classList.remove("wait"); });
+    });
+    cb.push(b); crow.appendChild(b);
+  });
+  box.appendChild(crow);
+  var hintHost = el("div"), hi = 0, hbtn = null;
+  var fb = el("p", "why");
+  fb.hidden = true;
+  x.opts.forEach(function(t, oi){
+    var b = el("button", "opt wait", t); b.type = "button"; b.disabled = true;
+    b.addEventListener("click", function(){
+      btns.forEach(function(bb){ bb.disabled = true; bb.classList.remove("wait"); });
+      if (hbtn) hbtn.disabled = true;
+      var ok = oi === x.a;
+      var msg;
+      if (ok){ b.classList.add("ok"); gs.correct++; msg = x.right || "ڕاستە."; if (conf === 0) gs.lowRight++; }
+      else {
+        b.classList.add("bad"); btns[x.a].classList.add("ok");
+        msg = (x.why && x.why[oi]) || "بەرسڤا ڕاست سەوزە.";
+        if (conf === 2){ gs.hiWrong++; msg += " تە ب باوەری بەرسڤ دا و خەلەت بوو؛ باشە ئەڤ بەشە دووبارە بخوینی."; }
+      }
+      fb.textContent = msg; fb.className = "why " + (ok ? "ok" : "bad"); fb.hidden = false;
+      gs.update(); if (onDone) onDone(ok);
+    });
+    btns.push(b); wrap.appendChild(b);
+  });
+  box.appendChild(wrap);
+  if (x.hints && x.hints.length){
+    hbtn = el("button", "act", "تلميح"); hbtn.type = "button";
+    hbtn.addEventListener("click", function(){
+      if (hi >= x.hints.length) return;
+      hintHost.appendChild(el("p", "hintbox", ar(hi + 1) + ". " + x.hints[hi]));
+      hi++; gs.hints++; gs.update();
+      if (hi >= x.hints.length) hbtn.disabled = true;
+    });
+    box.appendChild(hbtn); box.appendChild(hintHost);
+  }
+  box.appendChild(fb);
+  return box;
+}
+
+function buildGuided(L, sec, rest, tr){
+  var G = L.guided;
+  var gate = el("section", "sheet gate");
+  var o = el("div"); o.innerHTML = ORN; gate.appendChild(o.firstChild);
+  gate.appendChild(el("h2", "lt", L.title));
+  gate.appendChild(el("h3", "lt", L.sub));
+  gate.appendChild(el("div")).appendChild(el("span", "bar", "ئێکەم: بیرا خۆ بکە"));
+  gate.appendChild(el("p", "q", G.gate.q));
+  var ta = el("textarea"); ta.id = "gate-box"; ta.setAttribute("placeholder", "بنڤێسە ل ڤێرێ...");
+  gate.appendChild(ta);
+  var rev = el("div", "reveal"); rev.hidden = true;
+  rev.appendChild(el("p", "", G.gate.a));
+  var show = el("button", "act", "بەرسڤێ ببینە"); show.type = "button";
+  var go = el("button", "act", "بەردەوام بە بۆ دەقی"); go.type = "button"; go.hidden = true;
+  var skip = el("button", "act", "ڕاستەڕاست بچە دەقی"); skip.type = "button";
+  show.addEventListener("click", function(){ rev.hidden = false; go.hidden = false; show.hidden = true; skip.hidden = true; });
+  function open(){ rest.hidden = false; gate.hidden = true; window.scrollTo(0, 0); }
+  go.addEventListener("click", open); skip.addEventListener("click", open);
+  var row = el("div", "tools"); row.appendChild(show); row.appendChild(skip); row.appendChild(go);
+  gate.appendChild(row); gate.appendChild(rev);
+  sec.appendChild(gate);
+
+  var gs = { total:0, correct:0, hints:0, hiWrong:0, lowRight:0 };
+  var scoreEl = el("div", "score");
+  gs.update = function(){
+    scoreEl.textContent = "ڕاهێنان: " + ar(gs.correct) + " ژ " + ar(gs.total) + " · تلميح: " + ar(gs.hints);
+    tr.total = gs.total + (tr.extraTotal || 0); tr.correct = gs.correct + (tr.extraCorrect || 0);
+    updateTotal();
+  };
+
+  var stepsSheet = el("section", "sheet");
+  var o2 = el("div"); o2.innerHTML = ORN; stepsSheet.appendChild(o2.firstChild);
+  stepsSheet.appendChild(el("h3", "lt", "دووێ: ب پێنگاڤان فێربە"));
+  stepsSheet.appendChild(el("p", "note", "هەر ئەرکەکێ: دەقێ کتێبێ، پاشی ڕوونکرنەکا کورت (ژ لایێ منڤە)، پاشی پرسیارەک."));
+  G.steps.forEach(function(st){
+    var d = el("div", "step");
+    d.appendChild(el("h4", "", st.title));
+    var p = el("p"); rich(p, st.book); d.appendChild(p);
+    d.appendChild(el("p", "mine", "ڕوونکرن (ژ لایێ منڤە): " + st.mine));
+    d.appendChild(askItem(st.q, gs));
+    stepsSheet.appendChild(d);
+  });
+  rest.appendChild(stepsSheet);
+
+  var prac = el("section", "sheet");
+  var o3 = el("div"); o3.innerHTML = ORN; prac.appendChild(o3.firstChild);
+  prac.appendChild(el("h3", "lt", "سێیێ: خۆ تاقی بکە"));
+  G.practice.forEach(function(x, i){
+    var it = askItem(x, gs);
+    var qn = it.querySelector(".q"); qn.insertBefore(el("span", "qn", ar(i + 1) + ". "), qn.firstChild);
+    prac.appendChild(it);
+  });
+  var sum = el("div", "gsum"); sum.textContent = "دوماهیک: ب هەمی پرسیاران هنگی ئەنجامێ تە و باوەریا تە ل ڤێرێ دێ دیار بیت.";
+  var sumBtn = el("button", "act", "ئەنجامێ باوەریێ ببینە"); sumBtn.type = "button";
+  sumBtn.addEventListener("click", function(){
+    var t = "تە " + ar(gs.correct) + " ژ " + ar(gs.total) + " ڕاست بەرسڤ دان، و " + ar(gs.hints) + " تلميح بکار ئینان.";
+    if (gs.hiWrong > 0) t += " " + ar(gs.hiWrong) + " جاران ب باوەری بەرسڤ دا و خەلەت بوو؛ دووبارە دەقێ ڤان بەشان بخوینە.";
+    else t += " چ جاران ب باوەریا بلند خەلەت نەبوویە.";
+    if (gs.lowRight > 0) t += " " + ar(gs.lowRight) + " جاران گۆت «نزانم» و ڕاست بوو؛ تو ژ خۆ پتر دزانی.";
+    sum.textContent = t;
+  });
+  prac.appendChild(sumBtn); prac.appendChild(sum);
+  prac.appendChild(scoreEl);
+  rest.appendChild(prac);
+  gs.update();
+}
+
+function buildLesson(L){
+  var sec = el("div"); sec.id = L.id; sec.hidden = true;
+  var tools = el("div", "tools");
+  var hide = el("button", "act", "ئێتمەوە: بەشێن نیشانکری بشێرە"); hide.type = "button";
+  var read = el("div");
+  hide.addEventListener("click", function(){
+    var on = read.classList.toggle("hidehl");
+    if (!on) Array.prototype.forEach.call(read.querySelectorAll(".hl"), function(m){ m.classList.remove("shown"); });
+    hide.textContent = on ? "هەمیان نیشان بدە" : "ئێتمەوە: بەشێن نیشانکری بشێرە";
+  });
+  tools.appendChild(hide);
+  var rest = sec;
+  if (L.guided){ rest = el("div"); rest.hidden = true; }
+  else sec.appendChild(tools);
+  if (L.guided){ rest.appendChild(tools); }
+  if (L.pagenote) rest.appendChild(el("p", "pagenote", L.pagenote));
+  L.pages.forEach(function(pg, idx){ read.appendChild(renderSheet(L, pg, idx)); });
+  if (L.guided){
+    var tr0 = { total:0, correct:0 };
+    trackers[L.id + "g"] = tr0;
+    buildGuided(L, sec, rest, tr0);
+    rest.insertBefore(read, tools.nextSibling);
+  } else {
+    rest.appendChild(read);
+  }
+  var exSheet = el("section", "sheet");
+  var o = el("div"); o.innerHTML = ORN; exSheet.appendChild(o.firstChild);
+  var host = el("div"); exSheet.appendChild(host);
+  rest.appendChild(exSheet);
+  if (L.guided) sec.appendChild(rest);
+  main.appendChild(sec);
+  renderExercises(L, host);
+}
+
+LESSONS.forEach(function(L, i){
+  buildLesson(L);
+  var b = el("button", "", L.tab); b.type = "button"; b.setAttribute("role", "tab");
+  b.addEventListener("click", function(){ show(i); window.scrollTo(0, 0); });
+  nav.appendChild(b);
+});
+function show(i){
+  LESSONS.forEach(function(L, j){ document.getElementById(L.id).hidden = (i !== j); });
+  Array.prototype.forEach.call(nav.children, function(b, j){ b.setAttribute("aria-selected", String(i === j)); });
+  window.scrollTo(0, 0);
+}
+show(0);
+window.addEventListener("scroll", function(){
+  var h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById("progress").style.width = (h > 0 ? (window.scrollY / h * 100) : 0) + "%";
+});
+</script>
 </body>
 </html>
