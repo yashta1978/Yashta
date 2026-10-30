@@ -83,6 +83,7 @@ noscript .plain a{display:block;padding:10px 0}
 .thanks .tn[lang="ar"],.thanks .tn[lang="ku"]{font-size:1.08em}
 .thanks h3{margin:0 0 6px;font-size:19px;color:var(--accent)}
 .thanks p{margin:6px 0;font-size:16px;line-height:1.7;color:var(--ink)}
+.hby{margin:2px 0 4px;font-size:19px;font-weight:700;color:var(--gold);letter-spacing:.3px}
 .by{display:block;margin:10px 0 0;text-align:center;font-size:24px;font-weight:700;color:var(--accent)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 </style>
@@ -90,6 +91,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 <body>
 <header>
   <h1>Ara &amp; Vina</h1>
+  <div class="hby">&#9829; Created by their father</div>
   <p id="hint">Choose a student</p>
 </header>
 
@@ -270,7 +272,6 @@ function viewHome() {
       el("span", { "class": "arrow", text: "›", "aria-hidden": "true" })
     ]));
   });
-  grid.appendChild(el("p", { "class": "by", text: "\u2665 Created by their father" }));
   function tn(lang, dir, title, text) {
     return el("div", { "class": "tn", lang: lang, dir: dir }, [
       el("h3", { text: title }), el("p", { text: text })
