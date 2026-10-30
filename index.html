@@ -74,6 +74,7 @@ h3.prev{margin:22px 0 8px;font-size:15px;color:var(--muted);font-weight:600}
 .empty{color:var(--muted);padding:12px 0}
 noscript .plain{max-width:760px;margin:0 auto;padding:16px}
 noscript .plain a{display:block;padding:10px 0}
+.credit{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--accent)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 </style>
 </head>
@@ -115,7 +116,10 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
   </div>
 </noscript>
 
-<footer>Each lesson opens in its own language.</footer>
+<footer>
+  <p id="credit" class="credit">&#9829; Prepared by Dad</p>
+  Each lesson opens in its own language.
+</footer>
 
 <script>
 /* ---- Data: add a lesson to a subject's list below and it appears automatically ---- */
@@ -218,6 +222,7 @@ Object.keys(STUDENTS).forEach(function (sid) {
 
 var app = document.getElementById("app");
 var hint = document.getElementById("hint");
+var credit = document.getElementById("credit");
 
 function el(tag, attrs, children) {
   var n = document.createElement(tag);
@@ -240,6 +245,7 @@ function lessonLink(l) {
 }
 
 function viewHome() {
+  credit.style.display = "";
   hint.textContent = "Choose a student";
   document.title = "Ara & Vina — Lessons";
   var grid = el("div", { "class": "grid" }, []);
@@ -258,6 +264,7 @@ function viewHome() {
 }
 
 function viewStudent(id) {
+  credit.style.display = "none";
   var s = DATA[id];
   hint.textContent = s.name + " · " + s.grade;
   document.title = s.name + " — Lessons";
@@ -284,6 +291,7 @@ function viewStudent(id) {
 }
 
 function viewSubject(id, subId) {
+  credit.style.display = "none";
   var s = DATA[id];
   var sub = s.subjects.filter(function (x) { return x.id === subId; })[0];
   if (!sub) return viewStudent(id);
