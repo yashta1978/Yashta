@@ -45,6 +45,9 @@ a.card .meta{font-size:15px;color:var(--muted)}
 a.card .native{font-size:20px;color:var(--muted)}
 a.card.vina{border-inline-start:10px solid var(--vina)}
 a.card.ara{border-inline-start:10px solid var(--ara)}
+a.card.pic{padding:0;min-height:0;display:block;position:relative;overflow:hidden;border:3px solid var(--line)}
+a.card.pic img{display:block;width:100%;height:auto}
+a.card.pic .count{display:block;background:#fff;color:var(--muted);font-size:14px;font-weight:600;padding:4px 14px;text-align:center}
 a.card.subject{border-inline-start:10px solid var(--accent)}
 a.card.subject .meta{display:inline-block;margin-top:2px}
 .arrow{font-size:24px;color:var(--muted);flex:none}
@@ -200,6 +203,11 @@ var PREVIOUS = {
   }
 };
 
+/* banner pictures for a student's subjects (file in img/<student>/<subject>.jpg) */
+var BANNERS = {
+  ara: ["kurdish","english","arabic","islamic","math","science","social-studies","social-value","ict","art"]
+};
+
 var STUDENTS = {
   vina: { name: "Vina", grade: "Grade 6", theme: "vina" },
   ara:  { name: "Ara",  grade: "Grade 7", theme: "ara" }
@@ -274,6 +282,14 @@ function viewStudent(id) {
   ]);
   var grid = el("div", { "class": "grid" }, []);
   s.subjects.forEach(function (sub) {
+    if ((BANNERS[id] || []).indexOf(sub.id) > -1) {
+      var cnt = sub.lessons.length;
+      grid.appendChild(el("a", { "class": "card subject pic", href: "#" + id + "/" + sub.id, "aria-label": sub.title + " — " + (cnt ? cnt + (cnt === 1 ? " lesson" : " lessons") : "No lessons yet") }, [
+        el("img", { src: "img/" + id + "/" + sub.id + ".jpg", alt: sub.title, loading: "lazy" }),
+        el("span", { "class": "count", text: cnt ? (cnt + (cnt === 1 ? " lesson" : " lessons")) : "No lessons yet" })
+      ]));
+      return;
+    }
     var left = el("span", {}, [el("span", { "class": "name", text: sub.title })]);
     if (sub.native) {
       left.appendChild(el("br"));
