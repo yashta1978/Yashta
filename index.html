@@ -79,7 +79,7 @@ noscript .plain{max-width:760px;margin:0 auto;padding:16px}
 noscript .plain a{display:block;padding:10px 0}
 .thanks{background:var(--card);border:2px solid var(--line);border-inline-start:8px solid var(--gold);border-radius:16px;padding:14px 18px;margin-top:8px;text-align:center}
 .thanks .tn+.tn{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px}
-.thanks .sign{font-weight:700;color:var(--accent);margin-top:2px}
+.thanks .sign{font-weight:700;color:var(--accent);margin:14px 0 2px;font-size:18px;border-top:1px dashed var(--line);padding-top:10px}
 .thanks .tn[lang="ar"],.thanks .tn[lang="ku"]{font-size:1.08em}
 .thanks h3{margin:0 0 6px;font-size:19px;color:var(--accent)}
 .thanks p{margin:6px 0;font-size:16px;line-height:1.7;color:var(--ink)}
@@ -271,21 +271,19 @@ function viewHome() {
     ]));
   });
   grid.appendChild(el("p", { "class": "by", text: "\u2665 Created by their father" }));
-  function tn(lang, dir, title, text, sign) {
+  function tn(lang, dir, title, text) {
     return el("div", { "class": "tn", lang: lang, dir: dir }, [
-      el("h3", { text: title }), el("p", { text: text }), el("p", { "class": "sign", text: sign })
+      el("h3", { text: title }), el("p", { text: text })
     ]);
   }
   grid.appendChild(el("div", { "class": "thanks" }, [
     tn("en", "ltr", "A word of thanks",
-      "I truly appreciate the hard work and dedication that teachers give every day. These lessons are my small contribution to support their effort, and a humble thank-you for all they do. With my thanks and best wishes for success to all teachers and students.",
-      "\u2014 Mahir"),
+      "I truly appreciate the hard work and dedication that teachers give every day. These lessons are my small contribution to support their effort, and a humble thank-you for all they do. With my thanks and best wishes for success to all teachers and students."),
     tn("ar", "rtl", "كلمة شكر",
-      "أُقدِّر جهد المعلمين وتعبهم كل يوم، وهذه الدروس مساعدة صغيرة مني لهم تقديراً لجهدهم، مع الشكر وخالص التوفيق لجميع المعلمين والطلاب.",
-      "\u2014 ماهر"),
+      "أُقدِّر جهد المعلمين وتعبهم كل يوم، وهذه الدروس مساعدة صغيرة مني لهم تقديراً لجهدهم، مع الشكر وخالص التوفيق لجميع المعلمين والطلاب."),
     tn("ku", "rtl", "پەیڤەکا سوپاسیێ",
-      "ئەز ڕێزێ ل ماندیبوون و ڕەنجێن هەمی مامۆستایان دگرم. ئەڤ وانە هاریکارییەکا بچویکە ژ من بۆ وان. سوپاسی و سەرکەفتن بۆ هەمی مامۆستا و قوتابیان.",
-      "\u2014 ماهر")
+      "ئەز ڕێزێ ل ماندیبوون و ڕەنجێن هەمی مامۆستایان دگرم. ئەڤ وانە هاریکارییەکا بچویکە ژ من بۆ وان. سوپاسی و سەرکەفتن بۆ هەمی مامۆستا و قوتابیان.")
+    , el("p", { "class": "sign", dir: "ltr", text: "\u2014 Mahir Chalky" })
   ]));
   app.replaceChildren(grid);
 }
