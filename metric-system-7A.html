@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Metric System - Grade 7A</title>
+<style>
+
+:root{--ink:#111827;--muted:#374151;--bg:#ffffff;--panel:#f3f4f6;--line:#9ca3af;--accent:#1e3a8a;--accent-bg:#dbeafe;--ok:#166534;--ok-bg:#dcfce7;--bad:#991b1b;--bad-bg:#fee2e2;--hl:#fde68a}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.6}
+header.top{background:var(--accent);color:#fff;padding:18px 16px}
+header.top h1{margin:0;font-size:26px}
+header.top p{margin:4px 0 0;font-size:15px}
+#bar{position:sticky;top:0;height:6px;background:#d1d5db;z-index:20}
+#bar i{display:block;height:100%;width:0;background:var(--accent)}
+nav{position:sticky;top:6px;z-index:19;background:#fff;border-bottom:2px solid var(--ink);display:flex;gap:6px;overflow-x:auto;padding:6px 10px}
+nav a{white-space:nowrap;color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:4px 10px;font:600 14px Arial,sans-serif;background:#fff}
+nav a:hover{background:var(--accent-bg)}
+main{max-width:860px;margin:0 auto;padding:0 16px 60px}
+section{margin-top:30px;border-top:3px solid var(--ink);padding-top:12px;scroll-margin-top:60px}
+h2{font-size:23px;margin:0 0 10px;color:var(--accent)}
+h3{font-size:19px;margin:18px 0 6px}
+.box{border:2px solid var(--ink);background:var(--panel);padding:12px 14px;margin:12px 0}
+.goal{border-left:8px solid var(--accent);background:var(--accent-bg)}
+.sup,sup{font-size:.7em}
+button,select,input{font:600 16px Arial,sans-serif}
+button{background:#fff;color:var(--ink);border:2px solid var(--ink);padding:8px 14px;cursor:pointer;min-height:42px}
+button:hover{background:var(--accent-bg)}
+button.pri{background:var(--accent);color:#fff}
+button.pri:hover{background:#172554}
+input[type=text]{border:2px solid var(--ink);padding:6px 8px;width:96px;min-height:42px;text-align:center;background:#fff;color:var(--ink)}
+select{border:2px solid var(--ink);padding:6px;min-height:42px;background:#fff;color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.math{font-size:21px;font-family:"Cambria Math",Cambria,Georgia,serif}
+mark{background:var(--hl);color:var(--ink);padding:0 3px;border:1px solid #92400e}
+.fb{font:600 15px Arial,sans-serif;margin:4px 0}
+.ok{background:var(--ok-bg);border-left:6px solid var(--ok);padding:6px 10px;color:#052e16}
+.bad{background:var(--bad-bg);border-left:6px solid var(--bad);padding:6px 10px;color:#450a0a}
+.hidden{display:none}
+.steps li{margin:6px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.cols{grid-template-columns:1fr}body{font-size:17px}}
+.col{border:2px solid var(--ink);padding:10px;background:#fff}
+.col.right{border-color:var(--ok)}
+.col.wrong{border-color:var(--bad)}
+img.fig{max-width:100%;height:auto;border:2px solid var(--ink);display:block}
+.fig-wrap{max-width:360px;margin:8px 0}
+.stepline{padding:6px 10px;border-bottom:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;align-items:baseline}
+.stepline .note{font:15px Arial,sans-serif;color:var(--muted)}
+.ex-lines{border:2px solid var(--ink);background:#fff;min-height:48px;margin:8px 0}
+.blur{filter:blur(6px);cursor:pointer;user-select:none}
+.card{border:3px solid var(--ink);min-height:120px;padding:18px;text-align:center;background:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center}
+.card.back{background:var(--accent-bg)}
+table{border-collapse:collapse;width:100%}
+td,th{border:2px solid var(--ink);padding:8px 10px;text-align:left;vertical-align:middle}
+th{background:var(--panel)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}
+.opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.qnum{display:inline-block;min-width:30px;height:30px;line-height:30px;text-align:center;background:var(--accent);color:#fff;font:700 15px Arial,sans-serif;margin-right:6px}
+.item{border-bottom:1px solid var(--line);padding:10px 0}
+dialog{border:3px solid var(--ink);max-width:480px;padding:16px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.vocab button{margin:4px 6px 4px 0}
+.summary{border:2px solid var(--ink);padding:0}
+.summary li{padding:6px 12px;border-bottom:1px solid var(--line);list-style:none}
+.score{font:700 20px Arial,sans-serif}
+footer{margin-top:40px;font:14px Arial,sans-serif;color:var(--muted);border-top:2px solid var(--ink);padding-top:8px}
+:focus-visible{outline:3px solid #b45309;outline-offset:2px}
+
+.tbl td.grp{font-weight:700;background:var(--panel)}
+.pv td,.pv th{text-align:center;padding:6px 4px;font-size:15px}
+.pv-wrap{overflow-x:auto}
+@media(max-width:620px){.tbl td,.tbl th{padding:5px 6px;font-size:14px;line-height:1.35}}
+.mover{font-size:28px;font-family:"Cambria Math",Cambria,Georgia,serif;letter-spacing:2px;padding:10px;border:2px solid var(--ink);background:#fff;margin:8px 0;overflow-x:auto;white-space:nowrap}
+.mover .dp{color:#b91c1c;font-weight:700}
+.mover .ph{color:#1d4ed8;text-decoration:underline}
+.side{border:2px solid var(--ink);background:#fff7ed;padding:8px 12px;margin:10px 0}
+.side h4{margin:0 0 4px;font:700 15px Arial,sans-serif;text-transform:uppercase}
+.minaret{float:right;max-width:120px;margin:0 0 8px 12px}
+</style>
+</head>
+<body>
+<header class="top">
+<h1>Metric System</h1>
+<p>Mathematics - Grade 7A - Lesson 1-3 - Textbook pages 12 to 15</p>
+</header>
+<div id="bar"><i id="barfill"></i></div>
+<nav>
+<a href="#goal">Objective</a><a href="#powers">Powers of Ten</a><a href="#units">Units</a><a href="#ex2">Choosing Units</a><a href="#convert">Converting</a><a href="#tool">Decimal Mover</a><a href="#recall">Recall</a><a href="#guided">Guided</a><a href="#independent">Independent</a><a href="#problems">Problem Solving</a><a href="#spiral">Spiral Review</a><a href="#vocab">Vocabulary</a><a href="#quiz">Quiz</a><a href="#summary">Summary</a>
+</nav>
+<main>
+
+<section id="goal">
+<h2>Objective</h2>
+<div class="box goal"><strong>Learn to multiply and divide decimals by powers of ten and to convert metric measurements.</strong></div>
+<p>You know that in a place-value chart each place value is ten times greater than the place value to its right.</p>
+<p>The number of zeros in the power of ten, or the exponent in the power of ten, tells you how many places to move the decimal point.</p>
+</section>
+
+<section id="powers">
+<h2>Example 1: Multiplying and Dividing by Powers of Ten</h2>
+<div class="side"><h4>Remember</h4>If you place the decimal point and zeros to the right of an integer, the integer's value does not change. <span class="math">4 325 = 4 325.000</span></div>
+<p>Multiply or divide. Press <strong>Next step</strong> to see each step.</p>
+<div id="ex1"></div>
+</section>
+
+<section id="units">
+<h2>Metric Units</h2>
+<p>The metric system uses powers of ten. The base unit for length is the <em>meter</em>, for mass the <em>gram</em>, and for capacity the <em>liter</em>. Prefixes are used to describe units that are greater or smaller than the base unit.</p>
+<div class="side"><h4>Reading Math</h4>Prefixes: <strong>Kilo:</strong> thousand &nbsp; <strong>Centi:</strong> hundredth &nbsp; <strong>Milli:</strong> thousandth</div>
+<div class="pv-wrap">
+<table class="tbl">
+<tr><th></th><th>Unit</th><th>Abbreviation</th><th>Approximate Comparison</th></tr>
+<tr><td class="grp" rowspan="4">Length</td><td>Kilometer</td><td>km</td><td>Length of 10 football fields</td></tr>
+<tr><td>Meter</td><td>m</td><td>Width of a door</td></tr>
+<tr><td>Centimeter</td><td>cm</td><td>Width of your little finger</td></tr>
+<tr><td>Millimeter</td><td>mm</td><td>Thickness of a coin</td></tr>
+<tr><td class="grp" rowspan="3">Mass</td><td>Ton</td><td>ton</td><td>Mass of a small car</td></tr>
+<tr><td>Kilogram</td><td>kg</td><td>Mass of a textbook</td></tr>
+<tr><td>Gram</td><td>g</td><td>Mass of a small paperclip</td></tr>
+<tr><td class="grp" rowspan="2">Capacity</td><td>Liter</td><td>L</td><td>Filled bottle of sparkling water</td></tr>
+<tr><td>Milliliter</td><td>mL</td><td>Half-filled eyedropper</td></tr>
+</table>
+</div>
+<div class="side"><h4>Remember</h4><span class="math">1 ton = 1 000 kg</span></div>
+</section>
+
+<section id="ex2">
+<h2>Example 2: Choosing Appropriate Units</h2>
+<p>Use the abbreviation for the most appropriate metric unit. Choose first, then read the explanation.</p>
+<div id="ex2box"></div>
+</section>
+
+<section id="convert">
+<h2>Example 3: Converting Within the Metric System</h2>
+<p>In the metric system, each unit of measure is ten times greater than the unit to its right in a place-value chart.</p>
+<div class="pv-wrap">
+<table class="pv">
+<tr><td>1 000</td><td>100</td><td>10</td><td>1</td><td>0.1</td><td>0.01</td><td>0.001</td></tr>
+<tr><td>Thousands</td><td>Hundreds</td><td>Tens</td><td>Ones</td><td>Tenths</td><td>Hundredths</td><td>Thousandths</td></tr>
+<tr><th>kilo-</th><th>Hecto-</th><th>Deca-</th><th>Base unit</th><th>Deci-</th><th>Centi-</th><th>Milli-</th></tr>
+</table>
+</div>
+<p>To convert units within the metric system, multiply or divide by a power of ten.</p>
+<div class="side"><h4>Helpful Hint</h4>To convert to smaller units, <em>multiply</em>. To convert to larger units, <em>divide</em>.</div>
+<div id="ex3"></div>
+<h3>Think and Discuss</h3>
+<ol class="steps">
+<li><strong>Determine</strong> whether any measure in meters can be converted to millimeters.</li>
+<li><strong>Tell</strong> how you know whether to multiply or divide when converting units of measure.</li>
+</ol>
+<button id="tdBtn">Show possible answers</button>
+<div id="tdAns" class="box hidden">
+<p>1. Yes. 1 m = 1 000 mm, so any measure in meters can be multiplied by 1 000 to get millimeters.</p>
+<p>2. To convert to a smaller unit, multiply. To convert to a larger unit, divide.</p>
+<p class="fb">These answers are suggested; the textbook does not give them.</p>
+</div>
+</section>
+
+<section id="tool">
+<h2>Decimal Mover</h2>
+<p>Type a number, choose multiply or divide, and choose the power of ten. Watch where the decimal point goes.</p>
+<div class="row">
+<input type="text" id="mvNum" value="4325" aria-label="Number" style="width:130px">
+<select id="mvOp" aria-label="Operation"><option value="m">&times; multiply</option><option value="d">&divide; divide</option></select>
+<select id="mvPow" aria-label="Power of ten"></select>
+<button id="mvGo" class="pri">Show</button>
+</div>
+<div class="mover" id="mvOut"></div>
+<div id="mvTxt" class="fb"></div>
+</section>
+
+<section id="recall">
+<h2>Recall</h2>
+<p>Click a blurred line to reveal it. Try to say it first.</p>
+<div class="row"><button id="showAll">Show all</button><button id="hideAll">Hide all</button></div>
+<ol class="steps" id="blurList"></ol>
+<h3>Flashcards</h3>
+<div class="card" id="card" tabindex="0" role="button" aria-label="Flashcard. Press to flip."></div>
+<div class="row"><button id="prevCard">Previous</button><button id="flipCard" class="pri">Flip</button><button id="nextCard">Next</button><span id="cardCount" class="fb"></span></div>
+</section>
+
+<section id="guided">
+<h2>Guided Practice</h2>
+<div id="guidedBox"></div>
+</section>
+
+<section id="independent">
+<h2>Independent Practice</h2>
+<div id="indBox"></div>
+</section>
+
+<section id="problems">
+<h2>Practice and Problem Solving</h2>
+<div id="probBox"></div>
+</section>
+
+<section id="spiral">
+<h2>Spiral Review</h2>
+<div id="spiralBox"></div>
+</section>
+
+<section id="vocab" class="vocab">
+<h2>Vocabulary</h2>
+<p>Click a word to see its meaning.</p>
+<div id="vocabBtns"></div>
+<dialog id="dlg"><h3 id="dlgT"></h3><p id="dlgD"></p><button id="dlgClose" class="pri">Close</button></dialog>
+<p class="fb">Meanings of the prefixes come from the textbook. The other definitions were written to help review.</p>
+</section>
+
+<section id="quiz">
+<h2>Quiz</h2>
+<div id="quizBox"></div>
+<div id="quizEnd" class="hidden"><p class="score" id="quizScore"></p><button id="quizRetry" class="pri">Try again</button></div>
+</section>
+
+<section id="summary">
+<h2>Summary</h2>
+<ul class="summary" style="padding:0;margin:0">
+<li>The number of zeros in the power of ten (or its exponent) tells how many places to move the decimal point.</li>
+<li>To multiply by a power of ten, move the decimal point to the right. To divide, move it to the left.</li>
+<li>Base units: meter (length), gram (mass), liter (capacity). Kilo = thousand, centi = hundredth, milli = thousandth.</li>
+<li>To convert to a smaller unit, multiply. To convert to a larger unit, divide.</li>
+<li>Key facts: 1 km = 1 000 m, 1 m = 100 cm = 1 000 mm, 1 kg = 1 000 g, 1 ton = 1 000 kg, 1 L = 1 000 mL.</li>
+</ul>
+</section>
+
+<footer>Metric System - Grade 7A. Based on the textbook, Lesson 1-3, pages 12 to 15.</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+function $(id){return document.getElementById(id)}
+function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e}
+function E(s){return String(s).replace(/\*/g,"&times;").replace(/\//g,"&divide;").replace(/ - /g," &minus; ").replace(/\^(\d+)/g,"<sup>$1</sup>").replace(/\{\{/g,"<mark>").replace(/\}\}/g,"</mark>")}
+function fb(node,ok,msg){node.className="fb "+(ok?"ok":"bad");node.textContent=msg}
+function parseNum(s){
+  var t=String(s).replace(/−/g,"-").replace(/\s+/g,"");
+  if(t.indexOf(",")>=0){ if(t.indexOf(".")>=0||/,\d{3}(,|$)/.test(t))t=t.replace(/,/g,""); else t=t.replace(",","."); }
+  if(t===""||isNaN(Number(t)))return NaN;return Number(t);
+}
+function same(a,b){return Math.abs(a-b)<=1e-9*Math.max(1,Math.abs(b))}
+/* exact decimal shift on strings: k>0 moves the point right */
+function shift(str,k){
+  var neg=str.charAt(0)==="-";if(neg)str=str.slice(1);
+  var p=str.split(".");var ip=p[0]||"0",fp=p[1]||"";
+  var digits=ip+fp,pos=ip.length+k;
+  while(pos>digits.length)digits+="0";
+  while(pos<=0){digits="0"+digits;pos++}
+  var a=digits.slice(0,pos).replace(/^0+(?=\d)/,""),b=digits.slice(pos).replace(/0+$/,"");
+  return (neg?"-":"")+a+(b?"."+b:"");
+}
+function group(s){var p=s.split(".");var ip=p[0].replace(/\B(?=(\d{3})+(?!\d))/g," ");var fp=p[1]?p[1].replace(/(\d{3})(?=\d)/g,"$1 "):"";return ip+(fp?"."+fp:"")}
+window.addEventListener("scroll",function(){var h=document.documentElement.scrollHeight-window.innerHeight;$("barfill").style.width=(h>0?Math.min(100,window.scrollY/h*100):0)+"%"});
+
+/* step examples */
+function stepper(box,ex){
+  var w=el("div","box");
+  w.appendChild(el("h3","",ex.t));
+  if(ex.q)w.appendChild(el("p","",ex.q));
+  var out=el("div","ex-lines");w.appendChild(out);
+  var r=el("div","row");var nb=el("button","pri","Next step"),ab=el("button","","Show all"),rb=el("button","","Reset");
+  r.appendChild(nb);r.appendChild(ab);r.appendChild(rb);w.appendChild(r);
+  var n=1;
+  function draw(){out.innerHTML="";for(var i=0;i<n;i++){var L=ex.lines[i];var d=el("div","stepline");d.appendChild(el("span","math",L[0]));d.appendChild(el("span","note",L[1]));out.appendChild(d)}nb.disabled=n>=ex.lines.length}
+  nb.onclick=function(){if(n<ex.lines.length){n++;draw()}};ab.onclick=function(){n=ex.lines.length;draw()};rb.onclick=function(){n=1;draw()};
+  draw();box.appendChild(w);
+}
+var DP='<span class="dp">.</span>';
+[
+ {t:"a) 4 325 &times; 1 000",lines:[["4 325 &times; 1 000","Start."],["4 325"+DP+'<span class="ph">000</span>',"There are 3 zeros in 1 000. To multiply, move the decimal point 3 places right."],["= 4 325 000","Write 3 placeholder zeros."]]},
+ {t:"b) 4 325 &divide; 1 000",lines:[["4 325 &divide; 1 000","Start."],["4"+DP+"325","There are 3 zeros in 1 000. To divide, move the decimal point 3 places left."],["= 4.325","The answer."]]},
+ {t:"c) 79.95 &divide; 10<sup>4</sup>",lines:[["79.95 &divide; 10<sup>4</sup>","Start."],[DP+'<span class="ph">00</span>7995',"The power of 10 is 4. Move the decimal point 4 places left."],["= 0.007 995","Write placeholder zeros."]]}
+].forEach(function(ex){stepper($("ex1"),ex)});
+[
+ {t:"a) The mass of a backpack is about 6 500 g. 6 500 g = ? kg",lines:[["6 500 g = (6 500 &divide; 1 000) kg","1 kg = 1 000 g, so divide by 1 000."],["6 500 g = 6.5 kg","Move the decimal point 3 places left."]]},
+ {t:"b) A glass holds about 0.25 L of milk. 0.25 L = ? mL",lines:[["0.25 L = (0.25 &times; 1 000) mL","1 L = 1 000 mL, so multiply by 1 000."],["0.25 L = 250 mL","Move the decimal point 3 places right."]]}
+].forEach(function(ex){stepper($("ex3"),ex)});
+$("tdBtn").onclick=function(){$("tdAns").classList.toggle("hidden")};
+
+/* unit select */
+var UNITS=["mm","cm","m","km","g","kg","ton","mL","L"];
+function unitQ(box,label,before,after,ans,expl){
+  var d=el("div","item");d.appendChild(el("span","qnum",label));
+  var row=el("span","");row.appendChild(document.createTextNode(before+" "));
+  var s=el("select");s.setAttribute("aria-label","Unit for "+label);
+  var o0=el("option");o0.value="";o0.textContent="?";s.appendChild(o0);
+  UNITS.forEach(function(u){var o=el("option");o.value=u;o.textContent=u;s.appendChild(o)});
+  row.appendChild(s);row.appendChild(document.createTextNode(after));d.appendChild(row);
+  var f=el("div","fb");d.appendChild(f);
+  s.onchange=function(){
+    if(!s.value){f.className="fb";f.textContent="";return}
+    if(ans.indexOf(s.value)>=0)fb(f,true,"Correct. "+(expl||""));
+    else fb(f,false,"Not the best unit. "+(expl?"Hint: "+expl.replace(/^Think: /,""):"Look at the comparison table."));
+  };
+  box.appendChild(d);
+}
+(function(){
+  var b=$("ex2box");
+  unitQ(b,"a","A pencil is about 15","long.",["cm"],"Think: A pencil is the length of about 15 little-finger widths. A pencil is about 15 cm long.");
+  unitQ(b,"b","The mass of an average man is about 75",".",["kg"],"Think: A man has a mass of about 75 textbooks. The mass of a man is about 75 kg.");
+  unitQ(b,"c","A galon holds about 4",".",["L"],"Think: A galon could hold about 4 bottles of water. A galon holds about 4 L.");
+})();
+
+/* number question */
+function numQ(box,label,html,ans,hint,unit){
+  var d=el("div","item");d.appendChild(el("span","qnum",label));
+  d.appendChild(el("span","math",html));
+  var r=el("div","row");var inp=el("input");inp.type="text";inp.setAttribute("aria-label","Answer for "+label);inp.style.width="150px";
+  var b=el("button","pri","Check");r.appendChild(inp);if(unit)r.appendChild(el("span","math",unit));r.appendChild(b);d.appendChild(r);
+  var f=el("div","fb");d.appendChild(f);
+  function chk(){var v=parseNum(inp.value);if(isNaN(v)){fb(f,false,"Write a number.");return}
+    if(same(v,ans))fb(f,true,"Correct. "+group(String(ans))+(unit?" "+unit:"")+".");
+    else fb(f,false,"Not yet. "+(hint||"Count the zeros and move the decimal point."))}
+  b.onclick=chk;inp.onkeydown=function(e){if(e.key==="Enter")chk()};
+  box.appendChild(d);
+}
+function H(t){return el("h3","",t)}
+
+(function(){
+  var b=$("guidedBox");
+  b.appendChild(H("Multiply or divide. (See Example 1)"));
+  numQ(b,"1","5 937 &times; 100",593700,"2 zeros: move the point 2 places right.");
+  numQ(b,"2","719.25 &divide; 10<sup>3</sup>",0.71925,"Power 3: move the point 3 places left.");
+  numQ(b,"3","6.0912 &times; 10<sup>5</sup>",609120,"Power 5: move the point 5 places right.");
+  b.appendChild(H("Use the abbreviation for the most appropriate metric unit. (See Example 2)"));
+  unitQ(b,"4","A piece of paper is about 28","long.",["cm"],"About 28 little-finger widths.");
+  unitQ(b,"5","An eraser length is 3",".",["cm"],"About 3 little-finger widths.");
+  unitQ(b,"6","A car weighs about 2",".",["ton"],"A ton is the mass of a small car.");
+  unitQ(b,"7","A small glass holds about 250",".",["mL"],"A glass holds less than a liter.");
+  b.appendChild(H("Convert each measure. (See Example 3)"));
+  numQ(b,"8","The mass of a cat is about 5 kg. 5 kg = ? g",5000,"1 kg = 1 000 g. Multiply.","g");
+  numQ(b,"9","A race is about 5 000 m long. 5 000 m = ? km",5,"1 km = 1 000 m. Divide.","km");
+  numQ(b,"10","A container holds about 0.5 L of solution. 0.5 L = ? mL",500,"1 L = 1 000 mL. Multiply.","mL");
+  numQ(b,"11","A picture frame is about 18 cm long. 18 cm = ? m",0.18,"1 m = 100 cm. Divide.","m");
+  b.appendChild(el("p","fb","In the textbook, the heading for 8 to 11 says \"Multiply using the Distributive Property\". These are conversion questions (See Example 3)."));
+})();
+
+(function(){
+  var b=$("indBox");
+  b.appendChild(H("Multiply or divide. (See Example 1)"));
+  numQ(b,"12","278 &times; 1 000",278000);
+  numQ(b,"13","15.09 &times; 10<sup>3</sup>",15090);
+  numQ(b,"14","810.381 &divide; 100",8.10381);
+  numQ(b,"15","74.1 &times; 10<sup>4</sup>",741000);
+  numQ(b,"16","381.8 &divide; 10<sup>5</sup>",0.003818,"Power 5: move the point 5 places left and write placeholder zeros.");
+  numQ(b,"17","42 516 &divide; 10 000",4.2516);
+  b.appendChild(H("Use the abbreviation for the most appropriate metric unit. (See Example 2)"));
+  unitQ(b,"18","A television screen is about 68","wide.",["cm"],"Think of little-finger widths.");
+  unitQ(b,"19","A boy is about 1.5","tall.",["m"],"A door is about 1 m wide.");
+  unitQ(b,"20","A box of cereal weighs about 540",".",["g"],"Less than a textbook (1 kg).");
+  unitQ(b,"21","A spoon holds about 2",".",["mL"],"Very small amounts of liquid.");
+  var mi=el("div","");mi.innerHTML='<img class="fig minaret" alt="A tall brick minaret" src="data:image/jpeg;base64,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">';b.appendChild(mi);
+  unitQ(b,"22","The height of a minaret is about 30",".",["m"],"Much taller than a person.");
+  b.appendChild(el("div","","<div style='clear:both'></div>"));
+  b.appendChild(H("Convert each measure. (See Example 3)"));
+  numQ(b,"23","A sneaker is about 25 cm long. 25 cm = ? m",0.25,"","m");
+  numQ(b,"24","A container holds about 2 L of milk. 2 L = ? mL",2000,"","mL");
+  numQ(b,"25","A pen is about 0.18 m long. 0.18 m = ? cm",18,"","cm");
+  numQ(b,"26","A dumbbell weighs about 4.5 kg. 4.5 kg = ? g",4500,"","g");
+  numQ(b,"27","A truck weighs 4 t. 4 t = ? kg",4000,"1 ton = 1 000 kg.","kg");
+})();
+
+(function(){
+  var b=$("probBox");
+  b.appendChild(H("Find the value of each expression."));
+  numQ(b,"28","2.39 &times; 10 000",23900);
+  numQ(b,"29","60.87 &divide; 10<sup>3</sup>",0.06087);
+  numQ(b,"30","0.0863 &times; 10<sup>3</sup>",86.3);
+  numQ(b,"31","11.6 &minus; 42 &divide; 10<sup>2</sup>",11.18,"Order of operations: divide first, 42 &divide; 100 = 0.42.".replace("&divide;","÷"));
+  numQ(b,"32","(2.3 + 5.67) &times; 10<sup>5</sup>",797000,"Parentheses first: 2.3 + 5.67 = 7.97.");
+  b.appendChild(H("Convert each measure."));
+  numQ(b,"33","6 000 cm = ? km",0.06,"First cm to m (divide by 100), then m to km (divide by 1 000).","km");
+  numQ(b,"34","0.75 L = ? mL",750,"","mL");
+  numQ(b,"35","7.54 kg = ? g",7540,"","g");
+  numQ(b,"36","17.89 m = ? mm",17890,"1 m = 1 000 mm.","mm");
+  /* 37 */
+  (function(){
+    var d=el("div","item");d.appendChild(el("span","qnum","37"));
+    d.appendChild(el("span","","Kawa is 91.4 cm tall. Serdar is 1.83 m tall. Who is taller? How much taller?"));
+    var r=el("div","row");var s=el("select");[["","Who?"],["Kawa","Kawa"],["Serdar","Serdar"]].forEach(function(o){var op=el("option");op.value=o[0];op.textContent=o[1];s.appendChild(op)});
+    var inp=el("input");inp.type="text";inp.setAttribute("aria-label","How much taller in cm");
+    r.appendChild(s);r.appendChild(el("span","","is taller by"));r.appendChild(inp);r.appendChild(el("span","math","cm"));
+    var bt=el("button","pri","Check");r.appendChild(bt);d.appendChild(r);var f=el("div","fb");d.appendChild(f);
+    bt.onclick=function(){var v=parseNum(inp.value);
+      if(s.value==="Serdar"&&same(v,91.6))fb(f,true,"Correct. 1.83 m = 183 cm, and 183 − 91.4 = 91.6 cm. Serdar is 91.6 cm taller.");
+      else if(s.value==="Kawa")fb(f,false,"Not correct. Change 1.83 m to centimeters first, then compare.");
+      else fb(f,false,"Not yet. 1.83 m = ? cm. Then subtract 91.4.")};
+    b.appendChild(d);
+  })();
+  /* 38 */
+  (function(){
+    var d=el("div","item");d.appendChild(el("span","qnum","38"));
+    d.appendChild(el("span","","WRITE ABOUT IT: When you multiply or divide by a power of ten, how do you know how many places and in which direction to move the decimal point?"));
+    var ta=el("textarea");ta.rows=3;ta.style.cssText="width:100%;border:2px solid var(--ink);padding:8px;font:16px Arial,sans-serif;margin-top:6px";ta.setAttribute("aria-label","Your answer");d.appendChild(ta);
+    var bt=el("button","","Show a possible answer");var a=el("div","box hidden","The number of zeros (or the exponent) tells how many places. Multiply: move right. Divide: move left.");
+    bt.onclick=function(){a.classList.toggle("hidden")};d.appendChild(bt);d.appendChild(a);b.appendChild(d);
+  })();
+  numQ(b,"39","CHALLENGE: About 3.281 feet equal 1 meter. About how many feet are equal to 2.5 meters?",8.2025,"Multiply 2.5 &times; 3.281.".replace("&times;","×"),"feet");
+})();
+
+(function(){
+  var b=$("spiralBox");
+  b.appendChild(H("Evaluate. (Lesson 1-1)"));
+  numQ(b,"40","5 + 17 + 25 + 12",59,"");
+  numQ(b,"41","4 &times; 23 &times; 5",460,"Try 4 &times; 5 = 20 first.".replace("&times;","×"));
+  numQ(b,"42","7 &times; 33",231,"");
+  b.appendChild(H("Evaluate. (Lesson 1-2)"));
+  numQ(b,"43","8<sup>2</sup>",64,"");
+  numQ(b,"44","23<sup>1</sup>",23,"Any number to the power 1 is itself.");
+  numQ(b,"45","18<sup>0</sup>",1,"Any non-zero number to the power 0 is 1.");
+  numQ(b,"46","7<sup>3</sup>",343,"7 × 7 × 7.");
+  (function(){
+    var d=el("div","item");d.appendChild(el("span","qnum","47"));
+    d.appendChild(el("span","","TEST PREP: Which expression does not equal to 7 &times; (34 + 23)? (Lesson 1-1)"));
+    var f=el("div","fb");
+    [["a","7 &times; 57"],["b","(7 &times; 34) + (7 &times; 23)"],["c","7 &times; 34 + 23"],["d","(7 &times; 50) + (7 &times; 7)"]].forEach(function(o){
+      var bt=el("button","opt",o[0]+") "+o[1]);
+      bt.onclick=function(){if(o[0]==="c"){bt.className="opt right";fb(f,true,"Correct. 7 × 34 + 23 = 261, but 7 × (34 + 23) = 399.")}else{bt.className="opt wrong";fb(f,false,"This one equals 399. Try again.")}};
+      d.appendChild(bt)});
+    d.appendChild(f);b.appendChild(d);
+  })();
+  b.appendChild(el("p","fb","In the textbook, choice a is printed as 7 × 75, which equals 525, not 399. It is shown here as 7 × 57, which is probably what was meant."));
+})();
+
+/* decimal mover */
+(function(){
+  var ps=$("mvPow");for(var i=1;i<=6;i++){var o=el("option");o.value=i;o.textContent="10"+"\u00b9\u00b2\u00b3\u2074\u2075\u2076".charAt(i-1)+" = "+group(String(Math.pow(10,i)));ps.appendChild(o)}
+  ps.value="3";
+  function go(){
+    var raw=String($("mvNum").value).replace(/\s+/g,"").replace(/−/g,"-");
+    if(!/^-?\d*\.?\d+$/.test(raw)&&!/^-?\d+\.$/.test(raw)){$("mvOut").textContent="";$("mvTxt").textContent="Write a number such as 4325 or 79.95.";$("mvTxt").className="fb bad";return}
+    raw=raw.replace(/\.$/,"");
+    var k=Number(ps.value),mul=$("mvOp").value==="m";
+    var res=shift(raw,mul?k:-k);
+    $("mvOut").innerHTML=E(group(raw)+(mul?" * ":" / ")+"10^"+k)+" &nbsp;=&nbsp; <strong>"+group(res)+"</strong>";
+    $("mvTxt").className="fb ok";
+    $("mvTxt").textContent=(mul?"Multiply":"Divide")+" by 10 to the power "+k+": move the decimal point "+k+" place"+(k>1?"s":"")+" to the "+(mul?"right":"left")+", and write placeholder zeros if needed.";
+  }
+  $("mvGo").onclick=go;$("mvNum").onkeydown=function(e){if(e.key==="Enter")go()};go();
+})();
+
+/* recall */
+var STEPS=["To multiply by a power of ten, move the decimal point to the right.","To divide by a power of ten, move the decimal point to the left.","The number of zeros, or the exponent, tells how many places to move.","To convert to smaller units, multiply. To convert to larger units, divide.","1 kg = 1 000 g, 1 L = 1 000 mL, 1 km = 1 000 m, 1 m = 100 cm, 1 ton = 1 000 kg."];
+(function(){
+  var ol=$("blurList");
+  STEPS.forEach(function(s){var li=el("li","blur");li.textContent=s;li.tabIndex=0;function t(){li.classList.toggle("blur")}li.onclick=t;li.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();t()}};ol.appendChild(li)});
+  $("showAll").onclick=function(){[].forEach.call(ol.children,function(x){x.classList.remove("blur")})};
+  $("hideAll").onclick=function(){[].forEach.call(ol.children,function(x){x.classList.add("blur")})};
+})();
+var CARDS=[["Kilo-","thousand (1 000)"],["Centi-","hundredth (0.01)"],["Milli-","thousandth (0.001)"],["1 km = ? m","1 000 m"],["1 m = ? cm","100 cm"],["1 kg = ? g","1 000 g"],["1 ton = ? kg","1 000 kg"],["1 L = ? mL","1 000 mL"],["Width of your little finger","about 1 cm"],["Mass of a textbook","about 1 kg"]];
+(function(){
+  var i=0,back=false,c=$("card");
+  function draw(){c.textContent=CARDS[i][back?1:0];c.className="card"+(back?" back":"");$("cardCount").textContent=(i+1)+" / "+CARDS.length}
+  function flip(){back=!back;draw()}
+  c.onclick=flip;c.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();flip()}};
+  $("flipCard").onclick=flip;$("nextCard").onclick=function(){i=(i+1)%CARDS.length;back=false;draw()};$("prevCard").onclick=function(){i=(i-1+CARDS.length)%CARDS.length;back=false;draw()};
+  draw();
+})();
+
+/* vocab */
+(function(){
+  var V=[["Metric system","A system of measurement that uses powers of ten."],["Power of ten","A number such as 10, 100, 1 000 or 10⁴. It can be written as 10 with an exponent."],["Meter (m)","The base unit for length. About the width of a door."],["Gram (g)","The base unit for mass. About the mass of a small paperclip."],["Liter (L)","The base unit for capacity. About a filled bottle of sparkling water."],["Kilo-","Prefix meaning thousand. 1 km = 1 000 m."],["Centi-","Prefix meaning hundredth. 1 cm = 0.01 m."],["Milli-","Prefix meaning thousandth. 1 mm = 0.001 m."],["Placeholder zeros","Zeros written to fill empty places when the decimal point moves."]];
+  var box=$("vocabBtns"),dlg=$("dlg");
+  V.forEach(function(v){var b=el("button","",v[0]);b.onclick=function(){$("dlgT").textContent=v[0];$("dlgD").textContent=v[1];if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","")};box.appendChild(b)});
+  $("dlgClose").onclick=function(){if(dlg.close)dlg.close();else dlg.removeAttribute("open")};
+})();
+
+/* quiz */
+(function(){
+  var Q=[
+   ["3.6 * 1 000 = ?",["0.0036","36","3 600","360"],2],
+   ["52.4 / 10^2 = ?",["5 240","0.524","5.24","524"],1],
+   ["To divide by 10^4, move the decimal point:",["4 places right","4 places left","3 places left","10 places left"],1],
+   ["Which unit is best for the mass of a textbook?",["g","kg","ton","mL"],1],
+   ["Which unit is best for the length of a door's width?",["mm","cm","m","km"],2],
+   ["3.2 kg = ? g",["32","320","3 200","0.0032"],2],
+   ["450 mL = ? L",["4.5","0.45","45","45 000"],1],
+   ["To convert meters to centimeters, you:",["multiply by 100","divide by 100","multiply by 1 000","divide by 1 000"],0]
+  ];
+  var box=$("quizBox"),score=0,done=0;
+  function build(){
+    box.innerHTML="";score=0;done=0;$("quizEnd").className="hidden";
+    Q.forEach(function(q,qi){
+      var d=el("div","item");d.appendChild(el("span","qnum",String(qi+1)));d.appendChild(el("span","math",E(q[0])));
+      var f=el("div","fb"),answered=false,btns=[];
+      q[1].forEach(function(t,oi){var o=el("button","opt",E(t));
+        o.onclick=function(){if(answered)return;answered=true;done++;
+          if(oi===q[2]){o.className="opt right";score++;fb(f,true,"Correct.")}
+          else{o.className="opt wrong";btns[q[2]].className="opt right";fb(f,false,"Not correct. The right answer is highlighted.")}
+          if(done===Q.length){$("quizEnd").className="";$("quizScore").textContent="Your score: "+score+" out of "+Q.length}};
+        btns.push(o);d.appendChild(o)});
+      d.appendChild(f);box.appendChild(d);
+    });
+  }
+  $("quizRetry").onclick=function(){build();$("quiz").scrollIntoView()};
+  build();
+})();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>1-2 Powers – Grade 7</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--tx:#1c2433;--mu:#5b6678;--pr:#2a5db0;--ok:#1f9d55;--bad:#d64545;--ac:#f5a623;--bd:#d5dce8;--ex:#ffd166;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121722;--card:#1c2433;--tx:#eef2f9;--mu:#9aa6bb;--pr:#7aa5ff;--bd:#2d3850}}
+:root[data-theme="dark"]{--bg:#121722;--card:#1c2433;--tx:#eef2f9;--mu:#9aa6bb;--pr:#7aa5ff;--bd:#2d3850}
+html{scroll-padding-top:70px}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:18px/1.6 Georgia,"Times New Roman",serif}
+main{max-width:780px;margin:0 auto;padding:10px 14px 60px}
+h1{font-size:1.9rem;margin:.2em 0;font-family:system-ui,Arial,sans-serif}
+.sans,button,.ex,.ban,.n,.se,.ins,.bar{font-family:system-ui,-apple-system,Arial,sans-serif}
+.card,section{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:14px 0}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 12px;margin-top:8px}
+.row{display:flex;justify-content:space-between;font-size:.9rem;color:var(--mu)}
+.track{height:10px;background:var(--bd);border-radius:6px;overflow:hidden}.fill{height:100%;width:0;background:var(--ok);transition:width .3s}
+.ex{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.ex b{background:var(--ex);color:#000;padding:4px 16px;border-radius:4px;letter-spacing:.05em}
+.ex i{background:#e0a100;color:#fff;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700}
+.ex span{color:var(--pr);font-weight:700;font-size:1.1rem}
+.hl{background:#fff3a0;color:#000;padding:0 3px;font-weight:700}
+.big{font-size:3rem;font-weight:800;text-align:center;line-height:1.2;color:#d6283a}.big sup{color:var(--pr)}
+.lab{display:flex;justify-content:space-around;font-family:system-ui,Arial;font-weight:700;font-size:.95rem}
+.note{background:#efe9fb;color:#222;border-radius:8px;padding:8px 12px;margin:10px 0;font-size:.95rem}
+.note b:first-child{color:#6b3fa0}
+.side{color:var(--pr);font-style:italic;font-size:.95rem}
+.step{display:none}.step.on{display:block;margin:6px 0 6px 12px}
+button{font:inherit;font-family:system-ui,Arial;border:0;border-radius:10px;padding:8px 14px;background:var(--pr);color:#fff;cursor:pointer;min-height:40px}
+input[type=number]{font:inherit;width:78px;padding:5px;border:2px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+.ban{background:linear-gradient(90deg,#1f8a9e,#4fb6c4);color:#fff;font-weight:800;padding:6px 14px;border-radius:6px;margin:22px 0 8px;letter-spacing:.04em}
+.se{color:#d6283a;font-weight:600;margin-right:8px}.se i{background:var(--ex);color:#000;border-radius:50%;padding:0 8px;font-style:normal}
+.ins{font-weight:700;margin:4px 0}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.q{border:1px solid var(--bd);border-radius:10px;padding:8px 10px}.q.w{grid-column:1/-1}
+.q.ok{border-color:var(--ok);background:rgba(31,157,85,.12)}.q.no{border-color:var(--bad)}
+.n{background:#2a6fcf;color:#fff;border-radius:4px;padding:0 6px;font-size:.85rem;font-weight:700;margin-right:4px}
+.tg{color:#d6283a;font-weight:800;font-style:italic;font-family:system-ui,Arial}
+.ans{margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb{font-size:.9rem;font-family:system-ui,Arial;margin-top:4px}
+.opts button{display:block;width:100%;text-align:left;margin:5px 0;background:var(--bg);color:var(--tx);border:2px solid var(--bd)}
+.opts button.right{border-color:var(--ok)}.opts button.wrong{border-color:var(--bad)}
+.td{background:#dfe9f7;color:#111;border-radius:10px;padding:12px}.td h2{color:#2a5db0;font-family:system-ui,Arial}
+details{margin:8px 0}summary{cursor:pointer}
+.tab{width:100%;border-collapse:collapse;text-align:center;font-size:.95rem}.tab td,.tab th{border:1px solid var(--bd);padding:2px}.tab th{background:#cfe8cf;color:#111}
+</style>
+</head>
+<body>
+<main>
+<h1>1-2 Powers</h1>
+<div class="bar"><div class="row"><span id="pc"></span><span id="sc"></span></div><div class="track"><div class="fill" id="fl"></div></div></div>
+
+<section>
+<p class="side"><b>Learn</b> to represent numbers by using exponents.<br><b>Vocabulary:</b> <span class="hl">power</span> <span class="hl">exponent</span> <span class="hl">base</span></p>
+<p>A DNA molecule makes a copy of itself by splitting in half. Each half becomes a molecule that is identical to the original. The molecules continue to split so that the two become four, the four become eight, and so on.</p>
+<p>Each time DNA copies itself, the number of molecules doubles. After four copies, the number of molecules is 2 × 2 × 2 × 2 = 16.</p>
+<p>This multiplication can also be written as a <span class="hl">power</span>, using a <i>base</i> and an <i>exponent</i>. The <span class="hl">exponent</span> tells how many times to use the <span class="hl">base</span> as a factor.</p>
+<div class="big">2<sup>4</sup></div>
+<div class="lab"><span style="color:#d6283a">Base = 2</span><span style="color:var(--pr)">Exponent = 4</span></div>
+<div class="note"><b>Reading Math</b><br>Read 2<sup>4</sup> as “the fourth power of 2” or “2 to the fourth power.”</div>
+<div class="card sans"><b>🔧 Try it:</b> Base <input type="number" id="pb" value="2"> Exponent <input type="number" id="pe" value="4"><div class="big" id="pv" style="font-size:2rem"></div><div id="pt" style="text-align:center"></div></div>
+</section>
+
+<section>
+<div class="ex"><b>EXAMPLE</b><i>1</i><span>Evaluating Powers</span></div>
+<p><b>Find each value.</b></p>
+<div class="step on"><b>a.</b> 5<sup>2</sup></div>
+<div class="step">5<sup>2</sup> = 5 × 5 &nbsp;<span class="side">Use 5 as a factor 2 times.</span></div>
+<div class="step">&nbsp;&nbsp;&nbsp;&nbsp;= 25</div>
+<div class="step"><b>b.</b> 2<sup>6</sup> = 2 × 2 × 2 × 2 × 2 × 2 &nbsp;<span class="side">Use 2 as a factor 6 times.</span></div>
+<div class="step">&nbsp;&nbsp;&nbsp;&nbsp;= 64</div>
+<button onclick="nx(this)">Next ▶</button>
+<p>Recall that any number to the first power is equal to that number.<br>6<sup>1</sup> = 6 &nbsp; 13<sup>1</sup> = 13 &nbsp; 25<sup>1</sup> = 25</p>
+<p>Any number to the zero power, except zero, is equal to 1.<br>6<sup>0</sup> = 1 &nbsp; 10<sup>0</sup> = 1 &nbsp; 19<sup>0</sup> = 1</p>
+<p>Zero to the zero power is <i>undefined</i>, meaning that it does not exist.</p>
+</section>
+
+<section>
+<p>To express a whole number as a power, write the number as the product of equal factors. Then, write the product using the base and an exponent. For example, 10 000 = 10 × 10 × 10 × 10 = 10<sup>4</sup>.</p>
+<div class="ex"><b>EXAMPLE</b><i>2</i><span>Expressing Whole Numbers as Powers</span></div>
+<p><b>Write each number using an exponent and the given base.</b></p>
+<div class="step on"><b>a.</b> 49, base 7</div>
+<div class="step">49 = 7 × 7 &nbsp;<span class="side">7 is used as a factor 2 times.</span></div>
+<div class="step">&nbsp;&nbsp;&nbsp;&nbsp;= 7<sup>2</sup></div>
+<div class="step"><b>b.</b> 81, base 3: 81 = 3 × 3 × 3 × 3 &nbsp;<span class="side">3 is used as a factor 4 times.</span></div>
+<div class="step">&nbsp;&nbsp;&nbsp;&nbsp;= 3<sup>4</sup></div>
+<button onclick="nx(this)">Next ▶</button>
+</section>
+
+<section>
+<div class="ex"><b>EXAMPLE</b><i>3</i><span><i style="all:unset;font-style:italic">Earth Science Application</i></span></div>
+<p><b>The Richter scale measures an earthquake’s strength, or magnitude. Each category in the table is 10 times stronger than the next lower category. For example, a large earthquake is 10 times stronger than a moderate earthquake. How many times stronger is a great earthquake than a moderate one?</b></p>
+<table class="tab"><tr><th colspan="2">Earthquake Strength</th></tr><tr><th>Category</th><th>Magnitude</th></tr><tr><td>Moderate</td><td>5</td></tr><tr><td>Large</td><td>6</td></tr><tr><td>Major</td><td>7</td></tr><tr><td>Great</td><td>8</td></tr></table>
+<div class="step on">An earthquake with a magnitude of 6 is 10 times stronger than one with a magnitude of 5.</div>
+<div class="step">An earthquake with a magnitude of 7 is 10 times stronger than one with a magnitude of 6.</div>
+<div class="step">An earthquake with a magnitude of 8 is 10 times stronger than one with a magnitude of 7.</div>
+<div class="step" style="text-align:center">10 × 10 × 10 = 10<sup>3</sup> = 1 000</div>
+<div class="step">A great earthquake is 1 000 times stronger than a moderate one.</div>
+<button onclick="nx(this)">Next ▶</button>
+</section>
+
+<section class="td">
+<h2>Think and Discuss</h2>
+<details><summary><b>1. Describe</b> the relationship between 3<sup>5</sup> and 3<sup>6</sup>.</summary>3<sup>5</sup> = 243 and 3<sup>6</sup> = 729. 3<sup>6</sup> uses 3 as a factor one more time, so 3<sup>6</sup> = 3<sup>5</sup> × 3.</details>
+<details><summary><b>2. Tell</b> which power of 8 is equal to 64. Explain.</summary>8<sup>2</sup>, because 8 × 8 = 64.</details>
+<details><summary><b>3. Explain</b> why any number to the first power is equal to that number.</summary>The exponent 1 means the base is used as a factor only 1 time.</details>
+</section>
+
+<section>
+<div class="ex" style="margin:0"><b style="background:#4b3fa0;color:#fff">1-2 Exercises</b></div>
+<p class="sans" style="font-size:.9rem;color:var(--mu)">Type your answer and press Check. A wrong answer gives a hint; you may try again.</p>
+<div id="quiz"></div>
+<div id="done" class="note sans" style="display:none"></div>
+</section>
+</main>
+<script>
+const S=(b,e)=>b+'<sup>'+e+'</sup>';
+const hf=(b,e)=>e==0?'Any number to the zero power, except zero, is equal to 1.':e==1?'Any number to the first power is equal to that number.':'Use '+b+' as a factor '+e+' times: '+Array(e).fill(b).join(' × ');
+const F=(n,b,e)=>({n,q:S(b,e),p:[{pre:'= ',a:Math.pow(b,e)}],h:hf(b,e)});
+const E=(n,v,b,e)=>({n,q:v+', base '+b,p:[{pre:'= '+b+'<sup>',suf:'</sup>',a:e}],h:e==0?hf(b,0):'How many times is '+b+' used as a factor? '+(e<=4?Array(e).fill(b).join(' × ')+' = '+v:'')});
+const M=(n,q,a,h)=>({n,q,p:[{pre:'= ',a}],h});
+const T2=(n,N,ans)=>({n,q:''+N,p:[{pre:'①&nbsp;base ',a:0},{pre:'exp ',a:0},{pre:'②&nbsp;base ',a:0},{pre:'exp ',a:0}],v:x=>x[0]>1&&x[2]>1&&x[0]!=x[2]&&Math.pow(x[0],x[1])==N&&Math.pow(x[2],x[3])==N,h:'Write the number as a product of equal factors, then use a base and an exponent. Try two different bases.',ans});
+const MC=(n,tag,q,o,a,h)=>({n,tag,q,o,a,h,w:1});
+const W=(n,tag,q,p,h)=>({n,tag,q,p,h,w:1});
+const B=[
+{t:'GUIDED PRACTICE',s:[
+{ex:1,i:'Find each value.',k:[F(1,2,5),F(2,3,3),F(3,6,2),F(4,9,0)]},
+{ex:2,i:'Write each number using an exponent and the given base.',k:[E(5,25,5,2),E(6,16,4,2),E(7,27,3,3),E(8,100,10,2)]},
+{ex:3,i:'',k:[W(9,'','On the Richter scale, a great earthquake is 10 times stronger than a major one, and a major one is 10 times stronger than a large one. How many times stronger is a great earthquake than a large one?',[{pre:'Answer: ',a:100}],'10 × 10 = 10<sup>2</sup>')]}]},
+{t:'INDEPENDENT PRACTICE',s:[
+{ex:1,i:'Find each value.',k:[F(10,11,2),F(11,3,5),F(12,8,3),F(13,1,0),F(14,4,3),F(15,3,4),F(16,2,5),F(17,5,1),F(18,2,3),F(19,5,3),F(20,30,1),F(21,10,4)]},
+{ex:2,i:'Write each number using an exponent and the given base.',k:[E(22,81,9,2),E(23,4,4,1),E(24,64,4,3),E(25,1,7,0),E(26,32,2,5),E(27,128,2,7),E(28,1600,40,2),E(29,2500,50,2),E(30,100000,10,5)]},
+{ex:3,i:'',k:[W(31,'','In a game, a contestant had a starting score of one point. He tripled his score every turn for four turns. Write his score after four turns as a power. Then find his score.',[{pre:'Power: 3<sup>',suf:'</sup>',a:4},{pre:'Score = ',a:81}],'He triples 4 times: 3 × 3 × 3 × 3 = 3<sup>4</sup>.')]}]},
+{t:'PRACTICE AND PROBLEM SOLVING',s:[
+{i:'Give two ways to represent each number using powers.',k:[T2(32,81,'3<sup>4</sup> or 9<sup>2</sup>'),T2(33,16,'2<sup>4</sup> or 4<sup>2</sup>'),T2(34,64,'2<sup>6</sup>, 4<sup>3</sup> or 8<sup>2</sup>'),T2(35,729,'3<sup>6</sup>, 9<sup>3</sup> or 27<sup>2</sup>')]},
+{i:'Find each value.',k:[M(36,'2<sup>2</sup> + 2<sup>5</sup>',36,'4 + 32'),M(37,'3<sup>2</sup> + 4<sup>2</sup>',25,'9 + 16'),M(38,'8<sup>2</sup> + 9<sup>2</sup>',145,'64 + 81'),M(39,'3<sup>4</sup> + 3<sup>3</sup>',108,'81 + 27'),M(40,'6<sup>2</sup> + 6<sup>0</sup>',37,'36 + 1'),M(41,'125<sup>1</sup> + 125<sup>0</sup>',126,'125 + 1'),M(42,'1 254<sup>0</sup> × 8<sup>2</sup>',64,'1 254<sup>0</sup> = 1, and 8<sup>2</sup> = 64.'),M(43,'19<sup>0</sup> + 17<sup>0</sup> + 10<sup>0</sup>',3,'Each is 1.'),M(44,'3<sup>3</sup> + 4<sup>2</sup> − 5<sup>1</sup>',38,'27 + 16 − 5')]},
+{i:'',k:[
+W(45,'','To find the volume of a cube, find the third power of the length of an edge of the cube. What is the volume of a cube that is 6 cm long on an edge?',[{pre:'Volume = ',suf:' cm³',a:216}],'6<sup>3</sup> = 6 × 6 × 6'),
+W(46,'','A turtle walked 0.3 m in the first minute. Then, it tripled its speed each minute. What is the distance traveled by the turtle during the seventh minute?',[{pre:'Distance = ',suf:' m',a:218.7}],'3<sup>6</sup> = 729, then 0.3 × 729.'),
+W(48,'GEOMETRIC PATTERNS ','Sarah is making a quilt with a pattern of rings. In the center ring, she uses four stars. In each of the next three rings, she uses three times as many stars as in the one before. How many stars does she use in the fourth ring? Write the answer as a power and find its value.',[{pre:'4 × 3<sup>',suf:'</sup>',a:3},{pre:'Value = ',a:108}],'The fourth ring is 3 rings after the center: 4 × 3 × 3 × 3.'),
+W(49,'LIFE SCIENCE ','The cells of some kinds of bacteria divide every 30 minutes. If you begin with a single cell, how many cells will there be after 1 hour? 2 hours? 3 hours?',[{pre:'1 h: ',a:4},{pre:'2 h: ',a:16},{pre:'3 h: ',a:64}],'Every hour has 2 divisions: after 1 hour 2<sup>2</sup>, after 2 hours 2<sup>4</sup>, after 3 hours 2<sup>6</sup>.'),
+MC(50,'WHAT’S THE ERROR? ','A student wrote 64 as 8 × 2. What did the student do wrong?',['He used 8 and 2 as factors instead of using 8 as a factor 2 times (8 × 8 = 8<sup>2</sup>).','He should have written 8 + 2.','Nothing, it is correct.'],0,'8 × 2 = 16, not 64.'),
+MC(51,'WRITE ABOUT IT ','Is 2<sup>5</sup> greater than or less than 3<sup>3</sup>? Explain.',['Greater, because 2<sup>5</sup> = 32 and 3<sup>3</sup> = 27.','Less, because 2<sup>5</sup> = 10 and 3<sup>3</sup> = 9.','Equal.'],0,'2<sup>5</sup> = 2×2×2×2×2 = 32; 3<sup>3</sup> = 27.'),
+W(52,'CHALLENGE ','What is the length of the edge of a cube if its volume is 1 000 cubic meters?',[{pre:'Edge = ',suf:' m',a:10}],'Find a number whose third power is 1 000.')]}]}
+];
+const I=[],St=[];let D=0,SC=0,h='';
+B.forEach(b=>{h+='<div class="ban">'+b.t+'</div>';b.s.forEach(s=>{h+=(s.ex?'<span class="se">See Example <i>'+s.ex+'</i></span>':'')+(s.i?'<span class="ins">'+s.i+'</span>':'')+'<div class="g" style="margin-top:6px">';
+s.k.forEach(it=>{const i=I.length;I.push(it);St.push({t:0,d:false});
+h+='<div class="q'+(it.w?' w':'')+'" id="q'+i+'"><div><span class="n">'+it.n+'</span>'+(it.tag?'<span class="tg">'+it.tag+'</span>':'')+it.q+'</div>';
+if(it.o)h+='<div class="opts">'+it.o.map((o,k)=>'<button onclick="ch('+i+','+k+')">'+o+'</button>').join('')+'</div>';
+else h+='<div class="ans">'+it.p.map((x,j)=>'<span>'+(x.pre||'')+'<input type="number" step="any" inputmode="decimal" id="i'+i+'_'+j+'">'+(x.suf||'')+'</span>').join('')+'<button onclick="ck('+i+')">Check</button></div>';
+h+='<div class="fb" id="f'+i+'"></div></div>'});h+='</div>'})});
+quiz.innerHTML=h;
+function up(){pc.textContent='Progress: '+D+' / '+I.length;sc.textContent='First-try score: '+SC;fl.style.width=(D/I.length*100)+'%';
+if(D==I.length){done.style.display='block';const m=SC/I.length;done.innerHTML='🎉 Finished! You got <b>'+SC+' / '+I.length+'</b> on the first try. '+(m>=.8?'Excellent work!':'Review the lesson and the hints, then try again.')}}
+function fin(i,f){St[i].d=true;D++;if(f)SC++;up()}
+function ck(i){const it=I[i],s=St[i];if(s.d)return;const v=it.p.map((x,j)=>document.getElementById('i'+i+'_'+j).value);if(v.some(x=>x===''))return;
+const ok=it.v?it.v(v.map(Number)):it.p.every((x,j)=>Math.abs(+v[j]-x.a)<1e-9);const f=document.getElementById('f'+i),c=document.getElementById('q'+i);
+if(ok){c.className='q'+(it.w?' w':'')+' ok';f.innerHTML='✅ Correct!';fin(i,s.t==0)}
+else{s.t++;c.className='q'+(it.w?' w':'')+' no';f.innerHTML='❌ Hint: '+it.h;if(s.t>=3){f.innerHTML+='<br>Answer: <b>'+(it.ans||it.p.map(x=>x.a).join(', '))+'</b>';fin(i,false)}}}
+function ch(i,k){const it=I[i],s=St[i];if(s.d)return;const b=document.getElementById('q'+i).querySelectorAll('.opts button'),f=document.getElementById('f'+i);
+if(k===it.a){b[k].classList.add('right');f.innerHTML='✅ Correct! '+it.h;fin(i,s.t==0)}else{s.t++;b[k].classList.add('wrong');f.innerHTML='❌ Try again.'}}
+function nx(btn){const st=[...btn.parentNode.querySelectorAll('.step')];const n=st.find(x=>!x.classList.contains('on'));if(n)n.classList.add('on');if(!st.find(x=>!x.classList.contains('on')))btn.style.display='none'}
+function upd(){const b=+pb.value,e=+pe.value;if(isNaN(b)||isNaN(e)||e<0||e>8||b<0||b>12){pt.textContent='Use a base 0–12 and an exponent 0–8.';pv.innerHTML='';return}
+pv.innerHTML=b+'<sup>'+e+'</sup>';pt.textContent=b==0&&e==0?'Undefined — it does not exist.':e==0?'Any number to the zero power, except zero, is equal to 1.':e==1?'Any number to the first power is equal to that number.':Array(e).fill(b).join(' × ')+' = '+Math.pow(b,e)}
+pb.oninput=pe.oninput=upd;upd();up();
+</script>
+</body>
+</html>
