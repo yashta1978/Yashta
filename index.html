@@ -77,6 +77,9 @@ h3.prev{margin:22px 0 8px;font-size:15px;color:var(--muted);font-weight:600}
 .empty{color:var(--muted);padding:12px 0}
 noscript .plain{max-width:760px;margin:0 auto;padding:16px}
 noscript .plain a{display:block;padding:10px 0}
+.thanks{background:var(--card);border:2px solid var(--line);border-inline-start:8px solid var(--gold);border-radius:16px;padding:14px 18px;margin-top:8px;text-align:center}
+.thanks h3{margin:0 0 6px;font-size:19px;color:var(--accent)}
+.thanks p{margin:6px 0;font-size:16px;line-height:1.7;color:var(--ink)}
 .by{display:block;margin:10px 0 0;text-align:center;font-size:24px;font-weight:700;color:var(--accent)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 </style>
@@ -265,6 +268,11 @@ function viewHome() {
     ]));
   });
   grid.appendChild(el("p", { "class": "by", text: "\u2665 Created by their father" }));
+  grid.appendChild(el("div", { "class": "thanks" }, [
+    el("h3", { text: "A word of thanks" }),
+    el("p", { text: "I truly appreciate the hard work and dedication that teachers give every day. These lessons are my small contribution to support their effort, and a humble thank-you for all they do." }),
+    el("p", { text: "With my thanks and best wishes for success to all teachers and students." })
+  ]));
   app.replaceChildren(grid);
 }
 
