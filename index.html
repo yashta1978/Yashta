@@ -77,7 +77,7 @@ h3.prev{margin:22px 0 8px;font-size:15px;color:var(--muted);font-weight:600}
 .empty{color:var(--muted);padding:12px 0}
 noscript .plain{max-width:760px;margin:0 auto;padding:16px}
 noscript .plain a{display:block;padding:10px 0}
-.by{display:block;margin-top:6px;font-size:22px;font-weight:700;color:var(--accent)}
+.by{display:block;margin:10px 0 0;text-align:center;font-size:24px;font-weight:700;color:var(--accent)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 </style>
 </head>
@@ -259,12 +259,12 @@ function viewHome() {
       el("span", {}, [
         el("span", { "class": "name", text: s.name }),
         el("br"),
-        el("span", { "class": "meta", text: s.grade }),
-        el("span", { "class": "by", text: "\u2665 Created by her father" })
+        el("span", { "class": "meta", text: s.grade })
       ]),
       el("span", { "class": "arrow", text: "›", "aria-hidden": "true" })
     ]));
   });
+  grid.appendChild(el("p", { "class": "by", text: "\u2665 Created by their father" }));
   app.replaceChildren(grid);
 }
 
