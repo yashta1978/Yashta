@@ -46,6 +46,7 @@ a.card .native{font-size:20px;color:var(--muted)}
 a.card.vina{border-inline-start:10px solid var(--vina)}
 a.card.ara{border-inline-start:10px solid var(--ara)}
 a.card.subject{border-inline-start:10px solid var(--accent)}
+a.card.subject .meta{display:inline-block;margin-top:2px}
 .arrow{font-size:24px;color:var(--muted);flex:none}
 .theme-vina a.card.subject{border-inline-start-color:var(--vina)}
 .theme-ara  a.card.subject{border-inline-start-color:var(--ara)}
@@ -91,7 +92,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
     <a href="math-lesson-1-4.html">Order of Operations — Lesson 1-4</a>
     <strong>Ara — Grade 7 · Arabic</strong>
     <a href="arabic-storm-lesson.html" dir="rtl" lang="ar">درس اللغة العربية التفاعلي: العَاصِفَةُ</a>
-    <strong>Ara — Grade 7 · Religion</strong>
+    <strong>Ara — Grade 7 · Islamic</strong>
     <a href="religion-lesson.html" dir="rtl" lang="ku">وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ</a>
     <a href="lesson-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی — v2</a>
     <a href="lesson-v1.html" dir="rtl" lang="ku">وانەیێن ئایینی — v1</a>
@@ -101,34 +102,71 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 <footer>Each lesson opens in its own language.</footer>
 
 <script>
-/* ---- Data: add a new lesson or subject here and it appears automatically ---- */
-var DATA = {
+/* ---- Data: add a lesson to a subject's list below and it appears automatically ---- */
+var SUBJECTS = [   /* the same 13 subjects for both classes (from the timetables) */
+  { id: "arabic",   title: "Arabic",          native: "عربي",   nativeLang: "ar" },
+  { id: "islamic",  title: "Islamic",         native: "ئیسلامی", nativeLang: "ku" },
+  { id: "english",  title: "English" },
+  { id: "kurdish",  title: "Kurdish",         native: "کوردی",  nativeLang: "ku" },
+  { id: "math",     title: "Math" },
+  { id: "science",  title: "Science" },
+  { id: "social-studies", title: "Social Studies" },
+  { id: "social-value",   title: "Social Value" },
+  { id: "reading-writing", title: "Reading & Writing" },
+  { id: "music",    title: "Music" },
+  { id: "art",      title: "Art" },
+  { id: "pe",       title: "PE" },
+  { id: "ict",      title: "ICT" }
+];
+
+var LESSONS = {
   vina: {
-    name: "Vina", grade: "Grade 6", theme: "vina",
-    subjects: [
-      { id: "math", title: "Math", native: "", lessons: [
-        { title: "Order of Operations — Lesson 1-4", sub: "Book pages 28–33",
-          lang: "en", dir: "ltr", tag: "EN", href: "math-lesson-1-4.html" }
-      ]}
+    math: [
+      { title: "Order of Operations — Lesson 1-4", sub: "Book pages 28–33",
+        lang: "en", dir: "ltr", tag: "EN", href: "math-lesson-1-4.html" }
     ]
   },
   ara: {
-    name: "Ara", grade: "Grade 7", theme: "ara",
-    subjects: [
-      { id: "arabic", title: "Arabic", native: "عربي", nativeLang: "ar", lessons: [
-        { title: "درس اللغة العربية التفاعلي: العَاصِفَةُ",
-          lang: "ar", dir: "rtl", tag: "AR", href: "arabic-storm-lesson.html" }
-      ]},
-      { id: "religion", title: "Religion", native: "ئایین", nativeLang: "ku", lessons: [
-        { title: "وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ",
-          lang: "ku", dir: "rtl", tag: "KU", href: "religion-lesson.html" }
-      ], previous: [
-        { title: "وانەیێن ئایینی — v2", lang: "ku", dir: "rtl", tag: "KU", href: "lesson-v2.html" },
-        { title: "وانەیێن ئایینی — v1", lang: "ku", dir: "rtl", tag: "KU", href: "lesson-v1.html" }
-      ]}
+    arabic: [
+      { title: "درس اللغة العربية التفاعلي: العَاصِفَةُ",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic-storm-lesson.html" }
+    ],
+    islamic: [
+      { title: "وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ",
+        lang: "ku", dir: "rtl", tag: "KU", href: "religion-lesson.html" }
     ]
   }
 };
+
+/* older versions, shown under "Previous versions" in a subject */
+var PREVIOUS = {
+  ara: {
+    islamic: [
+      { title: "وانەیێن ئایینی — v2", lang: "ku", dir: "rtl", tag: "KU", href: "lesson-v2.html" },
+      { title: "وانەیێن ئایینی — v1", lang: "ku", dir: "rtl", tag: "KU", href: "lesson-v1.html" }
+    ]
+  }
+};
+
+var STUDENTS = {
+  vina: { name: "Vina", grade: "Grade 6", theme: "vina" },
+  ara:  { name: "Ara",  grade: "Grade 7", theme: "ara" }
+};
+
+/* build DATA: subjects with lessons first, then the rest in the list order */
+var DATA = {};
+Object.keys(STUDENTS).forEach(function (sid) {
+  var st = STUDENTS[sid], subs = SUBJECTS.map(function (s) {
+    return {
+      id: s.id, title: s.title, native: s.native, nativeLang: s.nativeLang,
+      lessons: (LESSONS[sid] && LESSONS[sid][s.id]) || [],
+      previous: (PREVIOUS[sid] && PREVIOUS[sid][s.id]) || []
+    };
+  });
+  var withL = subs.filter(function (x) { return x.lessons.length; });
+  var empty = subs.filter(function (x) { return !x.lessons.length; });
+  DATA[sid] = { name: st.name, grade: st.grade, theme: st.theme, subjects: withL.concat(empty) };
+});
 
 var app = document.getElementById("app");
 var hint = document.getElementById("hint");
@@ -186,6 +224,9 @@ function viewStudent(id) {
       left.appendChild(el("br"));
       left.appendChild(el("span", { "class": "native", lang: sub.nativeLang, text: sub.native }));
     }
+    left.appendChild(el("br"));
+    var n = sub.lessons.length;
+    left.appendChild(el("span", { "class": "meta", text: n ? (n + (n === 1 ? " lesson" : " lessons")) : "No lessons yet" }));
     grid.appendChild(el("a", { "class": "card subject", href: "#" + id + "/" + sub.id }, [
       left, el("span", { "class": "arrow", text: "›", "aria-hidden": "true" })
     ]));
@@ -209,6 +250,7 @@ function viewSubject(id, subId) {
   ]);
   var grid = el("div", { "class": "grid" }, []);
   sub.lessons.forEach(function (l) { grid.appendChild(lessonLink(l)); });
+  if (!sub.lessons.length) grid.appendChild(el("p", { "class": "empty", text: "No lessons yet. They will appear here once they are added." }));
   wrap.appendChild(grid);
   if (sub.previous && sub.previous.length) {
     wrap.appendChild(el("h3", { "class": "prev", text: "Previous versions" }));
