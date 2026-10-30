@@ -7,8 +7,9 @@
 <style>
 :root{
   --bg:#eef4f4; --ink:#1d2b2e; --muted:#5c6f73; --card:#ffffff; --line:#cfdcdc;
+  --accent:#2f4a52; --accent-soft:#e6eeee;
   --vina:#3f82c4; --vina-soft:#e4eff9;
-  --ara:#c1693b; --ara-soft:#faece3;
+  --ara:#c1693b;  --ara-soft:#faece3;
   --gold:#c9a45c; --bar:#2f4a52;
 }
 *{box-sizing:border-box}
@@ -17,101 +18,219 @@ body{
   font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Naskh Arabic",Arial,sans-serif;
 }
 header{
-  background:var(--bar); color:#fff; text-align:center; padding:22px 16px 18px;
+  background:var(--bar); color:#fff; text-align:center; padding:20px 16px 16px;
   border-bottom:4px solid var(--gold);
 }
 header h1{margin:0;font-size:26px;letter-spacing:.3px}
 header p{margin:4px 0 0;font-size:15px;opacity:.85}
-main{max-width:760px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:20px}
-section.student{
-  background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden;
-  box-shadow:0 2px 8px rgba(0,0,0,.07);
+main{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+.crumbs{display:flex;align-items:center;gap:10px;margin:0 0 14px;flex-wrap:wrap}
+.back{
+  display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;
+  font-size:15px;font-weight:600;min-height:40px;
 }
-section.student > h2{
-  margin:0; padding:14px 18px; display:flex; justify-content:space-between; align-items:baseline;
-  font-size:24px; color:#fff;
+.back:hover,.back:focus-visible{border-color:var(--accent)}
+.where{color:var(--muted);font-size:14px}
+h2.view-title{margin:0 0 12px;font-size:22px}
+.grid{display:grid;gap:14px}
+a.card{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;color:var(--ink);
+  background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px 20px;min-height:84px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
-section.student > h2 small{font-size:15px;font-weight:500;opacity:.92}
-.vina > h2{background:var(--vina)}
-.ara  > h2{background:var(--ara)}
-ul.lessons{list-style:none;margin:0;padding:12px;display:grid;gap:10px}
-ul.lessons a.lesson{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:14px 16px; border-radius:14px; text-decoration:none; color:var(--ink);
-  border:2px solid transparent; min-height:60px;
+a.card:hover,a.card:focus-visible{border-color:var(--accent)}
+a.card .name{font-size:26px;font-weight:700}
+a.card .meta{font-size:15px;color:var(--muted)}
+a.card .native{font-size:20px;color:var(--muted)}
+a.card.vina{border-inline-start:10px solid var(--vina)}
+a.card.ara{border-inline-start:10px solid var(--ara)}
+a.card.subject{border-inline-start:10px solid var(--accent)}
+.arrow{font-size:24px;color:var(--muted);flex:none}
+.theme-vina a.card.subject{border-inline-start-color:var(--vina)}
+.theme-ara  a.card.subject{border-inline-start-color:var(--ara)}
+
+a.lesson{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 18px;border-radius:14px;text-decoration:none;color:var(--ink);
+  border:2px solid transparent;min-height:64px;
 }
-.vina ul.lessons a.lesson{background:var(--vina-soft)}
-.ara  ul.lessons a.lesson{background:var(--ara-soft)}
-.vina ul.lessons a.lesson:hover,.vina ul.lessons a.lesson:focus-visible{border-color:var(--vina)}
-.ara  ul.lessons a.lesson:hover,.ara  ul.lessons a.lesson:focus-visible{border-color:var(--ara)}
+.theme-vina a.lesson{background:var(--vina-soft)}
+.theme-ara  a.lesson{background:var(--ara-soft)}
+.theme-vina a.lesson:hover,.theme-vina a.lesson:focus-visible{border-color:var(--vina)}
+.theme-ara  a.lesson:hover,.theme-ara  a.lesson:focus-visible{border-color:var(--ara)}
 .title{font-size:18px;font-weight:600;flex:1}
 .title[lang="ar"],.title[lang="ku"]{font-size:21px;line-height:1.9}
 .tag{
-  flex:none; font-size:12px; font-weight:700; padding:2px 9px; border-radius:999px;
-  background:#fff; color:var(--muted); border:1px solid var(--line); direction:ltr;
+  flex:none;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;
+  background:#fff;color:var(--muted);border:1px solid var(--line);direction:ltr;
 }
 .sub{display:block;font-size:13px;color:var(--muted);font-weight:400;direction:ltr;text-align:left}
-details{margin:0 12px 12px;border-top:1px dashed var(--line);padding-top:8px}
-summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 2px}
-details ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}
-details a{
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
-  padding:10px 14px;border-radius:10px;background:#f6f8f8;color:var(--ink);text-decoration:none;
-  border:1px solid var(--line);
-}
-details a .title{font-size:17px;font-weight:500}
-.empty{padding:6px 18px 18px;color:var(--muted)}
+h3.prev{margin:22px 0 8px;font-size:15px;color:var(--muted);font-weight:600}
+.prev-list{display:grid;gap:8px}
+.prev-list a.lesson{background:#f6f8f8;border:1px solid var(--line);min-height:52px;padding:10px 14px}
+.prev-list .title{font-size:17px;font-weight:500}
+.empty{color:var(--muted);padding:12px 0}
+noscript .plain{max-width:760px;margin:0 auto;padding:16px}
+noscript .plain a{display:block;padding:10px 0}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 </style>
 </head>
 <body>
 <header>
   <h1>Ara &amp; Vina</h1>
-  <p>Choose a student to open her lessons</p>
+  <p id="hint">Choose a student</p>
 </header>
 
-<main>
-  <!-- Vina — Grade 6 -->
-  <section class="student vina" id="vina" aria-labelledby="vina-h">
-    <h2 id="vina-h">Vina <small>Grade 6</small></h2>
-    <ul class="lessons">
-      <li>
-        <a class="lesson" href="math-lesson-1-4.html">
-          <span class="title" lang="en">Order of Operations — Lesson 1-4
-            <span class="sub">Math · Book pages 28–33</span></span>
-          <span class="tag">EN</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+<main id="app" aria-live="polite"></main>
 
-  <!-- Ara — Grade 7 -->
-  <section class="student ara" id="ara" aria-labelledby="ara-h">
-    <h2 id="ara-h">Ara <small>Grade 7</small></h2>
-    <ul class="lessons">
-      <li>
-        <a class="lesson" href="arabic-storm-lesson.html" dir="rtl">
-          <span class="title" lang="ar">درس اللغة العربية التفاعلي: العَاصِفَةُ</span>
-          <span class="tag">AR</span>
-        </a>
-      </li>
-      <li>
-        <a class="lesson" href="religion-lesson.html" dir="rtl">
-          <span class="title" lang="ku">وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ</span>
-          <span class="tag">KU</span>
-        </a>
-      </li>
-    </ul>
-    <details>
-      <summary>Previous versions of the religion lesson</summary>
-      <ul>
-        <li><a href="lesson-v2.html" dir="rtl"><span class="title" lang="ku">وانەیێن ئایینی — v2</span><span class="tag">KU</span></a></li>
-        <li><a href="lesson-v1.html" dir="rtl"><span class="title" lang="ku">وانەیێن ئایینی — v1</span><span class="tag">KU</span></a></li>
-      </ul>
-    </details>
-  </section>
-</main>
+<noscript>
+  <div class="plain">
+    <p>JavaScript is off. All lessons:</p>
+    <strong>Vina — Grade 6 · Math</strong>
+    <a href="math-lesson-1-4.html">Order of Operations — Lesson 1-4</a>
+    <strong>Ara — Grade 7 · Arabic</strong>
+    <a href="arabic-storm-lesson.html" dir="rtl" lang="ar">درس اللغة العربية التفاعلي: العَاصِفَةُ</a>
+    <strong>Ara — Grade 7 · Religion</strong>
+    <a href="religion-lesson.html" dir="rtl" lang="ku">وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ</a>
+    <a href="lesson-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی — v2</a>
+    <a href="lesson-v1.html" dir="rtl" lang="ku">وانەیێن ئایینی — v1</a>
+  </div>
+</noscript>
 
-<footer>Tap a lesson to open it. Each lesson opens in its own language.</footer>
+<footer>Each lesson opens in its own language.</footer>
+
+<script>
+/* ---- Data: add a new lesson or subject here and it appears automatically ---- */
+var DATA = {
+  vina: {
+    name: "Vina", grade: "Grade 6", theme: "vina",
+    subjects: [
+      { id: "math", title: "Math", native: "", lessons: [
+        { title: "Order of Operations — Lesson 1-4", sub: "Book pages 28–33",
+          lang: "en", dir: "ltr", tag: "EN", href: "math-lesson-1-4.html" }
+      ]}
+    ]
+  },
+  ara: {
+    name: "Ara", grade: "Grade 7", theme: "ara",
+    subjects: [
+      { id: "arabic", title: "Arabic", native: "عربي", nativeLang: "ar", lessons: [
+        { title: "درس اللغة العربية التفاعلي: العَاصِفَةُ",
+          lang: "ar", dir: "rtl", tag: "AR", href: "arabic-storm-lesson.html" }
+      ]},
+      { id: "religion", title: "Religion", native: "ئایین", nativeLang: "ku", lessons: [
+        { title: "وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ",
+          lang: "ku", dir: "rtl", tag: "KU", href: "religion-lesson.html" }
+      ], previous: [
+        { title: "وانەیێن ئایینی — v2", lang: "ku", dir: "rtl", tag: "KU", href: "lesson-v2.html" },
+        { title: "وانەیێن ئایینی — v1", lang: "ku", dir: "rtl", tag: "KU", href: "lesson-v1.html" }
+      ]}
+    ]
+  }
+};
+
+var app = document.getElementById("app");
+var hint = document.getElementById("hint");
+
+function el(tag, attrs, children) {
+  var n = document.createElement(tag);
+  for (var k in (attrs || {})) {
+    if (k === "text") n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]);
+  }
+  (children || []).forEach(function (c) { if (c) n.appendChild(c); });
+  return n;
+}
+function backLink(href, label) {
+  return el("a", { "class": "back", href: href, text: "← " + label });
+}
+function lessonLink(l) {
+  var t = el("span", { "class": "title", lang: l.lang }, []);
+  t.appendChild(document.createTextNode(l.title));
+  if (l.sub) t.appendChild(el("span", { "class": "sub", text: l.sub }));
+  return el("a", { "class": "lesson", href: l.href, dir: l.dir }, [
+    t, el("span", { "class": "tag", text: l.tag })
+  ]);
+}
+
+function viewHome() {
+  hint.textContent = "Choose a student";
+  document.title = "Ara & Vina — Lessons";
+  var grid = el("div", { "class": "grid" }, []);
+  ["vina", "ara"].forEach(function (id) {
+    var s = DATA[id];
+    grid.appendChild(el("a", { "class": "card " + s.theme, href: "#" + id }, [
+      el("span", {}, [
+        el("span", { "class": "name", text: s.name }),
+        el("br"),
+        el("span", { "class": "meta", text: s.grade })
+      ]),
+      el("span", { "class": "arrow", text: "›", "aria-hidden": "true" })
+    ]));
+  });
+  app.replaceChildren(grid);
+}
+
+function viewStudent(id) {
+  var s = DATA[id];
+  hint.textContent = s.name + " · " + s.grade;
+  document.title = s.name + " — Lessons";
+  var wrap = el("div", { "class": "theme-" + s.theme }, [
+    el("div", { "class": "crumbs" }, [backLink("#", "Home"), el("span", { "class": "where", text: s.name + " · " + s.grade })]),
+    el("h2", { "class": "view-title", text: "Choose a subject" })
+  ]);
+  var grid = el("div", { "class": "grid" }, []);
+  s.subjects.forEach(function (sub) {
+    var left = el("span", {}, [el("span", { "class": "name", text: sub.title })]);
+    if (sub.native) {
+      left.appendChild(el("br"));
+      left.appendChild(el("span", { "class": "native", lang: sub.nativeLang, text: sub.native }));
+    }
+    grid.appendChild(el("a", { "class": "card subject", href: "#" + id + "/" + sub.id }, [
+      left, el("span", { "class": "arrow", text: "›", "aria-hidden": "true" })
+    ]));
+  });
+  wrap.appendChild(grid);
+  app.replaceChildren(wrap);
+}
+
+function viewSubject(id, subId) {
+  var s = DATA[id];
+  var sub = s.subjects.filter(function (x) { return x.id === subId; })[0];
+  if (!sub) return viewStudent(id);
+  hint.textContent = s.name + " · " + sub.title;
+  document.title = s.name + " — " + sub.title;
+  var wrap = el("div", { "class": "theme-" + s.theme }, [
+    el("div", { "class": "crumbs" }, [
+      backLink("#" + id, s.name),
+      el("span", { "class": "where", text: s.name + " › " + sub.title })
+    ]),
+    el("h2", { "class": "view-title", text: sub.title })
+  ]);
+  var grid = el("div", { "class": "grid" }, []);
+  sub.lessons.forEach(function (l) { grid.appendChild(lessonLink(l)); });
+  wrap.appendChild(grid);
+  if (sub.previous && sub.previous.length) {
+    wrap.appendChild(el("h3", { "class": "prev", text: "Previous versions" }));
+    var pl = el("div", { "class": "prev-list" }, []);
+    sub.previous.forEach(function (l) { pl.appendChild(lessonLink(l)); });
+    wrap.appendChild(pl);
+  }
+  app.replaceChildren(wrap);
+}
+
+function route() {
+  var h = decodeURIComponent((location.hash || "").replace(/^#\/?/, ""));
+  var parts = h.split("/");
+  if (parts[0] && DATA[parts[0]]) {
+    if (parts[1]) viewSubject(parts[0], parts[1]); else viewStudent(parts[0]);
+  } else {
+    viewHome();
+  }
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
 </body>
 </html>
