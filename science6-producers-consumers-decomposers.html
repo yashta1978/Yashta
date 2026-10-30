@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Producers, Consumers and Decomposers</title>
+<style>
+:root{
+  --bg:#eef6f4; --ink:#1d2b2a; --muted:#4e6361; --card:#ffffff; --line:#cfe0dc;
+  --producer:#1f9d6e; --producer-soft:#dff4ea;
+  --consumer:#d9731f; --consumer-soft:#fdebd9;
+  --decomposer:#7a5a3a; --decomposer-soft:#f1e6da;
+  --good:#1b8a4b; --bad:#c0392b; --focus:#1a6fd1;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",Verdana,system-ui,sans-serif;
+  font-size:19px; line-height:1.6;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);
+}
+.wrap{max-width:780px;margin:0 auto;padding:14px}
+header{background:var(--producer);color:#fff;border-radius:20px;padding:18px 18px 16px;margin-bottom:12px}
+header h1{margin:0 0 4px;font-size:1.5rem;line-height:1.25}
+header p{margin:0 0 10px;opacity:.95;font-size:.95rem}
+.hbar{height:12px;background:rgba(255,255,255,.35);border-radius:99px;overflow:hidden}
+.hbar span{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .35s}
+.hstat{font-size:.9rem;margin-top:6px}
+
+nav{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+nav button{
+  flex:0 0 auto; font:inherit; font-size:.9rem; font-weight:700; min-height:46px; padding:8px 14px;
+  border-radius:99px; border:2px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+  white-space:nowrap; touch-action:manipulation;
+}
+nav button[aria-selected="true"]{background:var(--producer);border-color:var(--producer);color:#fff}
+nav button.done::after{content:" \2713"}
+
+.panel{background:var(--card);border-radius:20px;padding:18px;border:1px solid var(--line);margin-bottom:16px}
+.panel[hidden]{display:none}
+h2{margin:0 0 10px;font-size:1.3rem;line-height:1.3}
+.sub{color:var(--muted);font-size:.95rem;margin:0 0 14px}
+ul.goals{margin:0 0 14px;padding-left:1.3em}
+ul.goals li{margin-bottom:4px}
+
+.def{border-radius:16px;padding:14px 16px;margin-bottom:12px;border-left:8px solid}
+.def.p{background:var(--producer-soft);border-color:var(--producer)}
+.def.c{background:var(--consumer-soft);border-color:var(--consumer)}
+.def.d{background:var(--decomposer-soft);border-color:var(--decomposer)}
+.def h3{margin:0 0 4px;font-size:1.2rem}
+.def.p h3{color:#146e4c}.def.c h3{color:#a4540f}.def.d h3{color:#5a3f26}
+.def p{margin:0 0 8px}
+.key{font-weight:700}
+.eg{background:rgba(255,255,255,.75);border-radius:12px;padding:8px 12px;font-size:.95rem;color:var(--muted)}
+.eg b{color:var(--ink)}
+.note{font-size:.88rem;color:var(--muted);margin:6px 0 0}
+
+.btn{
+  font:inherit; font-weight:700; min-height:48px; padding:10px 20px; border:none; border-radius:14px;
+  background:var(--producer); color:#fff; cursor:pointer; touch-action:manipulation;
+}
+.btn.alt{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.btn.warn{background:var(--consumer)}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.hide{display:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+/* flashcards */
+.fc-wrap{perspective:1000px;margin:6px 0 8px}
+.fc{
+  display:grid;width:100%;min-height:230px;border:none;background:none;padding:0;cursor:pointer;font:inherit;color:inherit;
+  transform-style:preserve-3d;transition:transform .5s;touch-action:manipulation;
+}
+.fc.flip{transform:rotateY(180deg)}
+.face{
+  grid-area:1/1; display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  border-radius:20px;padding:20px;border:3px solid var(--line);background:#fff;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.face.back{transform:rotateY(180deg);background:var(--producer-soft);border-color:var(--producer)}
+.face .big{font-size:1.9rem;font-weight:700}
+.face .txt{font-size:1.15rem}
+.face .hint{font-size:.85rem;color:var(--muted);margin-top:10px}
+.fc-info{display:flex;justify-content:space-between;font-size:.95rem;color:var(--muted)}
+.seg{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.seg button{font:inherit;font-size:.9rem;min-height:42px;padding:6px 14px;border-radius:99px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* listen */
+.lcard{border-radius:16px;padding:14px 16px;margin-bottom:12px;border:2px solid var(--line)}
+.lcard h3{margin:0 0 6px;font-size:1.2rem}
+.lcard .words{margin-bottom:8px}
+.w{cursor:pointer;border-radius:6px;padding:1px 2px}
+.w.hl{background:#ffe08a}
+.w:hover{background:#eaf3f1}
+.small{font-size:.9rem}
+.warnbox{background:#fff4d6;border-radius:12px;padding:10px 12px;font-size:.92rem;margin-bottom:12px;display:none}
+
+/* faded text */
+.fw{
+  display:inline-block;padding:0 5px;margin:0 1px;border-radius:7px;cursor:pointer;background:#e3ecea;
+  color:rgba(29,43,42,.13);border-bottom:2px dashed #8fb0a9;user-select:none;-webkit-user-select:none;
+  transition:color .25s,background .25s;font:inherit;border-top:none;border-left:none;border-right:none;
+}
+.fw.on{background:var(--producer-soft);color:var(--ink);border-bottom-color:transparent}
+
+/* quiz / generic */
+.bar{height:14px;background:#dbe9e6;border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.bar span{display:block;height:100%;width:0;background:var(--producer);border-radius:99px;transition:width .35s}
+.stats{display:flex;justify-content:space-between;font-size:.95rem;color:var(--muted);margin-bottom:10px;gap:8px;flex-wrap:wrap}
+.q{font-size:1.15rem;font-weight:700;margin:0 0 12px}
+.opts{display:grid;gap:10px}
+.opt{
+  font:inherit;text-align:start;width:100%;min-height:52px;padding:12px 16px;border-radius:14px;
+  border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;touch-action:manipulation;
+}
+.opt:hover:not(:disabled){border-color:var(--producer)}
+.opt.right{background:#d8f3e2;border-color:var(--good);font-weight:700}
+.opt.wrong{background:#fbdcd8;border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{margin-top:12px;padding:12px 14px;border-radius:12px;display:none;font-size:1rem}
+.fb.show{display:block}
+.fb.ok{background:#d8f3e2;color:#0f5a30}
+.fb.no{background:#fbdcd8;color:#8a2217}
+.result{text-align:center;display:none}
+.result.show{display:block}
+.result .big{font-size:2.3rem;margin:4px 0}
+.stars{font-size:2rem;letter-spacing:4px}
+
+/* fill */
+.sent{margin:0 0 14px;line-height:2.1}
+.blank{
+  font:inherit;min-width:92px;min-height:42px;padding:2px 12px;margin:0 4px;border-radius:10px;
+  border:2px dashed #8fb0a9;background:#f5faf9;color:var(--ink);cursor:pointer;vertical-align:middle;touch-action:manipulation;
+}
+.blank.sel{border-style:solid;border-color:var(--focus)}
+.blank.right{background:#d8f3e2;border:2px solid var(--good);font-weight:700}
+.blank.wrong{background:#fbdcd8;border:2px solid var(--bad)}
+.bank{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;padding:12px;background:#f1f7f6;border-radius:14px}
+.chip{
+  font:inherit;min-height:46px;padding:6px 16px;border-radius:99px;border:2px solid var(--producer);
+  background:#fff;color:var(--ink);cursor:pointer;touch-action:manipulation;
+}
+.chip[disabled]{opacity:.3;cursor:default}
+.chip.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* match & sort */
+.col-title{font-weight:700;margin:10px 0 6px;color:var(--muted);font-size:.95rem}
+.pick{
+  font:inherit;text-align:start;width:100%;padding:12px 14px;margin-bottom:8px;border-radius:14px;
+  border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;touch-action:manipulation;
+}
+.pick.sel{border-color:var(--focus);background:#e6f0fc}
+.pick.right{background:#d8f3e2;border-color:var(--good);cursor:default}
+.pick.wrong{background:#fbdcd8;border-color:var(--bad)}
+.buckets{display:grid;gap:10px;margin-top:12px}
+.bucket{
+  border-radius:16px;padding:12px;border:3px dashed;cursor:pointer;min-height:84px;text-align:start;font:inherit;color:var(--ink);
+  touch-action:manipulation;width:100%;
+}
+.bucket.p{background:var(--producer-soft);border-color:var(--producer)}
+.bucket.c{background:var(--consumer-soft);border-color:var(--consumer)}
+.bucket.d{background:var(--decomposer-soft);border-color:var(--decomposer)}
+.bucket b{display:block;margin-bottom:4px}
+.placed{display:inline-block;background:#fff;border-radius:99px;padding:2px 12px;margin:2px 4px 2px 0;font-size:.95rem;border:2px solid rgba(0,0,0,.12)}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 4px;min-height:52px}
+
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:10px;border:1px solid var(--line);text-align:start;vertical-align:top}
+th{background:#e4f1ee}
+.scroll{overflow-x:auto}
+ul.check{list-style:none;padding:0;margin:14px 0 0}
+ul.check li{padding:6px 0;border-bottom:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.fc,.bar span,.hbar span,.fw{transition:none}}
+@media (min-width:700px){body{font-size:20px}.buckets{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Producers, Consumers and Decomposers</h1>
+  <p>Science &bull; Definitions</p>
+  <div class="hbar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="hbarwrap"><span id="hbar"></span></div>
+  <div class="hstat" id="hstat">Activities finished: 0 / 7</div>
+</header>
+
+<nav id="tabs" role="tablist" aria-label="Lesson sections"></nav>
+
+<!-- LEARN -->
+<section class="panel" id="p-learn">
+  <h2>Lesson goals</h2>
+  <ul class="goals">
+    <li>Define a <b>producer</b>, a <b>consumer</b> and a <b>decomposer</b>.</li>
+    <li>Say each definition aloud.</li>
+    <li>Tell the three kinds of organism apart.</li>
+  </ul>
+  <h2>Learn the definitions</h2>
+  <div class="def p">
+    <h3>Producer</h3>
+    <p>An organism that can <span class="key">make its own food</span> by using energy from its surrounding.</p>
+    <div class="eg"><b>Easy example:</b> grass.</div>
+  </div>
+  <div class="def c">
+    <h3>Consumer</h3>
+    <p>An organism that <span class="key">cannot make its own food</span> therefore eats other organisms or organic matter.</p>
+    <div class="eg"><b>Easy example:</b> a rabbit eats grass, so a rabbit is a consumer.</div>
+  </div>
+  <div class="def d">
+    <h3>Decomposers</h3>
+    <p>An organism that <span class="key">breaks down the remains of dead organisms or animal wastes</span> to obtain energy and nutrients.</p>
+    <div class="eg"><b>Easy example:</b> a mushroom.</div>
+  </div>
+  <p class="note">The definitions are from your book. The easy examples are added to help you picture each word.</p>
+  <div class="row"><button class="btn" data-go="flash">Start with flashcards</button></div>
+</section>
+
+<!-- FLASHCARDS -->
+<section class="panel" id="p-flash" hidden>
+  <h2>Flashcards</h2>
+  <p class="sub">Tap the card to flip it. Then tell yourself if you know it.</p>
+  <div class="seg" id="fc-mode">
+    <button type="button" data-m="td" aria-pressed="true">Word &rarr; Definition</button>
+    <button type="button" data-m="dt" aria-pressed="false">Definition &rarr; Word</button>
+  </div>
+  <div class="fc-wrap">
+    <button type="button" class="fc" id="fc" aria-label="Flashcard. Tap to flip.">
+      <div class="face front"><div id="fc-front"></div><div class="hint">Tap to flip</div></div>
+      <div class="face back"><div id="fc-back"></div></div>
+    </button>
+  </div>
+  <div class="fc-info"><span id="fc-pos">Card 1 of 3</span><span id="fc-known">I know it: 0 / 3</span></div>
+  <div class="row">
+    <button class="btn alt" id="fc-prev" type="button">Back</button>
+    <button class="btn alt" id="fc-next" type="button">Next</button>
+    <button class="btn alt" id="fc-shuf" type="button">Shuffle</button>
+  </div>
+  <div class="row">
+    <button class="btn" id="fc-yes" type="button">I know it</button>
+    <button class="btn warn" id="fc-no" type="button">Practice more</button>
+  </div>
+  <div class="fb" id="fc-msg" role="status" aria-live="polite"></div>
+</section>
+
+<!-- LISTEN -->
+<section class="panel" id="p-listen" hidden>
+  <h2>Listen and say it</h2>
+  <p class="sub">Tap Listen to hear each definition. Tap any word to hear it alone. Then say it aloud.</p>
+  <div class="warnbox" id="nospeech">Your device cannot read text aloud here. Try another browser, or read the definitions aloud yourself.</div>
+  <div id="listen-list"></div>
+  <div class="seg" style="margin-top:6px">
+    <button type="button" id="speed-norm" aria-pressed="true">Normal speed</button>
+    <button type="button" id="speed-slow" aria-pressed="false">Slow speed</button>
+  </div>
+  <p class="note">Tip: listen once, then say the sentence together with the voice.</p>
+</section>
+
+<!-- FADED TEXT -->
+<section class="panel" id="p-fade" hidden>
+  <h2>Reveal the faded words</h2>
+  <p class="sub">Try to remember each faded word first. Then tap it to check.</p>
+  <div class="seg" id="fade-level">
+    <button type="button" data-l="easy" aria-pressed="true">Easy: key words</button>
+    <button type="button" data-l="hard" aria-pressed="false">Hard: most words</button>
+  </div>
+  <div id="fade-list"></div>
+  <div class="row">
+    <button class="btn" id="fade-all" type="button">Reveal all</button>
+    <button class="btn alt" id="fade-reset" type="button">Hide again</button>
+  </div>
+  <div class="fb" id="fade-msg" role="status" aria-live="polite"></div>
+</section>
+
+<!-- QUIZ -->
+<section class="panel" id="p-quiz" hidden>
+  <h2>Choose the correct answer</h2>
+  <div id="quiz">
+    <div class="stats"><span id="qcount">Question 1 of 8</span><span id="qscore">Score: 0</span></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="qbarwrap"><span id="qbar"></span></div>
+    <p class="q" id="qtext"></p>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="qfb" role="status" aria-live="polite"></div>
+    <div class="row"><button class="btn hide" id="qnext" type="button">Next question</button></div>
+  </div>
+  <div class="result" id="qresult">
+    <div class="stars" id="qstars"></div>
+    <div class="big" id="qfinal"></div>
+    <p id="qmsg"></p>
+    <button class="btn" id="qagain" type="button">Try again</button>
+  </div>
+</section>
+
+<!-- FILL -->
+<section class="panel" id="p-fill" hidden>
+  <h2>Fill in the blanks</h2>
+  <p class="sub">Tap a word, then it fills the next empty blank. Tap a blank to take its word back.</p>
+  <div class="stats"><span id="fill-count">Filled: 0 / 6</span><span id="fill-score">Correct: 0 / 6</span></div>
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="fill-barwrap"><span id="fill-bar"></span></div>
+  <div id="fill-sents"></div>
+  <div class="bank" id="fill-bank" aria-label="Word bank"></div>
+  <div class="row">
+    <button class="btn" id="fill-check" type="button">Check answers</button>
+    <button class="btn alt" id="fill-reset" type="button">Start again</button>
+  </div>
+  <div class="fb" id="fill-fb" role="status" aria-live="polite"></div>
+</section>
+
+<!-- MATCH -->
+<section class="panel" id="p-match" hidden>
+  <h2>Match the word to its definition</h2>
+  <p class="sub">Tap a word, then tap the definition that matches it.</p>
+  <div class="stats"><span id="m-count">Matched: 0 / 3</span><span id="m-tries">Tries: 0</span></div>
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="m-barwrap"><span id="m-bar"></span></div>
+  <div class="col-title">Words</div>
+  <div id="m-terms"></div>
+  <div class="col-title">Definitions</div>
+  <div id="m-defs"></div>
+  <div class="fb" id="m-fb" role="status" aria-live="polite"></div>
+  <div class="row"><button class="btn alt" id="m-reset" type="button">Start again</button></div>
+</section>
+
+<!-- SORT -->
+<section class="panel" id="p-sort" hidden>
+  <h2>Sort the organisms</h2>
+  <p class="sub">Tap an organism, then tap the group where it belongs.</p>
+  <div class="stats"><span id="s-count">Sorted: 0 / 6</span><span id="s-miss">Mistakes: 0</span></div>
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="s-barwrap"><span id="s-bar"></span></div>
+  <div class="pool" id="s-pool"></div>
+  <div class="buckets" id="s-buckets"></div>
+  <div class="fb" id="s-fb" role="status" aria-live="polite"></div>
+  <div class="row"><button class="btn alt" id="s-reset" type="button">Start again</button></div>
+  <p class="note">These organisms are added examples, not from your book page.</p>
+</section>
+
+<!-- SUMMARY -->
+<section class="panel" id="p-sum" hidden>
+  <h2>Summary</h2>
+  <div class="scroll">
+  <table>
+    <tr><th>Word</th><th>What it does</th></tr>
+    <tr><td><b>Producer</b></td><td>Makes its own food by using energy from its surrounding.</td></tr>
+    <tr><td><b>Consumer</b></td><td>Cannot make its own food, therefore eats other organisms or organic matter.</td></tr>
+    <tr><td><b>Decomposers</b></td><td>Break down the remains of dead organisms or animal wastes to obtain energy and nutrients.</td></tr>
+  </table>
+  </div>
+  <h2 style="margin-top:18px">My progress</h2>
+  <ul class="check" id="check-list"></ul>
+</section>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){return document.getElementById(id);};
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function setBar(barId,wrapId,pct){$(barId).style.width=pct+"%";$(wrapId).setAttribute("aria-valuenow",Math.round(pct));}
+
+/* ---------- Data (from the book page) ---------- */
+var D=[
+ {id:"p",term:"Producer",def:"An organism that can make its own food by using energy from its surrounding.",
+  easy:["make","own","food","energy","surrounding"]},
+ {id:"c",term:"Consumer",def:"An organism that cannot make its own food therefore eats other organisms or organic matter.",
+  easy:["cannot","food","eats","organisms","organic","matter"]},
+ {id:"d",term:"Decomposers",def:"An organism that breaks down the remains of dead organisms or animal wastes to obtain energy and nutrients.",
+  easy:["breaks","remains","dead","wastes","energy","nutrients"]}
+];
+function clean(w){return w.replace(/[.,;:!?]/g,"").toLowerCase();}
+
+/* ---------- Progress ---------- */
+var ACT=[["flash","Flashcards"],["listen","Listen"],["fade","Reveal"],["quiz","Quiz"],["fill","Fill in"],["match","Match"],["sort","Sort"]];
+var doneSet={};
+function finish(k){
+  if(doneSet[k]) return;
+  doneSet[k]=true;
+  var n=0;for(var x in doneSet){if(doneSet[x])n++;}
+  setBar("hbar","hbarwrap",n/ACT.length*100);
+  $("hbarwrap").setAttribute("aria-valuenow",n);
+  $("hstat").textContent= n===ACT.length ? "Amazing! You finished all 7 activities." : "Activities finished: "+n+" / "+ACT.length;
+  var tb=document.querySelector('nav button[data-t="'+k+'"]'); if(tb) tb.classList.add("done");
+}
+
+/* ---------- Tabs ---------- */
+var TABS=[["learn","Learn"],["flash","Flashcards"],["listen","Listen"],["fade","Reveal"],["quiz","Quiz"],["fill","Fill in"],["match","Match"],["sort","Sort"],["sum","Summary"]];
+var nav=$("tabs");
+TABS.forEach(function(t){
+  var b=document.createElement("button");
+  b.type="button";b.setAttribute("role","tab");b.setAttribute("data-t",t[0]);b.textContent=t[1];
+  b.setAttribute("aria-selected",t[0]==="learn"?"true":"false");
+  b.addEventListener("click",function(){go(t[0]);});
+  nav.appendChild(b);
+});
+function go(key){
+  stopSpeech();
+  TABS.forEach(function(t){$("p-"+t[0]).hidden=(t[0]!==key);});
+  var bs=nav.querySelectorAll("button");
+  for(var i=0;i<bs.length;i++){bs[i].setAttribute("aria-selected",bs[i].getAttribute("data-t")===key?"true":"false");}
+  if(key==="sum") renderChecklist();
+  window.scrollTo(0,0);
+}
+var gos=document.querySelectorAll("[data-go]");
+for(var gi=0;gi<gos.length;gi++){(function(b){b.addEventListener("click",function(){go(b.getAttribute("data-go"));});})(gos[gi]);}
+function renderChecklist(){
+  var ul=$("check-list");ul.innerHTML="";
+  ACT.forEach(function(a){var li=document.createElement("li");li.textContent=(doneSet[a[0]]?"\u2705 ":"\u2B1C ")+a[1];ul.appendChild(li);});
+}
+
+/* ---------- Flashcards ---------- */
+var fcOrder=[0,1,2],fcI=0,fcMode="td",fcKnown={},fcSeen={};
+function fcRender(){
+  var d=D[fcOrder[fcI]];
+  var f=$("fc-front"),b=$("fc-back");
+  var termFront=(fcMode==="td");
+  f.className=termFront?"big":"txt"; f.textContent=termFront?d.term:d.def;
+  b.className=termFront?"txt":"big"; b.textContent=termFront?d.def:d.term;
+  $("fc").classList.remove("flip");
+  $("fc-pos").textContent="Card "+(fcI+1)+" of "+D.length;
+  var k=0;for(var x in fcKnown){if(fcKnown[x])k++;}
+  $("fc-known").textContent="I know it: "+k+" / "+D.length;
+}
+$("fc").addEventListener("click",function(){this.classList.toggle("flip");});
+$("fc-next").addEventListener("click",function(){fcI=(fcI+1)%D.length;fcRender();});
+$("fc-prev").addEventListener("click",function(){fcI=(fcI+D.length-1)%D.length;fcRender();});
+$("fc-shuf").addEventListener("click",function(){fcOrder=shuffle([0,1,2]);fcI=0;fcRender();});
+function fcRate(known){
+  var id=fcOrder[fcI];
+  fcKnown[id]=known;fcSeen[id]=true;
+  var seen=0,k=0;for(var x in fcSeen){if(fcSeen[x])seen++;}for(var y in fcKnown){if(fcKnown[y])k++;}
+  var m=$("fc-msg");m.className="fb show "+(known?"ok":"no");
+  m.textContent= known ? "Great! Keep going." : "No problem. Flip the card again and read it slowly.";
+  if(seen===D.length){
+    finish("flash");
+    m.textContent= k===D.length ? "You know all 3 cards. Excellent!" : "You rated all 3 cards. Practice the ones you are unsure about.";
+  }
+  if(known && seen<D.length){fcI=(fcI+1)%D.length;}
+  fcRender();
+}
+$("fc-yes").addEventListener("click",function(){fcRate(true);});
+$("fc-no").addEventListener("click",function(){fcRate(false);});
+var fcm=$("fc-mode").querySelectorAll("button");
+for(var fi=0;fi<fcm.length;fi++){(function(b){b.addEventListener("click",function(){
+  fcMode=b.getAttribute("data-m");
+  for(var j=0;j<fcm.length;j++){fcm[j].setAttribute("aria-pressed",fcm[j]===b?"true":"false");}
+  fcRender();
+});})(fcm[fi]);}
+fcRender();
+
+/* ---------- Listen ---------- */
+var synth=window.speechSynthesis, canSpeak=!!(synth&&window.SpeechSynthesisUtterance);
+var slow=false, activeWords=null, listened={};
+if(!canSpeak) $("nospeech").style.display="block";
+function pickVoice(){
+  if(!canSpeak) return null;
+  var v=synth.getVoices()||[];
+  for(var i=0;i<v.length;i++){if(/^en[-_]US/i.test(v[i].lang)) return v[i];}
+  for(var j=0;j<v.length;j++){if(/^en/i.test(v[j].lang)) return v[j];}
+  return null;
+}
+function clearHl(){
+  if(!activeWords) return;
+  for(var i=0;i<activeWords.length;i++){activeWords[i].el.classList.remove("hl");}
+}
+function stopSpeech(){ if(canSpeak){synth.cancel();} clearHl(); }
+function speak(text,words,onEnd){
+  if(!canSpeak){$("nospeech").style.display="block";return;}
+  synth.cancel(); clearHl(); activeWords=words||null;
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang="en-US"; u.rate=slow?0.6:0.9;
+  var v=pickVoice(); if(v) u.voice=v;
+  if(words){
+    u.onboundary=function(e){
+      if(e.name && e.name!=="word") return;
+      clearHl();
+      for(var i=0;i<words.length;i++){
+        if(e.charIndex>=words[i].start && e.charIndex<words[i].end){words[i].el.classList.add("hl");break;}
+      }
+    };
+  }
+  u.onend=function(){clearHl(); if(onEnd) onEnd();};
+  u.onerror=function(){clearHl();};
+  synth.speak(u);
+}
+function buildListen(){
+  var box=$("listen-list");box.innerHTML="";
+  D.forEach(function(d){
+    var card=document.createElement("div");card.className="lcard";
+    var h=document.createElement("h3");h.textContent=d.term;card.appendChild(h);
+    var wd=document.createElement("div");wd.className="words";
+    var words=[],pos=0,parts=d.def.split(" ");
+    parts.forEach(function(p,idx){
+      var s=document.createElement("span");s.className="w";s.textContent=p;
+      words.push({el:s,start:pos,end:pos+p.length});
+      (function(txt){s.addEventListener("click",function(){speak(clean(txt),null);});})(p);
+      wd.appendChild(s);
+      if(idx<parts.length-1) wd.appendChild(document.createTextNode(" "));
+      pos+=p.length+1;
+    });
+    card.appendChild(wd);
+    var r=document.createElement("div");r.className="row";r.style.marginTop="4px";
+    var b1=document.createElement("button");b1.type="button";b1.className="btn";b1.textContent="\u25B6 Listen to the definition";
+    b1.addEventListener("click",function(){
+      speak(d.def,words,function(){listened[d.id]=true;checkListen();});
+      if(!canSpeak) return;
+    });
+    var b2=document.createElement("button");b2.type="button";b2.className="btn alt";b2.textContent="Hear the word";
+    b2.addEventListener("click",function(){speak(d.term.toLowerCase(),null);});
+    var b3=document.createElement("button");b3.type="button";b3.className="btn alt";b3.textContent="Stop";
+    b3.addEventListener("click",stopSpeech);
+    r.appendChild(b1);r.appendChild(b2);r.appendChild(b3);card.appendChild(r);
+    box.appendChild(card);
+  });
+}
+function checkListen(){var n=0;for(var k in listened){if(listened[k])n++;}if(n===D.length) finish("listen");}
+function setSpeed(isSlow){
+  slow=isSlow;
+  $("speed-norm").setAttribute("aria-pressed",isSlow?"false":"true");
+  $("speed-slow").setAttribute("aria-pressed",isSlow?"true":"false");
+}
+$("speed-norm").addEventListener("click",function(){setSpeed(false);});
+$("speed-slow").addEventListener("click",function(){setSpeed(true);});
+if(canSpeak && synth.onvoiceschanged!==undefined){synth.onvoiceschanged=function(){};}
+buildListen();
+
+/* ---------- Faded text ---------- */
+var fadeLevel="easy", fadeRevealed=0, fadeTotal=0, fadeEls=[];
+function buildFade(){
+  var box=$("fade-list");box.innerHTML="";fadeEls=[];fadeRevealed=0;fadeTotal=0;
+  $("fade-msg").className="fb";
+  D.forEach(function(d){
+    var card=document.createElement("div");card.className="def "+d.id;
+    var h=document.createElement("h3");h.textContent=d.term;card.appendChild(h);
+    var p=document.createElement("p");
+    var parts=d.def.split(" ");
+    parts.forEach(function(w,idx){
+      var c=clean(w), hide=false;
+      if(fadeLevel==="easy"){hide=d.easy.indexOf(c)>-1;}
+      else {hide=(idx>2 && c.length>2);}
+      if(hide){
+        var s=document.createElement("button");s.type="button";s.className="fw";s.textContent=w;
+        s.setAttribute("aria-label","Hidden word. Tap to reveal.");
+        fadeTotal++;
+        s.addEventListener("click",function(){revealOne(s);});
+        fadeEls.push(s);p.appendChild(s);
+      } else {p.appendChild(document.createTextNode(w));}
+      if(idx<parts.length-1) p.appendChild(document.createTextNode(" "));
+    });
+    card.appendChild(p);box.appendChild(card);
+  });
+}
+function revealOne(s){
+  if(s.classList.contains("on")) return;
+  s.classList.add("on");s.removeAttribute("aria-label");fadeRevealed++;
+  if(fadeRevealed===fadeTotal){
+    var m=$("fade-msg");m.className="fb show ok";m.textContent="You revealed every word. Now try the Hard level!";
+    finish("fade");
+  }
+}
+$("fade-all").addEventListener("click",function(){fadeEls.forEach(revealOne);});
+$("fade-reset").addEventListener("click",buildFade);
+var fl=$("fade-level").querySelectorAll("button");
+for(var li=0;li<fl.length;li++){(function(b){b.addEventListener("click",function(){
+  fadeLevel=b.getAttribute("data-l");
+  for(var j=0;j<fl.length;j++){fl[j].setAttribute("aria-pressed",fl[j]===b?"true":"false");}
+  buildFade();
+});})(fl[li]);}
+buildFade();
+
+/* ---------- Quiz ---------- */
+var Q=[
+ {q:"Which organism can make its own food?",o:["Producer","Consumer","Decomposer"],a:0,e:"A producer makes its own food by using energy from its surrounding."},
+ {q:"An organism that cannot make its own food and eats other organisms is a ...",o:["Producer","Consumer","Decomposer"],a:1,e:"A consumer cannot make its own food, so it eats other organisms or organic matter."},
+ {q:"Which organism breaks down the remains of dead organisms?",o:["Producer","Consumer","Decomposer"],a:2,e:"Decomposers break down the remains of dead organisms or animal wastes."},
+ {q:"Complete the sentence: A producer can make its own ______.",o:["food","remains","wastes"],a:0,e:"A producer can make its own food."},
+ {q:"True or false: A consumer can make its own food.",o:["True","False"],a:1,e:"False. A consumer cannot make its own food, therefore it eats other organisms or organic matter."},
+ {q:"A rabbit eats grass. The rabbit is a ...",o:["Producer","Consumer","Decomposer"],a:1,e:"The rabbit cannot make its own food and eats another organism, so it is a consumer."},
+ {q:"Why do decomposers break down remains and wastes?",o:["To obtain energy and nutrients","To make a rabbit","To make sunlight"],a:0,e:"Decomposers break them down to obtain energy and nutrients."},
+ {q:"Grass makes its own food. Grass is a ...",o:["Producer","Consumer","Decomposer"],a:0,e:"An organism that makes its own food is a producer."}
+];
+var qi=0,qscore=0,qlocked=false;
+function qShow(){
+  var it=Q[qi];qlocked=false;
+  $("qcount").textContent="Question "+(qi+1)+" of "+Q.length;
+  $("qscore").textContent="Score: "+qscore;
+  setBar("qbar","qbarwrap",qi/Q.length*100);
+  $("qtext").textContent=it.q;
+  var o=$("opts");o.innerHTML="";
+  $("qfb").className="fb";$("qfb").textContent="";
+  $("qnext").className="btn hide";
+  it.o.forEach(function(t,k){
+    var b=document.createElement("button");b.type="button";b.className="opt";b.textContent=t;
+    b.addEventListener("click",function(){qChoose(k);});o.appendChild(b);
+  });
+}
+function qChoose(k){
+  if(qlocked) return;qlocked=true;
+  var it=Q[qi],bs=$("opts").querySelectorAll(".opt");
+  for(var i=0;i<bs.length;i++){bs[i].disabled=true;}
+  bs[it.a].classList.add("right");
+  var fb=$("qfb");
+  if(k===it.a){qscore++;fb.className="fb show ok";fb.textContent="Correct! "+it.e;}
+  else{bs[k].classList.add("wrong");fb.className="fb show no";fb.textContent="Not quite. "+it.e;}
+  $("qscore").textContent="Score: "+qscore;
+  setBar("qbar","qbarwrap",(qi+1)/Q.length*100);
+  $("qnext").textContent=(qi===Q.length-1)?"See my result":"Next question";
+  $("qnext").className="btn";
+}
+$("qnext").addEventListener("click",function(){qi++;if(qi>=Q.length){qFinish();}else{qShow();}});
+function qFinish(){
+  $("quiz").style.display="none";$("qresult").className="result show";
+  $("qfinal").textContent=qscore+" / "+Q.length;
+  var s=qscore>=Q.length-1?3:(qscore>=Math.ceil(Q.length*0.6)?2:1),st="";
+  for(var n=0;n<3;n++){st+=(n<s)?"\u2605":"\u2606";}
+  $("qstars").textContent=st;
+  $("qmsg").textContent=qscore===Q.length?"Perfect! You know all three words.":(s>=2?"Well done! Review the questions you missed.":"Good try! Read the definitions again and try once more.");
+  finish("quiz");
+}
+$("qagain").addEventListener("click",function(){qi=0;qscore=0;$("qresult").className="result";$("quiz").style.display="block";qShow();});
+qShow();
+
+/* ---------- Fill in the blanks ---------- */
+var FILL=[
+ {pre:"A producer makes its own ",ans:"food",post:" by using energy from its surrounding."},
+ {pre:"A consumer ",ans:"cannot",post:" make its own food."},
+ {pre:"A consumer eats other organisms or ",ans:"organic",post:" matter."},
+ {pre:"Decomposers break down the remains of ",ans:"dead",post:" organisms or animal wastes."},
+ {pre:"Decomposers break down the remains of dead organisms or animal ",ans:"wastes",post:"."},
+ {pre:"Decomposers obtain energy and ",ans:"nutrients",post:"."}
+];
+var BANK=["food","cannot","organic","dead","wastes","nutrients","sunlight","can"];
+var fVal,fLock,fSel,fBank;
+function fillInit(){
+  fVal=[];fLock=[];for(var i=0;i<FILL.length;i++){fVal.push(null);fLock.push(false);}
+  fSel=-1;fBank=shuffle(BANK);
+  $("fill-fb").className="fb";
+  fillRender();
+}
+function fillRender(){
+  var box=$("fill-sents");box.innerHTML="";
+  FILL.forEach(function(f,i){
+    var p=document.createElement("p");p.className="sent";
+    p.appendChild(document.createTextNode(f.pre));
+    var b=document.createElement("button");b.type="button";b.className="blank";
+    b.textContent=fVal[i]||"\u2003\u2003";
+    if(i===fSel&&!fLock[i]) b.classList.add("sel");
+    if(fLock[i]){b.classList.add("right");}
+    else if(fVal[i]&&b.getAttribute("data-bad")==="1"){b.classList.add("wrong");}
+    if(fWrong[i]&&!fLock[i]&&fVal[i]) b.classList.add("wrong");
+    b.setAttribute("aria-label","Blank "+(i+1)+(fVal[i]?": "+fVal[i]:": empty"));
+    b.addEventListener("click",function(){
+      if(fLock[i]) return;
+      if(fVal[i]){fVal[i]=null;fWrong[i]=false;}
+      fSel=i;fillRender();
+    });
+    p.appendChild(b);p.appendChild(document.createTextNode(f.post));box.appendChild(p);
+  });
+  var bank=$("fill-bank");bank.innerHTML="";
+  fBank.forEach(function(w){
+    var used=fVal.indexOf(w)>-1;
+    var c=document.createElement("button");c.type="button";c.className="chip";c.textContent=w;c.disabled=used;
+    c.addEventListener("click",function(){fillPlace(w);});bank.appendChild(c);
+  });
+  var filled=0,right=0;
+  for(var k=0;k<FILL.length;k++){if(fVal[k])filled++;if(fLock[k])right++;}
+  $("fill-count").textContent="Filled: "+filled+" / "+FILL.length;
+  $("fill-score").textContent="Correct: "+right+" / "+FILL.length;
+  setBar("fill-bar","fill-barwrap",right/FILL.length*100);
+}
+var fWrong=[false,false,false,false,false,false];
+function fillPlace(w){
+  var target=-1;
+  if(fSel>-1&&!fLock[fSel]&&!fVal[fSel]){target=fSel;}
+  else{for(var i=0;i<FILL.length;i++){if(!fLock[i]&&!fVal[i]){target=i;break;}}}
+  if(target<0) return;
+  fVal[target]=w;fWrong[target]=false;fSel=-1;
+  for(var j=0;j<FILL.length;j++){if(!fLock[j]&&!fVal[j]){fSel=j;break;}}
+  fillRender();
+}
+$("fill-check").addEventListener("click",function(){
+  var filled=0,right=0;
+  for(var i=0;i<FILL.length;i++){
+    if(fVal[i]){filled++;if(fVal[i]===FILL[i].ans){fLock[i]=true;fWrong[i]=false;}else{fWrong[i]=true;}}
+    if(fLock[i]) right++;
+  }
+  var fb=$("fill-fb");
+  if(filled===0){fb.className="fb show no";fb.textContent="Tap a word first to fill a blank.";fillRender();return;}
+  if(right===FILL.length){fb.className="fb show ok";fb.textContent="All correct! Excellent work.";finish("fill");}
+  else if(filled<FILL.length){fb.className="fb show no";fb.textContent="Fill all the blanks, then check again. Red blanks are wrong: tap them to try again.";}
+  else{fb.className="fb show no";fb.textContent=right+" of "+FILL.length+" correct. Tap the red blanks and try other words.";}
+  fillRender();
+});
+$("fill-reset").addEventListener("click",function(){fWrong=[false,false,false,false,false,false];fillInit();});
+fillInit();
+
+/* ---------- Match ---------- */
+var mSelT=null,mSelD=null,mDone,mTries;
+function matchInit(){
+  mSelT=null;mSelD=null;mDone={};mTries=0;
+  var tb=$("m-terms"),db=$("m-defs");tb.innerHTML="";db.innerHTML="";
+  D.forEach(function(d){
+    var b=document.createElement("button");b.type="button";b.className="pick";b.textContent=d.term;b.setAttribute("data-id",d.id);
+    b.addEventListener("click",function(){mPick("t",b);});tb.appendChild(b);
+  });
+  shuffle(D).forEach(function(d){
+    var b=document.createElement("button");b.type="button";b.className="pick";b.textContent=d.def;b.setAttribute("data-id",d.id);
+    b.addEventListener("click",function(){mPick("d",b);});db.appendChild(b);
+  });
+  $("m-fb").className="fb";mStats();
+}
+function mStats(){
+  var n=0;for(var k in mDone){if(mDone[k])n++;}
+  $("m-count").textContent="Matched: "+n+" / "+D.length;
+  $("m-tries").textContent="Tries: "+mTries;
+  setBar("m-bar","m-barwrap",n/D.length*100);
+}
+function mPick(kind,b){
+  if(b.classList.contains("right")) return;
+  var group=(kind==="t")?$("m-terms"):$("m-defs"),bs=group.querySelectorAll(".pick");
+  for(var i=0;i<bs.length;i++){bs[i].classList.remove("sel");}
+  b.classList.add("sel");
+  if(kind==="t") mSelT=b; else mSelD=b;
+  if(mSelT&&mSelD){
+    mTries++;
+    var fb=$("m-fb"),t=mSelT,d=mSelD;
+    if(t.getAttribute("data-id")===d.getAttribute("data-id")){
+      t.classList.remove("sel");d.classList.remove("sel");t.classList.add("right");d.classList.add("right");
+      mDone[t.getAttribute("data-id")]=true;
+      fb.className="fb show ok";fb.textContent="Correct match!";
+      var n=0;for(var k in mDone){if(mDone[k])n++;}
+      if(n===D.length){fb.textContent="All matched in "+mTries+" tries. Great job!";finish("match");}
+    } else {
+      t.classList.remove("sel");d.classList.remove("sel");t.classList.add("wrong");d.classList.add("wrong");
+      fb.className="fb show no";fb.textContent="Not a match. Read the definition again.";
+      setTimeout(function(){t.classList.remove("wrong");d.classList.remove("wrong");},700);
+    }
+    mSelT=null;mSelD=null;mStats();
+  }
+}
+$("m-reset").addEventListener("click",matchInit);
+matchInit();
+
+/* ---------- Sort ---------- */
+var SORT=[
+ {n:"Grass",g:"p",why:"Grass makes its own food, so it is a producer."},
+ {n:"Rabbit",g:"c",why:"A rabbit cannot make its own food and eats other organisms, so it is a consumer."},
+ {n:"Mushroom",g:"d",why:"A mushroom breaks down the remains of dead organisms, so it is a decomposer."},
+ {n:"Tree",g:"p",why:"A tree makes its own food, so it is a producer."},
+ {n:"Lion",g:"c",why:"A lion cannot make its own food and eats other organisms, so it is a consumer."},
+ {n:"Mold",g:"d",why:"Mold breaks down dead remains, so it is a decomposer."}
+];
+var sSel=null,sPlaced,sMiss;
+function sortInit(){
+  sSel=null;sPlaced=0;sMiss=0;
+  var pool=$("s-pool");pool.innerHTML="";
+  shuffle(SORT).forEach(function(it){
+    var c=document.createElement("button");c.type="button";c.className="chip";c.textContent=it.n;
+    c.addEventListener("click",function(){
+      var all=pool.querySelectorAll(".chip");for(var i=0;i<all.length;i++){all[i].classList.remove("sel");}
+      c.classList.add("sel");sSel={item:it,el:c};
+    });
+    pool.appendChild(c);
+  });
+  var bk=$("s-buckets");bk.innerHTML="";
+  D.forEach(function(d){
+    var b=document.createElement("button");b.type="button";b.className="bucket "+d.id;b.setAttribute("data-g",d.id);
+    var t=document.createElement("b");t.textContent=d.term+(d.id==="d"?"":"s");b.appendChild(t);
+    var box=document.createElement("span");box.className="holder";b.appendChild(box);
+    b.addEventListener("click",function(){sortDrop(d.id,box);});bk.appendChild(b);
+  });
+  $("s-fb").className="fb";sStats();
+}
+function sStats(){
+  $("s-count").textContent="Sorted: "+sPlaced+" / "+SORT.length;
+  $("s-miss").textContent="Mistakes: "+sMiss;
+  setBar("s-bar","s-barwrap",sPlaced/SORT.length*100);
+}
+function sortDrop(g,holder){
+  var fb=$("s-fb");
+  if(!sSel){fb.className="fb show no";fb.textContent="Tap an organism first.";return;}
+  if(sSel.item.g===g){
+    var tag=document.createElement("span");tag.className="placed";tag.textContent=sSel.item.n;holder.appendChild(tag);
+    sSel.el.remove();sPlaced++;
+    fb.className="fb show ok";fb.textContent="Correct! "+sSel.item.why;
+    sSel=null;
+    if(sPlaced===SORT.length){fb.textContent="All sorted! Great job.";finish("sort");}
+  } else {
+    sMiss++;fb.className="fb show no";
+    fb.textContent="Not this group. Think: does it make its own food, eat others, or break down dead remains?";
+  }
+  sStats();
+}
+$("s-reset").addEventListener("click",sortInit);
+sortInit();
+
+})();
+</script>
+</body>
+</html>

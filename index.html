@@ -88,8 +88,15 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 <noscript>
   <div class="plain">
     <p>JavaScript is off. All lessons:</p>
+    <strong>Vina — Grade 6 · Arabic</strong>
+    <a href="arabic6-unit1-lets-live-together.html" dir="rtl" lang="ar">لِنَتَعايَشْ مَعاً – الوَحْدَةُ ١</a>
+    <a href="arabic6-salah-visit.html" dir="rtl" lang="ar">زِيارَةُ صَلاحٍ</a>
+    <a href="arabic6-tale-of-two-friends.html" dir="rtl" lang="ar">حِكايَةُ صَديقَيْنِ – الوَحْدَةُ ١</a>
+    <a href="arabic6-my-friend-ex6-7.html" dir="rtl" lang="ar">صَديقي: التَّمْرينانِ السّادِسُ وَالسّابِعُ</a>
     <strong>Vina — Grade 6 · Math</strong>
     <a href="math-lesson-1-4.html">Order of Operations — Lesson 1-4</a>
+    <strong>Vina — Grade 6 · Science</strong>
+    <a href="science6-producers-consumers-decomposers.html">Producers, Consumers and Decomposers</a>
     <strong>Ara — Grade 7 · Arabic</strong>
     <a href="arabic-storm-lesson.html" dir="rtl" lang="ar">درس اللغة العربية التفاعلي: العَاصِفَةُ</a>
     <a href="winter-memorization-dictation.html" dir="rtl" lang="ar">فصل الشتاء — حفظ وإملاء</a>
@@ -129,9 +136,23 @@ var SUBJECTS = [   /* the same 13 subjects for both classes (from the timetables
 
 var LESSONS = {
   vina: {
+    arabic: [
+      { title: "لِنَتَعايَشْ مَعاً – الوَحْدَةُ ١",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-unit1-lets-live-together.html" },
+      { title: "زِيارَةُ صَلاحٍ",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-salah-visit.html" },
+      { title: "حِكايَةُ صَديقَيْنِ – الوَحْدَةُ ١",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-tale-of-two-friends.html" },
+      { title: "صَديقي: التَّمْرينانِ السّادِسُ وَالسّابِعُ",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-my-friend-ex6-7.html" }
+    ],
     math: [
       { title: "Order of Operations — Lesson 1-4", sub: "Book pages 28–33",
         lang: "en", dir: "ltr", tag: "EN", href: "math-lesson-1-4.html" }
+    ],
+    science: [
+      { title: "Producers, Consumers and Decomposers", sub: "Definitions",
+        lang: "en", dir: "ltr", tag: "EN", href: "science6-producers-consumers-decomposers.html" }
     ]
   },
   ara: {
