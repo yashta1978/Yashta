@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دەنگ و پیت و برگە</title>
+<style>
+:root{--ink:#111;--bg:#fff;--soft:#f3f5f9;--line:#222;--head:#0b2a5b;--ok:#0a6b2d;--okbg:#d8f3df;--bad:#9b1111;--badbg:#fbdada;--hl:#fff1b8;--vow:#0b2a5b}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;font-size:19px;line-height:2;direction:rtl}
+#bar{position:fixed;top:0;right:0;height:6px;width:0;background:var(--head);z-index:50}
+header{background:var(--head);color:#fff;padding:28px 16px 20px;text-align:center}
+header h1{margin:0;font-size:30px;line-height:1.6}
+header p{margin:6px 0 0;font-size:18px}
+nav{position:sticky;top:6px;z-index:40;background:#fff;border-bottom:2px solid var(--line);display:flex;overflow-x:auto;white-space:nowrap}
+nav a{flex:0 0 auto;padding:10px 14px;color:var(--head);text-decoration:none;font-weight:bold;font-size:17px;border-left:1px solid #bbb}
+main{max-width:820px;margin:0 auto;padding:0 16px 120px}
+section{padding-top:24px;margin-top:8px}
+h2{margin:0 0 10px;font-size:26px;color:var(--head);border-bottom:3px solid var(--head);line-height:1.7}
+h3{margin:22px 0 6px;font-size:22px;color:var(--head)}
+h4{margin:14px 0 4px;font-size:19px}
+p{margin:8px 0}
+.box{border:2px solid var(--line);padding:10px 14px;margin:12px 0;background:var(--soft)}
+.rule{border:2px solid var(--head);background:#eef3ff;padding:10px 14px;margin:12px 0}
+.rule b.t{display:block;color:var(--head)}
+.note{border:1px dashed #555;padding:8px 12px;margin:12px 0;font-size:17px;background:#fafafa}
+ol,ul{padding-right:26px;margin:6px 0}
+ol{list-style-type:arabic-indic}
+li{margin:4px 0}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{display:inline-block;min-width:38px;text-align:center;padding:2px 10px;border:2px solid var(--line);background:#fff;font-size:22px;line-height:1.7}
+.chip.v{background:var(--vow);color:#fff}
+.chip.s{background:#fff;border-style:solid}
+.chip small{display:block;font-size:13px;line-height:1.3;padding-bottom:2px}
+.legend{font-size:16px}
+.tree{display:flex;flex-direction:column;align-items:center;gap:0;margin:14px 0}
+.nd{border:2px solid var(--line);background:#fff;padding:6px 14px;text-align:center;font-weight:bold;min-width:150px}
+.nd.top{background:var(--head);color:#fff}
+.nd.a{background:#e4f1fa}.nd.b{background:#fde8c8}.nd.c{background:#e1f5e1}.nd.d{background:#fadcdc}
+.ln{width:2px;height:16px;background:var(--line)}
+.kids{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;border-top:2px solid var(--line);padding-top:0;margin-top:0}
+.kid{display:flex;flex-direction:column;align-items:center}
+.kid .ln{height:14px}
+button{font-family:inherit;font-size:18px;cursor:pointer;border:2px solid var(--line);background:#fff;color:var(--ink);padding:6px 14px;min-height:44px}
+button.pri{background:var(--head);color:#fff;border-color:var(--head)}
+button.sel{background:var(--hl)}
+input[type=text]{font-family:inherit;font-size:22px;padding:6px 10px;border:2px solid var(--line);min-height:46px;width:100%;max-width:340px;direction:rtl}
+.blur{filter:blur(7px);cursor:pointer;user-select:none}
+.blur.on{filter:none}
+.bq{border:2px solid var(--line);padding:6px 12px;margin:8px 0;background:#fff}
+.card{border:2px solid var(--line);padding:14px;margin:10px 0;min-height:90px;cursor:pointer;background:#fff}
+.card.back{background:var(--hl)}
+.card .lbl{font-size:15px;color:#444;display:block}
+.q{border:2px solid var(--line);padding:10px 12px;margin:14px 0;background:#fff}
+.q .qt{font-weight:bold}
+.opt{display:block;width:100%;text-align:right;margin:6px 0;min-height:46px}
+.opt.good{background:var(--okbg);border-color:var(--ok);color:#06401c;font-weight:bold}
+.opt.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad);font-weight:bold}
+.score{font-weight:bold;border:2px solid var(--line);padding:6px 12px;display:inline-block;background:var(--hl);margin:8px 0}
+.ans{display:none;border:2px solid var(--ok);background:var(--okbg);padding:8px 12px;margin:8px 0}
+.ans.on{display:block}
+table{border-collapse:collapse;width:100%;font-size:18px;margin:10px 0}
+th,td{border:2px solid var(--line);padding:6px 8px;text-align:right;vertical-align:top}
+th{background:var(--head);color:#fff}
+.syl{display:inline-block;border:2px solid var(--line);padding:0 8px;margin:2px;background:#fff}
+.syl.k{background:#fff1b8}.syl.d{background:#cfe4ff}
+dl{margin:8px 0}dt{font-weight:bold;color:var(--head);margin-top:8px}dd{margin:0 0 6px 0;padding-right:10px}
+dt button{border:none;background:none;padding:0;min-height:0;font-weight:bold;color:var(--head);text-decoration:underline;font-size:19px}
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;align-items:center;justify-content:center;padding:16px}
+#modal.on{display:flex}
+#modal div.in{background:#fff;border:3px solid var(--line);padding:16px;max-width:420px;width:100%}
+#fab{position:fixed;bottom:14px;left:14px;z-index:60;background:var(--head);color:#fff;border-color:var(--head);min-height:48px}
+#panel{display:none;position:fixed;top:0;bottom:0;left:0;width:min(86vw,360px);background:#fff;border-right:3px solid var(--line);z-index:70;overflow:auto;padding:14px}
+#panel.on{display:block}
+#panel h3{margin-top:0}
+footer{text-align:center;padding:16px;font-size:16px;border-top:2px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<header>
+  <h1>دەنگ و پیت · برگە</h1>
+  <p>وانا یەکەم و وانا دووەم · بەشێ ڕێزمانێ · لاپەڕێن ١٠ هەتا ٢٠ ژ کتێبێ</p>
+</header>
+<nav>
+  <a href="#hedef">ئارمانج</a>
+  <a href="#w1">دەنگ و پیت</a>
+  <a href="#w2">برگە</a>
+  <a href="#bir">ئێتمەوە</a>
+  <a href="#kart">کارت</a>
+  <a href="#rahenan">ڕاهێنان</a>
+  <a href="#koiz">کویز</a>
+  <a href="#ferheng">فەرهەنگۆک</a>
+</nav>
+<main>
+
+<section id="hedef">
+  <h2>ئارمانجێن وانێ</h2>
+  <ol>
+    <li>پێناسا دەنگ و پیتێ بزانین و جیاوازیا د ناڤبەرا وان دا بدەینە دیارکرن.</li>
+    <li>دەنگێن نەبزوێن (٢٩) و دەنگێن بزوێن (٨) بناسین؛ و بزوێنێن کورت (٣) ژ یێن درێژ (٥) جودا بکەین.</li>
+    <li>ب ڕێسایان جیاکەین کا (و) و (ی) بزوێنن یان نەبزوێنن.</li>
+    <li>برگێ بناسین و شێوەیێن پێکهاتنا وێ بزانین.</li>
+    <li>برگەیا کورت ژ برگەیا درێژ جودا بکەین.</li>
+  </ol>
+  <div class="note">ئەڤ وانە ژ لاپەڕێن ١٠ هەتا ٢٠ یێن کتێبێ هاتیە ئامادەکرن. پێناسە و ڕێسا و نمونەیێن کتێبێ وەک خۆ هاتینە ڤەگوهاستن، و شروڤەکرن ب کوردیا بەهدینی هاتیە نڤیسین. دەما تشتەک ژ کتێبێ نەبیت، ل جهێ خۆ دیار کریە.</div>
+</section>
+
+<section id="w1">
+  <h2>وانا یەکەم: دەنگ و پیت</h2>
+
+  <h3>١. دەنگ چیە؟</h3>
+  <div class="rule"><b class="t">دەنگ</b>بچوکترین دانەیا ئاخافتنێیە، یا ژ دەڤی دهێتە دەر.</div>
+  <p>هەر تشتەکێ بخوازین بێژین، ب ڕێکا دەنگان دەردبڕین. ئەو ب گوهێ خۆ دبیستین.</p>
+
+  <h3>٢. پیت چیە؟</h3>
+  <div class="rule"><b class="t">پیت</b>ئەو هێمایێن تایبەتنە یێن بۆ هەر دەنگەکێ ژ دەنگێن ئاخافتنا مرۆڤی هاتینە دانان؛ واتە پیت وێنەیێ دەنگانە.</div>
+  <p>هەر تشتەکێ بخوازین بنڤیسین، ب ڕێکا پیتان دنڤیسین. ئەو ب چاڤێن خۆ دبینین.</p>
+  <div class="box"><b>نمونە:</b> دەما دەنگێ (ک) دبێژین، ئەم تنێ دەنگەکێ ب گوهێ خۆ دبیستین؛ دەما دنڤیسین، وێنەیەک بۆ وی دەنگی دانین: (ک).</div>
+  <div class="rule"><b class="t">ڕێسا</b>هەمی زمان کۆمەڵەیەک دەنگێن تایبەت ب خۆ هەنە، ب هۆیا ڤان دەنگان وشە و ڕستە دهێنە دروستکرن. هەر دەنگەکێ ل زمانێ کوردی هێمایەک بۆ هاتیە دانان، ئەو (پیت) ناڤ دکەن.</div>
+
+  <h3>٣. نەخشا دەنگ و پیتان</h3>
+  <div class="tree" aria-label="نەخشا دەنگ و پیتان">
+    <div class="nd top">دەنگ و پیت</div>
+    <div class="ln"></div>
+    <div class="kids">
+      <div class="kid"><div class="ln"></div>
+        <div class="nd a">دەنگێن زمانێ کوردی</div>
+        <div class="ln"></div>
+        <div class="kids">
+          <div class="kid"><div class="ln"></div>
+            <div class="nd d">دەنگێن بزوێن<br>ژمارەیا وان (٨) دەنگە</div>
+            <div class="ln"></div>
+            <div class="kids">
+              <div class="kid"><div class="ln"></div><div class="nd d">بزوێنێن کورت<br>(٣) دەنگ</div></div>
+              <div class="kid"><div class="ln"></div><div class="nd d">بزوێنێن درێژ<br>(٥) دەنگ</div></div>
+            </div>
+          </div>
+          <div class="kid"><div class="ln"></div><div class="nd c">دەنگێن نەبزوێن<br>ژمارەیا وان (٢٩) دەنگە</div></div>
+        </div>
+      </div>
+      <div class="kid"><div class="ln"></div><div class="nd b">پیتێن زمانێ کوردی<br>ژمارەیا وان (٣٤) پیتە</div></div>
+    </div>
+  </div>
+
+  <h3>٤. پیتێن زمانێ کوردی (٣٤ پیت)</h3>
+  <p>ئەڤە پیتێن زمانێ کوردینە ب ڕیزکرنا کتێبێ:</p>
+  <div class="row" id="alphabet"></div>
+  <p class="legend">ب ڕەنگێ تاری: پیتێن بزوێن یێن جێگیر (ا، ە، ۆ، وو، ێ). ب ڕەنگێ سپی: پیتێن نەبزوێن؛ (و) و (ی) ژی ب سپی هاتینە، چونکی ل گۆر جهێ خۆ دبنە بزوێن یان نەبزوێن (بنێرە بەشێ ٧).</p>
+
+  <h3>٥. دەنگێن نەبزوێن (٢٩ دەنگ)</h3>
+  <p>ئەو دەنگێن ب ئاسانی ناهێنە گۆتن؛ دەما دەرئێخستنا وان دا بەربەست چێدبیت، و ب هاریکاریا دەنگێن بزوێن ژ دەڤی دەردکەڤن.</p>
+  <div class="row" id="cons"></div>
+
+  <h3>٦. دەنگێن بزوێن (٨ دەنگ)</h3>
+  <p>ئەو دەنگێن ب ئاسانی ژ دەڤی دەردکەڤن و دەما گۆتنا وان دا بەربەست چێنابیت؛ هاریکاریا دەنگێن نەبزوێن دکەن بۆ ئەوێ ب ئاسانی بهێنە گۆتن.</p>
+  <div class="row" id="vow"></div>
+  <div class="box">
+    <b>بزوێنێن کورت (٣):</b> بزرۆکە (إ)، ە، و.<br>
+    <b>بزوێنێن درێژ (٥):</b> ا، ۆ، وو، ێ، ی.
+  </div>
+  <p>دەنگێ بزرۆکە ل زمانێ کوردی پیتەکێ تایبەت نینە و ناهێتە نڤیسین. ل وشێن (ژن، من، مل، دڵ، شل، کل...) ئەو دکەڤیتە د ناڤبەرا دوو دەنگێن نەبزوێن دا، لێ دەرناکەڤیت د نڤیسینێ دا.</p>
+
+  <h3>٧. جیاکرنا (و) و (ی)</h3>
+  <p>ئەگەر ب وردی بنێریە دەنگێن (و، ی)، دبینی ئەو ل هەردوو کۆمەلێن دەنگان (بزوێن و نەبزوێن) هەنە و ل نڤیسینێ دا شێوەیەکێ وان هەیە. هندەک نیشانێن جیاکەر هەنە کو ب هۆیا وان دەنگ دهێنە ناسین.</p>
+  <ol>
+    <li>دەنگێ (و، ی) یێ بزوێن هەرگیز ل سەرەتایا (وشە و برگە) نایێت؛ ئەگەر ل ڤان جهان بیت، دەنگێ <b>نەبزوێنە</b>، وەک: وەرزش، ئاواز، یاری، بڕیار.</li>
+    <li>هەر دەمەکێ ل برگەیەکێ دا ل پێش و پاش دەنگێ (و، ی) دەنگەکێ <b>بزوێن</b> هەبیت، ئەو (و، ی) دبیتە دەنگێ <b>نەبزوێن</b>؛ چونکی ل زمانێ کوردی دا دوو دەنگێن بزوێن ب دویڤ ئێک ڤە نایێن. وەک: پەیکەر، سێو، لالاو، یار.</li>
+    <li>ئەگەر ل برگەیەکێ دا ل پێش یان پاش (و، ی) دەنگەکێ <b>نەبزوێن</b> هاتبیت، ئەو (و، ی) دبیتە دەنگێ <b>بزوێن</b>. وەک: کورد، گوڵ، بڕین، فڕین.</li>
+  </ol>
+
+  <h3>٨. ئامیرێ تاقیکرنێ: پیتێن بزوێن و نەبزوێن</h3>
+  <p>وشەیەکێ بنڤیسە، ئەز دێ ب ڕێسایێن سەرێ پیتێن وێ جودا کەم.</p>
+  <div class="row"><input type="text" id="w-in" placeholder="وەک: کورد" autocomplete="off"><button class="pri" id="w-go">بشکێنە</button></div>
+  <div id="w-out"></div>
+  <p class="legend">ڕەنگێ تاری = بزوێن · ڕەنگێ سپی = نەبزوێن. ئامیر تنێ پیتێن نڤیسکی دبینیت؛ بزرۆکە ناهێتە نڤیسین، ژ ڤێ چەندێ ژمارا وێ نایێتە نیشاندان. ئەنجامێن ئامیری ب ڕێسایێن سەرێ هاتینە ڕاگرتن، نە ژ کتێبێ.</p>
+</section>
+
+<section id="w2">
+  <h2>وانا دووەم: برگە</h2>
+
+  <h3>١. برگە چیە؟</h3>
+  <div class="rule"><b class="t">برگە</b>بریتیە ژ چەند دەنگەکان، یێن ب یەک تەوژم ژ دەڤی دهێنە دەر؛ ژ بزوێنەکێ و نەبزوێنەکێ یان پتر ژ نەبزوێنەکێ پێکدهێت.</div>
+  <p>ئەگەر ب وردی سەرنج بدەینە وان وشەیێن ڤان ڕستەیان پێکئینای، دبینین هەر وشەیەک بریتیە ژ چەند برگەیەکان، یێن ب هاریکاریا دەنگ و پیتێن بزوێن دهێنە گۆتن و نڤیسین.</p>
+
+  <h3>٢. هەفت ڕستە و برگەیێن وان</h3>
+  <p>ل سەر ژمارەیەکێ بکلیک بکە دا برگەیێن وێ ڕستێ ببینی:</p>
+  <div id="sent" class="row"></div>
+  <div id="sent-out" class="box">ڕستەیەکێ هەلبژێرە.</div>
+
+  <h3>٣. برگە ب چەند شێوەیان پێکدهێت</h3>
+  <div class="box">
+    <b>ئ.</b> هندەک ژ ڤان برگەیان ژ دوو دەنگان پێکهاتینە: دەنگێ یەکەم <b>نەبزوێنە</b>، یێ دووەم <b>بزوێنە</b>. (دە، کە، کا...هتد).<br>
+    <b>ب.</b> هندەک ژ سێ دەنگان پێکهاتینە: دەنگێ یەکەم و سێیەم <b>نەبزوێنن</b>، یێ دووەم <b>بزوێنە</b>: (دەم، باخ، ئاش...هتد).<br>
+    <b>پ.</b> برگە هەیە ژ چار دەنگان پێکهاتیە: دەنگێ یەکەم و سێیەم و چوارەم <b>نەبزوێنن</b>، یێ دووەم <b>بزوێنە</b>: (دەست، خەست، کورد...هتد).
+  </div>
+
+  <h3>٤. برگە دوو جۆرە</h3>
+  <h4>١. برگەیا کورت</h4>
+  <div class="rule">بریتیە ژ وێ برگەیێ ژ دەنگەکێ <b>نەبزوێن</b> و <b>بزوێنەکێ کورت</b> پێکهاتبیت.</div>
+  <h4>٢. برگەیا درێژ</h4>
+  <div class="rule">بریتیە ژ وێ برگەیێ <b>بزوێنەکێ درێژ</b> تێدا بیت، یان ژ (دوو، سێ) دەنگێن <b>نەبزوێن</b> و <b>بزوێنەکێ کورت</b> پێکهاتبیت.</div>
+  <p>برگە ل ڤان دوو دەمان ب <b>برگەیا درێژ</b> دهێتە هژمارتن:</p>
+  <ol>
+    <li>بزوێنا درێژ تێدا بیت.</li>
+    <li>ب نەبزوێنەکێ ڤە دوماهیک بیت.</li>
+  </ol>
+
+  <h3>٥. نەخشا جۆرێن برگێ</h3>
+  <div class="tree">
+    <div class="nd top">جۆرێن برگێ</div>
+    <div class="ln"></div>
+    <div class="kids">
+      <div class="kid"><div class="ln"></div><div class="nd d">برگەیا درێژ<br>ئ: دوو یان سێ نەبزوێن + بزوێنەکا کورت<br>ب: نەبزوێنەک + بزوێنەکا درێژ</div></div>
+      <div class="kid"><div class="ln"></div><div class="nd b">برگەیا کورت<br>نەبزوێنەک + بزوێنەکا کورت</div></div>
+    </div>
+  </div>
+  <div class="tree">
+    <div class="nd top">پێکهاتنا برگەیا درێژ</div>
+    <div class="ln"></div>
+    <div class="kids">
+      <div class="kid"><div class="ln"></div><div class="nd d">ب نەبزوێن<br>دوماهیک بیت</div></div>
+      <div class="kid"><div class="ln"></div><div class="nd b">بزوێنا درێژ<br>تێدا بیت</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="bir">
+  <h2>ئێتمەوە</h2>
+  <p>ل سەر هەر ڕستەیەکێ بکلیک بکە دا ئەو ببینی. ئەگەر وەڵام ل بیرا تە بوو، دەما ڕێکێ ڤە بکە.</p>
+  <div class="row"><button id="b-all">هەمیان نیشان بدە</button><button id="b-none">هەمیان بشارەوە</button></div>
+  <div id="blurs"></div>
+</section>
+
+<section id="kart">
+  <h2>کارتێن ڤەگوهاستنێ</h2>
+  <p>ل سەر کارتێ بکلیک بکە دا وەڵام ببینی، جارەکا دی بکلیک بکە دا بزڤڕیتەڤە.</p>
+  <div id="cards"></div>
+</section>
+
+<section id="rahenan">
+  <h2>ڕاهێنان و وەڵامێن وان</h2>
+  <div class="note">ڕاهێنان ژ کتێبێ هاتینە و ب وەڵامێن پێشنیارکری هاتینە حەلکرن. ئەو وەڵام ب ڕێسایێن کتێبێ هاتینە دەستڤەئینان، لێ وەڵامنامەیا کتێبێ نینە: ئەگەر ماموستایێ تە وەڵامەکێ دی دایە، ئەو دا بهێتە ڕاستڤەکرن.</div>
+
+  <h3>وانا یەکەم · ڕاهێنان ١</h3>
+  <p>دەنگێن بزوێن و نەبزوێن ل ڤان وشەیان دەربڕینە (ل سەر وشەیێ بکلیک بکە):</p>
+  <div class="row" id="r1-words"></div>
+  <div id="r1-out"></div>
+
+  <h3>وانا یەکەم · ڕاهێنان ٢</h3>
+  <p>وەڵامێ ڕاست هەلبژێرە:</p>
+  <div id="r2"></div>
+
+  <h3>وانا یەکەم · ڕاهێنان ٣</h3>
+  <p>ئەڤان ڕوون بکەڤە:</p>
+  <div id="r3"></div>
+
+  <h3>وانا یەکەم · ڕاهێنان ٤ (ئەرکێ ماڵێ)</h3>
+  <div class="box">ل سەر پشوویا هاوینا ئەمساڵ پێنج ڕستە ب شێوەیێ دارشتنێ بنڤیسە. پاشی هەمی وان پیتان بنڤیسە یێن تە ب کار ئینایین و ببینە کا کیژ پیتێن زمانێ کوردی ب کار ئینایینە.</div>
+
+  <h3>وانا دووەم · ڕاهێنان ١</h3>
+  <p>ئەڤان وشەیان برگە برگە بکە. بزانە هەر وشەیەک ژ چەند برگەیان پێکهاتیە؛ چەند برگەیێن کورتن و چەند برگەیێن درێژن؟ (بکلیک بکە دا وەڵام ببینی)</p>
+  <div id="l2r1"></div>
+
+  <h3>وانا دووەم · ڕاهێنان ٢</h3>
+  <div class="box">چوار وشەیان بینە، ژمارا برگەیێن وان جیاواز بن، و هەر چوارێن وان د ڕستەیێ دا ب کار بینە.</div>
+  <button id="r22-btn">نمونەیەک ببینە</button>
+  <div class="ans" id="r22-ans"></div>
+
+  <h3>وانا دووەم · ڕاهێنان ٣</h3>
+  <p>وەڵامێ ڕاست هەلبژێرە:</p>
+  <div id="l2r3"></div>
+
+  <h3>وانا دووەم · ڕاهێنان ٤ (ئەرکێ ماڵێ)</h3>
+  <div class="box">ناڤێ (٥) باژێرێن هەرێما کوردستانێ بنڤیسە و برگەیێن وان جودا بکە. بزانە هەر ناڤەکێ ژ چەند برگەیان پێکهاتیە و کیژ ژمارا برگەیان پتر دوبارە دبیت.</div>
+  <button id="r24-btn">نمونەیەک ببینە</button>
+  <div class="ans" id="r24-ans"></div>
+</section>
+
+<section id="koiz">
+  <h2>کویز</h2>
+  <p>١٣ پرسیارن. هەر پرسیارەکێ تنێ جارەکێ دهێتە وەڵامدان.</p>
+  <div class="score" id="k-score">نمرە: ٠ ژ ٠</div>
+  <div id="quiz"></div>
+  <div id="k-final" class="box" style="display:none"></div>
+  <button id="k-restart" class="pri" style="display:none">ڤەگەڕە دەستپێکێ</button>
+</section>
+
+<section id="ferheng">
+  <h2>فەرهەنگۆک</h2>
+  <p>ل سەر وشەیێ بکلیک بکە دا مانایا وێ ببینی.</p>
+  <dl id="gl"></dl>
+</section>
+
+<section id="pukhte-sec">
+  <h2>پوختە</h2>
+  <p>ل سەر دوگمەیا «پوختە» یا ل خوارێ بکلیک بکە دا پوختەیێ ل لایەکێ ببینی.</p>
+</section>
+
+</main>
+<footer>وانا دەنگ و پیت و برگە · ڕێزمان · شروڤەکرن ب کوردیا بەهدینی</footer>
+
+<button id="fab" aria-label="پوختە">پوختە</button>
+<aside id="panel" aria-label="پوختە">
+  <button id="p-close">داخستن</button>
+  <h3>پوختەیا وانێ</h3>
+  <ol>
+    <li><b>دەنگ</b> بچوکترین دانەیا ئاخافتنێیە؛ <b>پیت</b> وێنە و هێمایا نڤیسکییا دەنگێیە.</li>
+    <li>ل زمانێ کوردی <b>٣٤ پیت</b> هەنە: <b>٢٩ دەنگێن نەبزوێن</b> و <b>٨ دەنگێن بزوێن</b>.</li>
+    <li>بزوێنێن کورت <b>٣</b>ن (بزرۆکە، ە، و) و بزوێنێن درێژ <b>٥</b> ن (ا، ۆ، وو، ێ، ی).</li>
+    <li>(و) و (ی) ل سەرەتایا وشەیێ یان د ناڤبەرا دوو بزوێنان دا <b>نەبزوێنن</b>؛ ل پاش یان پێش نەبزوێنەکێ <b>بزوێنن</b>.</li>
+    <li><b>برگە</b> ژ بزوێنەکێ و نەبزوێنەکێ یان پتر پێکدهێت؛ <b>کورتە</b> ئەگەر نەبزوێنەک + بزوێنەکا کورت بیت، و <b>درێژە</b> ئەگەر بزوێنەکا درێژ تێدابیت یان ب نەبزوێنەکێ ڤە دوماهیک بیت.</li>
+  </ol>
+</aside>
+
+<div id="modal"><div class="in"><h3 id="m-t" style="margin-top:0"></h3><p id="m-b"></p><button class="pri" id="m-x">داخستن</button></div></div>
+
+<script>
+(function(){
+"use strict";
+var AR='٠١٢٣٤٥٦٧٨٩';
+function toAr(n){return String(n).replace(/\d/g,function(d){return AR.charAt(d);});}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
+function $(id){return document.getElementById(id);}
+
+/* ---------- پیت ---------- */
+var CONS=['ئ','ب','پ','ت','ج','چ','ح','خ','د','ر','ڕ','ز','ژ','س','ش','ع','غ','ف','ڤ','ق','ک','گ','ل','ڵ','م','ن','هـ','و','ی'];
+var VOW=['ا','ە','و','ۆ','وو','ی','ێ','بزرۆکە'];
+var ALL=['ئ','ب','پ','ت','ج','چ','ح','خ','د','ر','ڕ','ز','ژ','س','ش','ع','غ','ف','ڤ','ق','ک','گ','ل','ڵ','م','ن','هـ','و','ۆ','وو','ی','ێ','ە','ا'];
+var VSET={'ۆ':1,'وو':1,'ێ':1,'ە':1,'ا':1};
+(function(){
+  var a=$('alphabet');
+  ALL.forEach(function(c){var s=el('span','chip'+(VSET[c]?' v':''),c);a.appendChild(s);});
+  var cn=$('cons');CONS.forEach(function(c){cn.appendChild(el('span','chip',c));});
+  var vw=$('vow');VOW.forEach(function(c){vw.appendChild(el('span','chip v',c));});
+})();
+
+/* ---------- شیکارکرنا وشەیان ---------- */
+function analyze(word){
+  var clean=word.replace(/[\s‌‍ـ]/g,'');
+  var tok=[],i=0;
+  while(i<clean.length){
+    var c=clean.charAt(i);
+    if(c==='و'&&clean.charAt(i+1)==='و'){tok.push({t:'وو',amb:false,v:true});i+=2;continue;}
+    var base=!!VSET[c];
+    tok.push({t:c,amb:(c==='و'||c==='ی'),v:base});
+    i++;
+  }
+  for(var k=0;k<tok.length;k++){
+    if(!tok[k].amb)continue;
+    var prev=k>0?tok[k-1]:null;
+    var next=k<tok.length-1?tok[k+1]:null;
+    if(k===0){tok[k].v=false;continue;}
+    var pv=prev&&prev.v;
+    var nv=next&&!next.amb&&next.v;
+    tok[k].v=!(pv||nv);
+  }
+  return tok;
+}
+function drawTokens(tok,box){
+  var row=el('div','row');
+  tok.forEach(function(x){var s=el('span','chip '+(x.v?'v':'s'));s.appendChild(document.createTextNode(x.t));var sm=el('small',null,x.v?'بزوێن':'نەبزوێن');s.appendChild(sm);row.appendChild(s);});
+  box.appendChild(row);
+  var v=0,n=0;tok.forEach(function(x){if(x.v)v++;else n++;});
+  var p=el('p',null,'ئەنجام: '+toAr(n)+' پیتێن نەبزوێن و '+toAr(v)+' پیتێن بزوێن.');
+  box.appendChild(p);
+}
+$('w-go').addEventListener('click',function(){
+  var out=$('w-out');out.textContent='';
+  var w=$('w-in').value.trim();
+  if(!w){out.appendChild(el('p',null,'وشەیەک بنڤیسە.'));return;}
+  var h=el('div','box');h.appendChild(el('b',null,w));drawTokens(analyze(w),h);out.appendChild(h);
+});
+$('w-in').addEventListener('keydown',function(e){if(e.key==='Enter'){$('w-go').click();}});
+
+/* ---------- ڕستە و برگە ---------- */
+var SENT=[
+ ['ئاوی کانی سازگارە','ئا / وی / کا / نی / ساز / گا / رە'],
+ ['مرۆڤ ب کاری شیرینە','م / رۆڤ / ب / کا / ری / شی / ری / نە'],
+ ['قەراج دەشتێکی پان و بەرین و بەپیتە','قە / راج / دەش / تێ / کی / پا / نو / بە / رین / نو / بە / پی / تە'],
+ ['هەڤالی من نەهاتیە','هە / ڤا / لی / من / نە / ها / تی / یە'],
+ ['ئاشتی خوێندن تەواودەکا','ئاش / تی / خوێن / دن / تە / واو / دە / کا'],
+ ['وەفایی شاعیرەکێ ب ناڤودەنگە','وە / فا / یی / شا / عی / رە / کێ / ب / نا / ڤو / دەن / گە'],
+ ['دەستپاکی ڕەوشتێکی باشە','دەست / پا / کی / ڕە / وش / تێ / کی / با / شە']
+];
+(function(){
+  var r=$('sent'),out=$('sent-out');
+  SENT.forEach(function(s,i){
+    var b=el('button',null,toAr(i+1));
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(r.children,function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      out.textContent='';
+      out.appendChild(el('b',null,s[0]));
+      var row=el('div','row');
+      var parts=s[1].split(' / ');
+      parts.forEach(function(p){row.appendChild(el('span','syl',p));});
+      out.appendChild(row);
+      out.appendChild(el('div',null,'ژمارا برگەیان: '+toAr(parts.length)));
+    });
+    r.appendChild(b);
+  });
+})();
+
+/* ---------- ئێتمەوە (تەمومژ) ---------- */
+var RECALL=[
+ 'دەنگ بچوکترین دانەیا ئاخافتنێیە یا ژ دەڤی دهێتە دەر.',
+ 'پیت هێما و وێنەیێ دەنگانە و دهێتە نڤیسین.',
+ 'پیتێن زمانێ کوردی (٣٤) ن؛ دەنگێن نەبزوێن (٢٩) ن و دەنگێن بزوێن (٨) ن.',
+ 'بزوێنێن کورت (٣) ن: بزرۆکە، ە، و. بزوێنێن درێژ (٥) ن: ا، ۆ، وو، ێ، ی.',
+ 'ل زمانێ کوردی دوو دەنگێن بزوێن ب دویڤ ئێک ڤە نایێن.',
+ 'برگە ژ بزوێنەکێ و نەبزوێنەکێ یان پتر پێکدهێت.',
+ 'برگەیا کورت: نەبزوێنەک + بزوێنەکا کورت.',
+ 'برگە درێژە ئەگەر بزوێنەکا درێژ تێدابیت یان ب نەبزوێنەکێ ڤە دوماهیک بیت.'
+];
+(function(){
+  var c=$('blurs');
+  RECALL.forEach(function(t){
+    var d=el('div','bq');var s=el('span','blur',t);
+    s.addEventListener('click',function(){s.classList.toggle('on');});
+    d.appendChild(s);c.appendChild(d);
+  });
+  $('b-all').addEventListener('click',function(){Array.prototype.forEach.call(c.querySelectorAll('.blur'),function(x){x.classList.add('on');});});
+  $('b-none').addEventListener('click',function(){Array.prototype.forEach.call(c.querySelectorAll('.blur'),function(x){x.classList.remove('on');});});
+})();
+
+/* ---------- کارت ---------- */
+var CARDS=[
+ ['دەنگ چیە؟','بچوکترین دانەیا ئاخافتنێیە یا ژ دەڤی دهێتە دەر.'],
+ ['پیت چیە؟','هێما و وێنەیێ دەنگانە یێ دهێتە نڤیسین.'],
+ ['پیتێن زمانێ کوردی چەندن؟','٣٤ پیت.'],
+ ['دەنگێن نەبزوێن چەندن؟','٢٩ دەنگ.'],
+ ['دەنگێن بزوێن چەندن؟','٨ دەنگ.'],
+ ['بزوێنێن کورت کامنە؟','بزرۆکە (إ)، ە، و. (٣ دەنگ).'],
+ ['بزوێنێن درێژ کامنە؟','ا، ۆ، وو، ێ، ی. (٥ دەنگ).'],
+ ['(و) و (ی) کەنگی نەبزوێنن؟','دەما ل سەرەتایا وشە یان برگەیێ بن، یان ل پێش یان پاش بزوێنەکێ بن.'],
+ ['(و) و (ی) کەنگی بزوێنن؟','دەما ل پێش یان پاش نەبزوێنەکێ بن.'],
+ ['برگە چیە؟','چەند دەنگەکێن ب یەک تەوژم ژ دەڤی دهێنە دەر؛ ژ بزوێنەکێ و نەبزوێنەکێ یان پتر پێکدهێت.'],
+ ['برگەیا کورت چیە؟','نەبزوێنەک + بزوێنەکا کورت. وەک: دە، کە، گە.'],
+ ['برگەیا درێژ چیە؟','ئەو برگەیا بزوێنەکا درێژ تێدابیت، یان ب نەبزوێنەکێ ڤە دوماهیک بیت. وەک: کا، دەم، دەست، کورد.']
+];
+(function(){
+  var c=$('cards');
+  CARDS.forEach(function(x){
+    var d=el('div','card');var l=el('span','lbl','پرسیار');var t=el('div',null,x[0]);
+    d.appendChild(l);d.appendChild(t);
+    var back=false;
+    d.addEventListener('click',function(){
+      back=!back;
+      d.classList.toggle('back',back);
+      l.textContent=back?'وەڵام':'پرسیار';
+      t.textContent=back?x[1]:x[0];
+    });
+    c.appendChild(d);
+  });
+})();
+
+/* ---------- MCQ ---------- */
+var LET=['ئ','ب','پ','ت'];
+function mcq(host,list,onDone,scoreEl){
+  var done=0,right=0;
+  function upd(){if(scoreEl)scoreEl.textContent='نمرە: '+toAr(right)+' ژ '+toAr(done);}
+  list.forEach(function(item,qi){
+    var q=el('div','q');
+    q.appendChild(el('div','qt',toAr(qi+1)+'- '+item.q));
+    var btns=[],locked=false;
+    item.o.forEach(function(o,oi){
+      var b=el('button','opt',LET[oi]+'- '+o);
+      b.addEventListener('click',function(){
+        if(locked)return;locked=true;done++;
+        if(oi===item.a){b.classList.add('good');right++;}
+        else{b.classList.add('wrong');btns[item.a].classList.add('good');}
+        btns.forEach(function(x){x.disabled=true;});
+        upd();
+        if(item.e){q.appendChild(el('div','note',item.e));}
+        if(done===list.length&&onDone)onDone(right,done);
+      });
+      btns.push(b);q.appendChild(b);
+    });
+    host.appendChild(q);
+  });
+  upd();
+}
+
+/* ---------- ڕاهێنان ١ ---------- */
+var R1=['گەلا','کەیبانو','دۆ','کووڕ','کورد','گەنم','کەروێشک','کەوچک','کوڕ'];
+(function(){
+  var r=$('r1-words'),out=$('r1-out');
+  R1.forEach(function(w){
+    var b=el('button',null,w);
+    b.addEventListener('click',function(){
+      Array.prototype.forEach.call(r.children,function(x){x.classList.remove('sel');});
+      b.classList.add('sel');out.textContent='';
+      var h=el('div','box');h.appendChild(el('b',null,w));drawTokens(analyze(w),h);out.appendChild(h);
+    });
+    r.appendChild(b);
+  });
+})();
+
+/* ---------- ڕاهێنان ٢ ---------- */
+var R2=[
+ {q:'وشەیا (گڵەزەردە) چەند پیتێن نەبزوێن تێدانە؟',o:['٤','٧','٨','٥'],a:3},
+ {q:'وشەیا (وازی) چەند پیتێن بزوێن تێدانە؟',o:['١','٢','٣','هیچ'],a:1},
+ {q:'ژمارا دەنگێن نەبزوێن یێن زمانێ کوردی:',o:['٢٩','٢٧','٣٢','٣٣'],a:0},
+ {q:'ل کیژ وشەیێ دەنگێ بزرۆکە هەیە؟',o:['ئالا','بن','کانی','ماسی'],a:1},
+ {q:'ژمارا دەنگێن بزوێن:',o:['٦','٧','٨','٩'],a:2},
+ {q:'کیژ وشە یەک برگەیە؟',o:['ئالا','بڕوا','بەهار','بی'],a:3},
+ {q:'ل کیژ وشەیێ دا (ی) نەبزوێنە؟',o:['میر','یار','ژیر','تیر'],a:1}
+];
+mcq($('r2'),R2);
+
+/* ---------- ڕاهێنان ٣ ---------- */
+var R3=[
+ ['ئایا دەگونجیت دەنگێ بزوێن بکەڤیتە سەرەتایا وشە و برگەیێ ڤە؟','نەخێر. دەنگێ بزوێن ل سەرەتایا وشە و برگەیێ نایێت؛ ئەگەر وشەیەک ب دەنگەکێ بزوێن دەست پێ بکەت، هەمزەیا (ئ) ل پێشێ دهێتە نڤیسین، وەک: ئاو. ئەڤ وەڵامە ژ ڕێسایێن کتێبێ هاتیە (ڕێسایا ١).'],
+ ['ئایا ل زمانێ کوردی دا دەگونجیت دوو دەنگێن بزوێن ب دویڤ ئێک ڤە بهێن؟','نەخێر. ل زمانێ کوردی دوو بزوێن ب دویڤ ئێک ڤە نایێن؛ ئەڤە ڕێسایا دووەمە.'],
+ ['دەنگێ (و) ل دوو وشەیان دا بینە، ب مەرجەکێ جارەکێ (بزوێن) و جارەکێ (نەبزوێن) بیت.','نمونە: (و) بزوێنە ل: کورد، گوڵ. (و) نەبزوێنە ل: وەرزش، سێو.'],
+ ['ئایا دەگونجیت ل زمانێ کوردی دا دوو دەنگێن نەبزوێن ب دویڤ ئێک ڤە بهێن؟','بەلێ، دەگونجیت. نمونە: ل (کورد) دا (ر) و (د) دوو نەبزوێنن و ب دویڤ ئێک ڤە هاتینە.']
+];
+(function(){
+  var c=$('r3');
+  R3.forEach(function(x,i){
+    var q=el('div','q');q.appendChild(el('div','qt',toAr(i+1)+'. '+x[0]));
+    var b=el('button',null,'وەڵام ببینە');var a=el('div','ans',x[1]);
+    b.addEventListener('click',function(){a.classList.toggle('on');b.textContent=a.classList.contains('on')?'وەڵامی بشارە':'وەڵام ببینە';});
+    q.appendChild(b);q.appendChild(a);c.appendChild(q);
+  });
+})();
+
+/* ---------- وانا دووەم ڕاهێنان ١ ---------- */
+var L2=[
+ ['هاوینەهەوار',['ها','وی','نە','هە','وار'],['d','d','k','k','d']],
+ ['گوڵزار',['گوڵ','زار'],['d','d']],
+ ['مرۆڤ',['م','رۆڤ'],['k','d']],
+ ['دڵ',['دڵ'],['d']],
+ ['پێشمەرگە',['پێش','مەر','گە'],['d','d','k']],
+ ['گۆڤەند',['گۆ','ڤەند'],['d','d']],
+ ['چاوپێکەوتن',['چاو','پێ','کەو','تن'],['d','d','d','d']]
+];
+(function(){
+  var c=$('l2r1');
+  var t=el('table');
+  var hr=el('tr');['وشە','برگە','ژمارا','کورت','درێژ'].forEach(function(h){hr.appendChild(el('th',null,h));});
+  t.appendChild(hr);
+  L2.forEach(function(x){
+    var tr=el('tr');tr.appendChild(el('td',null,x[0]));
+    var td=el('td');
+    tr.appendChild(td);
+    var show=false;
+    var k=0,d=0;x[2].forEach(function(z){if(z==='k')k++;else d++;});
+    var btn=el('button',null,'وەڵام');
+    td.appendChild(btn);
+    var n=el('td'),kk=el('td'),dd=el('td');
+    tr.appendChild(n);tr.appendChild(kk);tr.appendChild(dd);
+    btn.addEventListener('click',function(){
+      show=!show;
+      td.textContent='';
+      if(show){
+        x[1].forEach(function(s,i){td.appendChild(el('span','syl '+x[2][i],s));});
+        n.textContent=toAr(x[1].length);kk.textContent=toAr(k);dd.textContent=toAr(d);
+        td.appendChild(document.createElement('br'));
+        var h=el('button',null,'بشارە');h.addEventListener('click',function(){btn.click();});td.appendChild(h);
+      }else{td.appendChild(btn);n.textContent='';kk.textContent='';dd.textContent='';}
+    });
+    t.appendChild(tr);
+  });
+  c.appendChild(t);
+  c.appendChild(el('p','legend','ڕەنگێ زەرد = برگەیا کورت · ڕەنگێ شین = برگەیا درێژ.'));
+  c.appendChild(el('div','note','ئەڤ وەڵامە ب ڕێسایێن برگێ ل کتێبێ هاتینە دەستڤەئینان؛ ڕێکنڤیسا وان دبیت ل نک ماموستایێ تە کێمەک جیاواز بیت، بتایبەت ل (مرۆڤ) و (چاوپێکەوتن).'));
+})();
+
+(function(){
+  var b=$('r22-btn'),a=$('r22-ans');
+  a.appendChild(el('p',null,'نمونە (ژ لایێ منڤە، نە ژ کتێبێ):'));
+  var ul=el('ul');
+  ['باخ (یەک برگە): ئەم ل باخی یاری دکەین.','پەنیر (دوو برگە): ئەز ل بەربانگێ پەنیر دخۆم.','مراوی (سێ برگە): مراوی ل سەر ئاڤێ مەلە دکەت.','گوڵەبەڕۆژە (پێنج برگە): گوڵەبەڕۆژە ڕووی خۆ ل خۆرێ دکەت.'].forEach(function(s){ul.appendChild(el('li',null,s));});
+  a.appendChild(ul);
+  b.addEventListener('click',function(){a.classList.toggle('on');});
+})();
+
+var L2R3=[
+ {q:'وشەیا (ئاوارە) ژ چەند برگەیان پێکهاتیە؟',o:['دوو','یەک','سێ','چوار'],a:2},
+ {q:'برگەیا (نان):',o:['درێژە','کورتە','هەردووکیانە','هیچیان نینە'],a:0},
+ {q:'ئێک ژ ڤان برگەیا کورتە:',o:['شا','ژن','دێ','دە'],a:3},
+ {q:'کام ل ڤان وەڵامان پترین برگە تێدانە؟',o:['پەنیر','گوڵەبەڕۆژە','مراوی','یاری'],a:1},
+ {q:'دەنگێ بزوێن ل برگەیا (خوا) چیە؟',o:['و+ا','ا','خ','بزرۆکە'],a:1}
+];
+mcq($('l2r3'),L2R3);
+
+(function(){
+  var b=$('r24-btn'),a=$('r24-ans');
+  a.appendChild(el('p',null,'نمونە (ژ لایێ منڤە، نە ژ کتێبێ):'));
+  var t=el('table');var hr=el('tr');['باژێڕ','برگە','ژمارا'].forEach(function(h){hr.appendChild(el('th',null,h));});t.appendChild(hr);
+  [['دهۆک','دە / هۆک'],['هەولێر','هەو / لێر'],['سلێمانی','سلێ / ما / نی'],['زاخۆ','زا / خۆ'],['هەڵەبجە','هە / ڵەب / جە']].forEach(function(x){
+    var tr=el('tr');tr.appendChild(el('td',null,x[0]));tr.appendChild(el('td',null,x[1]));tr.appendChild(el('td',null,toAr(x[1].split(' / ').length)));t.appendChild(tr);
+  });
+  a.appendChild(t);
+  a.appendChild(el('p',null,'ژمارا (٢) پتر دوبارە دبیت.'));
+  b.addEventListener('click',function(){a.classList.toggle('on');});
+})();
+
+/* ---------- کویز ---------- */
+var QZ=[
+ {q:'ل زمانێ کوردی چەند پیت هەنە؟',o:['٢٨','٣٢','٣٤','٣٦'],a:2},
+ {q:'ژمارا دەنگێن بزوێن چەندە؟',o:['٣','٥','٨','٢٩'],a:2},
+ {q:'ژمارا دەنگێن نەبزوێن چەندە؟',o:['٢٩','٢٧','٣٢','٣٣'],a:0},
+ {q:'کیژ ژ ڤان بزوێنەکێ درێژە؟',o:['ە','و','ا','بزرۆکە'],a:2},
+ {q:'ل کیژ وشەیێ (و) نەبزوێنە؟',o:['گوڵ','کورد','سێو','فڕین'],a:2,e:'ڕێسایا ٢: (و) ل پاش بزوێنا (ێ) هاتیە.'},
+ {q:'ل کیژ وشەیێ (ی) بزوێنە؟',o:['یار','پەیکەر','فڕین','بڕیار'],a:2,e:'ڕێسایا ٣: (ی) ل پاش نەبزوێنا (ڕ) هاتیە و ل پاش خۆ بزوێن نینە.'},
+ {q:'وشەیا (ئاوارە) ژ چەند برگەیان پێکهاتیە؟',o:['یەک','دوو','سێ','چوار'],a:2},
+ {q:'برگەیا کورت ژ چ پێکدهێت؟',o:['نەبزوێنەک + بزوێنەکا درێژ','نەبزوێنەک + بزوێنەکا کورت','دوو بزوێن','دوو نەبزوێن'],a:1},
+ {q:'کیژ ژ ڤان برگەیە کورتە؟',o:['دە','شا','دێ','ژن'],a:0},
+ {q:'برگە کەنگی درێژە؟',o:['تنێ دەما بزوێنەکا کورت تێدابیت','دەما بزوێنەکا درێژ تێدابیت یان ب نەبزوێنەکێ ڤە دوماهیک بیت','تنێ دەما دوو دەنگ بن','چ دەمێ نە'],a:1},
+ {q:'وشەیا (گوڵەبەڕۆژە) ژ چەند برگەیان پێکهاتیە؟',o:['٣','٤','٥','٦'],a:2},
+ {q:'ئایا ل زمانێ کوردی دا دوو دەنگێن بزوێن ب دویڤ ئێک ڤە دهێن؟',o:['بەلێ','نەخێر'],a:1},
+ {q:'دەنگێ بزوێن ل وشەیا (خوا) چیە؟',o:['خ','و','ا','بزرۆکە'],a:2}
+];
+(function(){
+  var host=$('quiz'),sc=$('k-score'),fin=$('k-final'),rs=$('k-restart');
+  function start(){
+    host.textContent='';fin.style.display='none';rs.style.display='none';
+    mcq(host,QZ,function(r,d){
+      fin.style.display='block';
+      var pct=Math.round(r*100/d);
+      var msg=pct>=80?'زۆر باشە! تە وانە باش فێر بوو.':(pct>=50?'باشە، لێ جارەکا دی پوختەیێ بخوینەڤە.':'پێدڤیە وانا جارەکا دی بخوینی و ئێتمەوەیێ بکەی.');
+      fin.textContent='ئەنجامێ دوماهیێ: '+toAr(r)+' ژ '+toAr(d)+' ('+toAr(pct)+'٪). '+msg;
+      rs.style.display='inline-block';
+    },sc);
+  }
+  rs.addEventListener('click',function(){start();var s=$('koiz');if(s&&s.scrollIntoView)s.scrollIntoView();});
+  start();
+})();
+
+/* ---------- فەرهەنگۆک ---------- */
+var GL=[
+ ['دەنگ','بچوکترین دانەیا ئاخافتنێیە یا ژ دەڤی دهێتە دەر.'],
+ ['پیت','هێما و وێنەیێ دەنگانە، ب پیتان دنڤیسین.'],
+ ['بزوێن','ئەو دەنگێ ب ئاسانی ژ دەڤی دەردکەڤیت و بەربەست ل بەر نابیت.'],
+ ['نەبزوێن','ئەو دەنگێ دەما دەرئێخستنێ دا بەربەست ل بەر چێدبیت و ب هاریکاریا بزوێنان ژ دەڤی دەردکەڤیت.'],
+ ['بزرۆکە','بزوێنەکا کورتە (إ)، ناهێتە نڤیسین، وەک د (ژن، من، دڵ) دا.'],
+ ['برگە','چەند دەنگەکێن ب یەک تەوژم ژ دەڤی دهێنە دەر.'],
+ ['برگەیا کورت','نەبزوێنەک + بزوێنەکا کورت.'],
+ ['برگەیا درێژ','ئەو برگەیا بزوێنەکا درێژ تێدابیت یان ب نەبزوێنەکێ ڤە دوماهیک بیت.'],
+ ['ئەلفبێ','کۆمەلا پیتێن زمانەکێ یێن ب ڕیز دانایی.'],
+ ['ئاخافتن','گۆتنا دەنگان و وشان ب دەڤی.']
+];
+(function(){
+  var dl=$('gl');
+  GL.forEach(function(x){
+    var dt=el('dt');var b=el('button',null,x[0]);
+    b.addEventListener('click',function(){$('m-t').textContent=x[0];$('m-b').textContent=x[1];$('modal').classList.add('on');});
+    dt.appendChild(b);dl.appendChild(dt);
+  });
+  $('m-x').addEventListener('click',function(){$('modal').classList.remove('on');});
+  $('modal').addEventListener('click',function(e){if(e.target===$('modal'))$('modal').classList.remove('on');});
+})();
+
+/* ---------- لوحة جانبية و شريط تقدم ---------- */
+$('fab').addEventListener('click',function(){$('panel').classList.add('on');});
+$('p-close').addEventListener('click',function(){$('panel').classList.remove('on');});
+function prog(){
+  var h=document.documentElement;
+  var max=h.scrollHeight-h.clientHeight;
+  var p=max>0?(window.pageYOffset||h.scrollTop)/max:0;
+  $('bar').style.width=Math.min(100,Math.max(0,p*100))+'%';
+}
+window.addEventListener('scroll',prog);window.addEventListener('resize',prog);prog();
+})();
+</script>
+</body>
+</html>
