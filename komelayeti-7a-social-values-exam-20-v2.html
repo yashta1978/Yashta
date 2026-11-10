@@ -81,12 +81,18 @@ body.zoom .pg{min-width:190%}
 .total{background:#fff;border:3px solid #7b3fa0;border-radius:14px;padding:12px;text-align:center;font-size:22px;margin:14px 0}
 .small{font-size:15px;color:#555}
 .mine{color:var(--p);font-size:13px}
+.sm{background:#fff;border-radius:12px;padding:10px 12px;margin:10px 0;border:2px solid #d9d2e6;border-inline-start:8px solid var(--o)}
+.sm h3{margin:0 0 6px;font-size:19px;color:#4a2570}
+.sm ul{margin:0;padding-inline-start:22px;font-size:18px;line-height:1.9}
+.sm li.k2{color:#222}
+.sm li .tag{margin-inline-start:6px}
+.eyeq{margin-inline-start:8px;margin-top:8px}
 </style>
 </head>
 <body>
 <header>
  <h1 id="ttl"></h1>
- <div class="tabs"><button class="tab on" id="t1"></button><button class="tab" id="t2"></button></div>
+ <div class="tabs"><button class="tab on" id="t1"></button><button class="tab" id="t3"></button><button class="tab" id="t2"></button></div>
  <div class="bar" id="bar1">
   <div class="cnt" id="cnt"></div>
   <button class="btn" id="allBtn"></button>
@@ -96,13 +102,14 @@ body.zoom .pg{min-width:190%}
 </header>
 <main>
  <section id="v1"><div id="pages"></div></section>
- <section id="v2" class="hide"><div id="exam"></div></section>
+ <section id="v3" class="hide"><div id="sumry"></div></section>
+<section id="v2" class="hide"><div id="exam"></div></section>
 </main>
 <div id="modal"></div>
 <script>
 var T={
  ttl:"ئەزموون: دام و دەزگەهێن حکومەتێ و مولکێ گشتی (ل. ١٢–٢٧)",
- tab1:"پەڕا کتێبێ", tab2:"پرسیار",
+ tab1:"پەڕا کتێبێ", tab2:"پرسیار", tab3:"پوختە",
  all:"هەمی بەرسڤان نیشان بدە", reset:"پەڕێ ڤەگەڕینە", zoom:"مەزنکرن", zoomOut:"بچویککرن",
  eye:"👁 بەرسڤێ نیشان بدە", check:"پشکنین", close:"داخستن", next:"یا پشتی",
  mine:"ژ لایێ منڤە، نە ژ کتێبێ", stud:"ژ خەتێ قوتابیێ",
@@ -341,8 +348,17 @@ function buildExam(){
       shw.onclick=function(){shw.remove();var m=el('div','model '+q.src,q.model);card.insertBefore(m,res);card.appendChild(wrap)};
       card.appendChild(shw);
     }else{
-      btn.onclick=function(){if(st.done)return;var r=ev();st.done=true;btn.remove();finish(r)};
-      card.appendChild(btn);
+      btn.onclick=function(){if(st.done)return;var r=ev();st.done=true;btn.remove();eb.remove();finish(r)};
+      var eb=el('button','btn eyeq',T.eye);
+      eb.onclick=function(){if(st.done)return;st.done=true;btn.remove();eb.remove();var why='';
+        if(q.type==='mc'||q.type==='tf'){nodes.forEach(function(n,j){if(opts[j][1]===1){n.classList.add('good');why='بەرسڤ: '+n.textContent}})}
+        else if(q.type==='ms'){var L=[];opts2.forEach(function(o,i){if(o[1]===1){chk[i].classList.add('good');L.push(o[0])}});why='بەرسڤ: '+L.join('، ')}
+        else if(q.type==='mt'){q.L.forEach(function(l,i){sels[i].value=q.R[i];sels[i].disabled=true;sels[i].style.borderColor='#1e8e3e'});why=q.L.map(function(l,i){return l+' = '+q.R[i]}).join('\n')}
+        else if(q.type==='cl'){inp.disabled=true;why='بەرسڤ: '+q.a[0]}
+        else if(q.type==='fl'){inp.disabled=true;if(!q.model)why='بەرسڤ: '+q.any.slice(0,q.need).join('، ')}
+        if(q.why&&q.type==='tf')why+='\n'+q.why;
+        showRes(0,'بەرسڤ هاتە نیشاندان',why)};
+      card.appendChild(btn);card.appendChild(eb);
     }
     function showRes(s,msg,why){
       st.score=s;card.classList.add('done',s>=q.pts?'good':(s>0?'mid':'bad'));
@@ -366,17 +382,40 @@ function updTotal(){
 }
 /* ---------------- تبويبات ---------------- */
 function setTab(n){
-  $('v1').classList.toggle('hide',n!==1);$('v2').classList.toggle('hide',n!==2);
-  $('t1').classList.toggle('on',n===1);$('t2').classList.toggle('on',n===2);
+  $('v1').classList.toggle('hide',n!==1);$('v2').classList.toggle('hide',n!==2);$('v3').classList.toggle('hide',n!==3);
+  $('t1').classList.toggle('on',n===1);$('t2').classList.toggle('on',n===2);$('t3').classList.toggle('on',n===3);
   $('allBtn').classList.toggle('hide',n!==1);$('zoomBtn').classList.toggle('hide',n!==1);$('nav').classList.toggle('hide',n!==1);
-  if(n===1){updCnt();setTimeout(placeArrows,30)}else updTotal();
+  if(n===1){updCnt();setTimeout(placeArrows,30)}else if(n===2)updTotal();else $('cnt').textContent=T.tab3+' • '+T.page+' '+ar(12)+'–'+ar(26);
 }
-$('ttl').textContent=T.ttl;$('t1').textContent=T.tab1;$('t2').textContent=T.tab2;
+$('ttl').textContent=T.ttl;$('t1').textContent=T.tab1;$('t2').textContent=T.tab2;$('t3').textContent=T.tab3;
 $('allBtn').textContent=T.all;$('zoomBtn').textContent=T.zoom;
-$('t1').onclick=function(){setTab(1)};$('t2').onclick=function(){setTab(2);window.scrollTo(0,0)};
+$('t1').onclick=function(){setTab(1)};$('t2').onclick=function(){setTab(2);window.scrollTo(0,0)};$('t3').onclick=function(){setTab(3);window.scrollTo(0,0)};
 $('allBtn').onclick=showAll;
 $('zoomBtn').onclick=function(){var z=document.body.classList.toggle('zoom');$('zoomBtn').textContent=z?T.zoomOut:T.zoom;setTimeout(placeArrows,30)};
-buildPages();buildExam();
+
+var SUM=[
+ [12,'پەیڤ و دەستەواژە',[['حکومەت','k'],['یاسا','k'],['دەستوور','k'],['فیدڕالی','k'],['دوو جۆرێن حکومەتێ: حکومەتا نشتیمانی و حکومەتا خۆجهی.','k'],['ڕێزگرتنا دام و دەزگەهێن حکومەتێ، هەڤوڵاتیبوونە.','k']]],
+ [13,'دام و دەزگەهێن حکومەتی',[['حکومەت ژ کۆمەکا دام و دەزگەهێن گشتی پێک دهێت.','k'],['ڕۆلێ وان یێ سەرەکی بڕێڤەبرنا کاروبارێن هەڤوڵاتیانە.','k'],['وەزارەتێن هاتینە ناڤکرن (٧): پەروەردێ، داد، ڕۆشنبیری، پێشمەرگەی، ناڤخۆ، چاندنێ، ساخلەمیێ.','k']]],
+ [14,'پێناسا حکومەتێ و جۆرێن وێ',[['حکومەت: قەوارەیەکێ ڕامیاری و کارگێڕییە، دەسهەلات و سەروەری ل سنوورەکێ جوگرافی یێ دیارکری هەیە.','k'],['جۆرێن سیستەمێن سیاسی ٥ ن:','k'],['١- پاشایەتی  ٢- پەرلەمانی  ٣- کۆماری  ٤- فیدڕالی  ٥- دکتاتۆری','k'],['تەنێ ژمارە و ناڤێن وان داخوازن، نە ڕوونکرنا هەر ئێکی.','m']]],
+ [16,'حکومەتا خۆجهی',[['حکومەتا خۆجهی بەشەکە ژ حکومەتا نشتیمانی کو دەسهەلاتا وێ ل سنوورەکێ جوگرافی یێ دیارکری هەیە.','k'],['د ژیانا ڕۆژانە یا خەلکی دا ڕۆلەکێ سەرەکی دبینیت.','k'],['هەلبژاردن بنەمایەکێ سەرەکی یە بۆ حکومەتەکا خۆجهی یا خۆشگوزەران.','k'],['پەیڤ: ڕێکخراوێن مەدەنی، بڕێڤەبەرن، هەلبژاردن، هەرێم.','k']]],
+ [17,'هەلبژاردن (ڕاست / خەلەت)',[['هەلبژاردن ب گرنگترین بنەمایێ حکومەتا خۆجهی دهێتە دانان.','k'],['شەرعیەتا حکومەتا خۆجهی ب ڕێکا هەلبژاردنا ڕوونکاری (شفاف) دهێتە دانان.','k']]],
+ [20,'ڕۆلێ دام و دەزگەهێن حکومەتێ',[['ڕۆلێ وان یێ سەرەکی بڕێڤەبرنا کاروبارێن هەڤوڵاتیانە.','k'],['ب ڕێکا دابینکرنا پێدڤییێن خزمەتگوزاری وەکو ئاڤا پاقژ، کارەبا، سووتەمەنی، ڕێک و پڕ، پەروەردە و فێرکرن، چاڤدێری یا ساخلەمیێ و پاراستنا ژینگەهێ.','k'],['ڕۆلێ دام و دەزگەهێن خزمەتگوزاریا پیڤەرە بۆ ئاستێ پێشکەفتنا شارستانیەتێ.','k'],['حکومەت ژ کۆمەکا دام و دەزگەهان کو بۆ خزمەتکرنا گشتی کاردکەن، پێکدهێت.','k'],['پەیڤ: وەزارەت، کابینا حکومەتێ، دام و دەزگەهێن حکومەتێ، دەستهەلات.','k']]],
+ [24,'مولکێ گشتی',[['مە هەمی یا بەرپرسیارەتی بۆ پاراستنا مولکێ گشتی هەیە.','k'],['پاراستنا مولکێ گشتی ل وی جهێ دژین ئەرکێ مە هەمیانە.','k'],['پەیڤ: مولکێ گشتی، بەرپرسیارەتی، بەرژەوەندی، مولکێ تایبەت.','k']]],
+ [25,'کارامەیا لێگەڕیانێ',[['دوو جهێن گەشتیاری ل کوردستانێ: پیرا دەلال، شکەفتا شانەدەر.','o']]],
+ [26,'نموونەیێن مولکێ گشتی و جوداهی',[['نموونەیێن مولکێ گشتی: نەخۆشخانە، قوتابخانە، فەرمانگەهێن میری.','k'],['پاراستنا مولکێ گشتی دبیت ب یاسا بهێتە ڕێکخستن.','k'],['مولکێ تایبەت = تایبەتە ب کەسەکی ڤە.  مولکێ گشتی = یێ مە هەمیایە.','o']]]
+];
+function buildSum(){
+  var h=$('sumry');h.textContent='';
+  h.appendChild(el('div','small','ئەڤە هەمی یێن د کتێبێ دا ب پێنووسا ڕەساسی هاتینە نیشانکرن، ل دویڤ لاپەڕان.'));
+  SUM.forEach(function(s){
+    var c=el('div','sm');c.appendChild(el('h3',null,T.page+' '+ar(s[0])+' • '+s[1]));
+    var u=el('ul');s[2].forEach(function(it){var li=el('li','k2',it[0]);
+      if(it[1]==='o')li.appendChild(el('span','tag o',T.stud));
+      if(it[1]==='m')li.appendChild(el('span','tag',T.mine));
+      u.appendChild(li)});
+    c.appendChild(u);h.appendChild(c)});
+}
+buildPages();buildExam();buildSum();
 window.addEventListener('resize',placeArrows);
 window.addEventListener('load',function(){setTimeout(placeArrows,50)});
 setTimeout(placeArrows,200);
