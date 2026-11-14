@@ -14,6 +14,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tabs{position:sticky;top:0;z-index:30;display:flex;background:#fff;border-bottom:1px solid var(--line)}
 .tabs button{flex:1;min-height:48px;border:0;background:#fff;font-size:16px;font-weight:600;color:var(--mut);border-bottom:3px solid transparent;padding:6px 2px}
 .tabs button.on{color:var(--b);border-bottom-color:var(--b)}
+#bkbtn{display:none;flex:1 1 150px;min-height:44px}#bkbtn.show{display:block}.bar.bk .cnt{display:none}
 .pane{display:none;padding:10px 0 80px}.pane.on{display:block}
 .wrap{max-width:900px;margin:0 auto;padding:0 10px}
 .bar{position:sticky;top:48px;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:6px 10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
@@ -154,7 +155,7 @@ textarea{min-height:110px}
 </nav>
 
 <section class="pane on" id="p-book">
- <div class="bar"><div class="cnt" id="cnt"></div><div style="display:flex;gap:8px;align-items:center"><select id="gotop" aria-label="Go to page"></select><button class="btn" id="zoom">Zoom</button></div></div>
+ <div class="bar"><button class="btn pri" id="bkbtn" type="button">Back</button><div class="cnt" id="cnt"></div><div style="display:flex;gap:8px;align-items:center"><select id="gotop" aria-label="Go to page"></select><button class="btn" id="zoom">Zoom</button></div></div>
  <div class="wrap">
   <div class="legend">
    <span class="dot o">&#128161;</span> highlighted by the teacher &nbsp; <span class="dot b">&#128161;</span> the rest of the page &nbsp; <span class="dot r">!</span> possible mistake in the book &nbsp; <span class="dot" style="border-color:#5b6573">&#128065;</span> show answer. Tap an answer on the page to check it.
@@ -264,8 +265,17 @@ function showTab(t){
   document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});
   document.querySelectorAll('.pane').forEach(function(p){p.classList.toggle('on',p.id==='p-'+t)});
   window.scrollTo(0,0);
+  if(t!=='book')BK=null;
+  var bb=document.getElementById('bkbtn');
+  if(BK&&t==='book'){var tb=document.querySelector('.tabs button[data-t="'+BK.t+'"]');bb.textContent='Back to '+(tb?tb.textContent:'Learn');bb.classList.add('show');bb.parentNode.classList.add('bk')}else{bb.classList.remove('show');bb.parentNode.classList.remove('bk')}
   if(t==='book') layoutAll();
 }
+// remember where a jump to the Book page started, so one button brings the student back to the same place
+var BK=null;
+function curTab(){var b=document.querySelector('.tabs button.on');return b?b.dataset.t:'book'}
+function markBack(){var t=curTab();if(t!=='book')BK={t:t,y:window.scrollY}}
+function goBookPage(pg){markBack();showTab('book');setTimeout(function(){var s=document.getElementById('pg'+pg);if(s)s.scrollIntoView()},60)}
+document.getElementById('bkbtn').addEventListener('click',function(){var b=BK;if(!b)return;BK=null;showTab(b.t);setTimeout(function(){window.scrollTo(0,b.y)},30)});
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){showTab(b.dataset.t)})});
 // ---------- modal ----------
 function openMd(title,text,cls,card){$('#mdt').textContent=title;$('#mdx').textContent=text;$('#mdc').className='mdc '+(cls||'');var ms=$('#mds');ms.textContent='';if(card){srcBtns(card,ms);practiseBtn(card.id,ms)}$('#md').classList.add('on')}
@@ -281,7 +291,7 @@ function srcBtns(c,box,viaV){
   (c.sp||[]).forEach(function(e){mk(e,false)});(c.rp||[]).forEach(function(e){mk(e,true)});
 }
 function showSrc(c,e,rel){
-  clearSrc();closeMd();
+  markBack();clearSrc();closeMd();
   var sec=document.getElementById('pg'+e.pg);if(!sec)return;
   var im=sec.querySelector('.im'),first=null;
   e.g.forEach(function(segs){
@@ -813,7 +823,6 @@ function defCard(d,i,onCh){
     });
     a.appendChild(hm);a.appendChild(sm2);a.appendChild(kn);a.appendChild(ag);a.appendChild(bt);
     var vp=el('button','btn sm','View page '+d[2]);vp.addEventListener('click',function(){lpvOpen(d[2])});a.appendChild(vp);
-    var gp=el('button','btn sm','Go to page '+d[2]);gp.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+d[2]);if(s)s.scrollIntoView()},60)});a.appendChild(gp);
     c.appendChild(a);c.appendChild(kmsg);if(KNOWN[i])c.classList.add('k');paint();return c}
 
 
@@ -859,7 +868,7 @@ $('#lpvx').addEventListener('click',lpvClose);
 $('#lpvz').addEventListener('click',function(){$('#lpv').classList.toggle('z')});
 $('#lpvp').addEventListener('click',function(){var i=D.pages.indexOf(pageObj(LV.b));if(i>0){LV.b=D.pages[i-1].b;LV.e=null;lpvRender()}});
 $('#lpvn').addEventListener('click',function(){var i=D.pages.indexOf(pageObj(LV.b));if(i<D.pages.length-1){LV.b=D.pages[i+1].b;LV.e=null;lpvRender()}});
-$('#lpvb').addEventListener('click',function(){var b=LV.b,e=LV.e,r=LV.rel,c=LV.c;lpvClose();if(e&&c)showSrc(c,e,r);else{showTab('book');setTimeout(function(){var s=document.getElementById('pg'+b);if(s)s.scrollIntoView()},60)}});
+$('#lpvb').addEventListener('click',function(){var b=LV.b,e=LV.e,r=LV.rel,c=LV.c;lpvClose();if(e&&c)showSrc(c,e,r);else goBookPage(b)});
 function snipFor(c,host){
   var e=(c.sp&&c.sp[0])||(c.rp&&c.rp[0]);host.textContent='';
   if(!e){var vb=el('button','btn sm','View page '+c.pg);vb.addEventListener('click',function(){lpvOpen(c.pg,null,false,c)});host.appendChild(vb);return}
@@ -927,7 +936,7 @@ function showGuide(g){
   var s1=stepBox(1,'Read',st[0]);
   s1.appendChild(el('p',null,'Read the book pages '+p1+' to '+p2+' here. Under each page you find its hints. Orange hints are what the teacher taught.'));
   var a1=el('div','acts');var pgs=[];pages.forEach(function(x){if(pgs.indexOf(x)<0)pgs.push(x)});pgs.sort(function(a,b){return a-b}).forEach(function(x){var vb=el('button','btn pri','View page '+x);vb.addEventListener('click',function(){lpvOpen(x)});a1.appendChild(vb)});
-  var gp=el('button','btn','Open in Book page');gp.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+p1);if(s)s.scrollIntoView()},60)});a1.appendChild(gp);
+  var gp=el('button','btn','Open in Book page');gp.addEventListener('click',function(){goBookPage(p1)});a1.appendChild(gp);
   var dn=el('button','btn'+(st[0]?' on':''),st[0]?'I have read it ✔':'I have read it');dn.addEventListener('click',function(){GREAD[g]=!GREAD[g];showGuide(g)});a1.appendChild(dn);s1.appendChild(a1);
   var s2=stepBox(2,'Remember this',st[1]);
   if(df.length){s2.appendChild(el('p',null,'Say each definition from memory. Tap Hide more until all words are hidden, then tap I know it.'));df.forEach(function(x){s2.appendChild(defCard(x[0],x[1],function(){showGuide(g)}))})}
@@ -974,7 +983,7 @@ function buildSum(){
     h.appendChild(el('h2',null,'Mistakes in the book ('+errs.length+')'));
     h.appendChild(el('p','note','Do not copy these mistakes. Each one is marked with a red ! on its page.'));
     errs.forEach(function(e){var d=el('div','fc');var t=el('div','term',(e[1].k==='logic'?'Logic error':'Typo')+' on page '+e[0]);d.appendChild(t);d.appendChild(el('p',null,e[1].m));
-      var b=el('button','btn sm','Go to page '+e[0]);b.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+e[0]);if(s)s.scrollIntoView()},60)});d.appendChild(b);h.appendChild(d)});
+      var b=el('button','btn sm','View page '+e[0]);b.addEventListener('click',function(){lpvOpen(e[0])});d.appendChild(b);h.appendChild(d)});
   }
   // answers that are mine
   var mine=D.L.filter(function(c){return c.mine});
