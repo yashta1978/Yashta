@@ -90,7 +90,7 @@ svg.cn line{stroke-width:1.2;vector-effect:non-scaling-stroke;opacity:.5;mix-ble
 #bki{width:100%;box-sizing:border-box;font-size:18px;padding:10px;border:2px solid var(--mut);border-radius:10px;margin:6px 0}
 .md{position:fixed;inset:0;background:rgba(10,15,25,.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
 .md.on{display:flex}
-.lpv{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:90;flex-direction:column}.lpv.on{display:flex}.lpvh{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-bottom:1px solid var(--line);align-items:center}.lpvs{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}.lpvw{width:100%}.lpv.z .lpvw{width:220%}.lpv .hl.foc{outline:3px solid #d81b60}.lpl{padding:10px 12px 30px}.lpl .hi{display:block;width:100%;text-align:left;min-height:48px;margin:6px 0;padding:10px;border:2px solid var(--line);border-radius:10px;background:#fff;font-size:17px}.lpl .hi.o{border-color:var(--o);background:var(--ob)}.lpl .hi.b{border-color:var(--b);background:var(--bb)}.lpl .hi.r{border-color:var(--r);background:var(--rb)}.lpl .hx{white-space:pre-line;font-size:17px;margin:6px 0 0}.snip{margin:6px 0}.snip canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
+.lpv{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:90;flex-direction:column}.lpv.on{display:flex}.lpvh{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-bottom:1px solid var(--line);align-items:center}.lpvs{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}.lpvw{width:100%}.lpv.z .lpvw{width:220%}.lpv .hl.foc{outline:3px solid #d81b60}.lpl{padding:10px 12px 30px}.lpl .hi{display:block;width:100%;text-align:left;min-height:48px;margin:6px 0;padding:10px;border:2px solid var(--line);border-radius:10px;background:#fff;font-size:17px}.lpl .hi.o{border-color:var(--o);background:var(--ob)}.lpl .hi.b{border-color:var(--b);background:var(--bb)}.lpl .hi.r{border-color:var(--r);background:var(--rb)}.lpl .hx{white-space:pre-line;font-size:17px;margin:6px 0 0}.snip{margin:6px 0}.pn{font-size:15px;color:#555;margin:6px 0}.pt{margin:8px 0;padding:8px 10px;border-left:6px solid;border-radius:6px;background:#fff}.pt .ph{display:block;margin-bottom:4px;font-size:18px}.pt.c0{border-color:#00838f}.pt.c0 .ph{color:#00838f}.pt.c1{border-color:#6d4c41}.pt.c1 .ph{color:#6d4c41}.pt.c2{border-color:#3949ab}.pt.c2 .ph{color:#3949ab}.pt.c3{border-color:#827717}.pt.c3 .ph{color:#827717}.snip canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
 .mdc{background:#fff;width:100%;max-width:560px;max-height:80vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px;border-top:6px solid var(--b)}
 .mdc.o{border-top-color:var(--o)}.mdc.r{border-top-color:var(--r)}
 .mdc h3{margin:0 0 6px;font-size:20px}
@@ -219,6 +219,20 @@ function mineText(e,s){
   var parts=String(s).split(/(Mine, not from the book)/);
   parts.forEach(function(p){if(p==='Mine, not from the book'){e.appendChild(el('span','mine',p))}else if(p){e.appendChild(document.createTextNode(p))}});
 }
+function partsOf(s){
+  var re=/(^|[.;)]\s+)(?:\d+\)\s*)?([A-Z][A-Za-z\-\/ ()]{2,45}):\s/g,m,hs=[];s=String(s);
+  while((m=re.exec(s))){hs.push({i:m.index+m[1].length,h:m[2],e:re.lastIndex})}
+  if(hs.length<2)return null;
+  var out={intro:s.slice(0,hs[0].i).trim(),parts:[]};
+  hs.forEach(function(x,k){out.parts.push([x.h,s.slice(x.e,k+1<hs.length?hs[k+1].i:s.length).trim()])});
+  return out;
+}
+function ansText(e,s){
+  var P=partsOf(s);if(!P){mineText(e,s);return}
+  if(P.intro){var ip=el('div');mineText(ip,P.intro);e.appendChild(ip)}
+  e.appendChild(el('div','pn','This answer has '+P.parts.length+' parts.'));
+  P.parts.forEach(function(x,k){var d=el('div','pt c'+(k%4));var h=el('b','ph',(k+1)+' · '+x[0]);d.appendChild(h);var b=el('div');mineText(b,x[1]);d.appendChild(b);e.appendChild(d)});
+}
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 var LB={};D.L.forEach(function(c){LB[c.id]=c});
 // ---------- tabs ----------
@@ -262,7 +276,7 @@ function ansBox(c){
   var b=el('div','ans '+(c.st==='t'?'t':c.st==='o'?'o':''));
   var bd=el('span','badge '+c.st,c.st==='t'?'Teacher mark agrees with the book':c.mine?'Mine, not from the book':c.st==='o'?'Check with Mahir / teacher':'From the book');
   b.appendChild(bd);b.appendChild(document.createElement('br'));
-  var tx=el('span');mineText(tx,c.ans);b.appendChild(tx);
+  var tx=el('div');ansText(tx,c.ans);b.appendChild(tx);
   b.appendChild(el('span','src','Source: '+c.src));
   if(c.err)c.err.forEach(function(e){var bx=el('span','ask');bx.appendChild(el('span','badge err',e.k==='logic'?'Logic error in the book':'Typo in the book'));bx.appendChild(document.createTextNode(e.m));b.appendChild(bx)});
   if(c.ask)b.appendChild(el('span','ask',c.ask));
@@ -648,7 +662,7 @@ function showQ(){
   var eye=el('button','btn','👁 Show answer');var eslot=el('div');
   function paintEye(){eslot.textContent='';if(!o.peek)return;eye.textContent='👁 Hide answer';
     var t=q.t==='mc'?q.o[q.a]+'. '+q.w:q.t==='ord'?q.it.join(' > ')+'.':q.m;
-    var bx=el('div','ans');bx.appendChild(el('b',null,'Answer: '));if(q.mine)mineText(bx,t);else bx.appendChild(document.createTextNode(t));
+    var bx=el('div','ans');bx.appendChild(el('b',null,'Answer: '));if(q.t==='op')ansText(bx,t);else if(q.mine)mineText(bx,t);else bx.appendChild(document.createTextNode(t));
     eslot.appendChild(bx);eslot.appendChild(el('p','note','You looked at the answer, so this question gets 0 marks.'))}
   eye.addEventListener('click',function(){if(o.peek&&eslot.firstChild){eslot.textContent='';eye.textContent='👁 Show answer';return}o.peek=true;paintEye()});
   box.appendChild(eye);box.appendChild(eslot);paintEye();
