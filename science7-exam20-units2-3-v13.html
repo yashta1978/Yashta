@@ -90,6 +90,7 @@ svg.cn line{stroke-width:1.2;vector-effect:non-scaling-stroke;opacity:.5;mix-ble
 #bki{width:100%;box-sizing:border-box;font-size:18px;padding:10px;border:2px solid var(--mut);border-radius:10px;margin:6px 0}
 .md{position:fixed;inset:0;background:rgba(10,15,25,.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
 .md.on{display:flex}
+.lpv{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:90;flex-direction:column}.lpv.on{display:flex}.lpvh{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-bottom:1px solid var(--line);align-items:center}.lpvs{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}.lpvw{width:100%}.lpv.z .lpvw{width:220%}.lpv .hl.foc{outline:3px solid #d81b60}.lpl{padding:10px 12px 30px}.lpl .hi{display:block;width:100%;text-align:left;min-height:48px;margin:6px 0;padding:10px;border:2px solid var(--line);border-radius:10px;background:#fff;font-size:17px}.lpl .hi.o{border-color:var(--o);background:var(--ob)}.lpl .hi.b{border-color:var(--b);background:var(--bb)}.lpl .hi.r{border-color:var(--r);background:var(--rb)}.lpl .hx{white-space:pre-line;font-size:17px;margin:6px 0 0}.snip{margin:6px 0}.snip canvas{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
 .mdc{background:#fff;width:100%;max-width:560px;max-height:80vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px;border-top:6px solid var(--b)}
 .mdc.o{border-top-color:var(--o)}.mdc.r{border-top-color:var(--r)}
 .mdc h3{margin:0 0 6px;font-size:20px}
@@ -168,6 +169,7 @@ textarea{min-height:110px}
 <section class="pane" id="p-sum"><div class="wrap" id="sum"></div></section>
 
 <div class="md" id="bkd"><div class="mdc o" id="bkc"><h3 id="bkt"></h3><p id="bkq"></p><input id="bki" type="text" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Your answer"><p id="bkm"></p><div class="acts"><button class="btn pri" id="bkok">Check</button><button class="btn" id="bkeye">👁 Show answer</button><button class="btn" id="bkx">Close</button></div></div></div>
+<div class="lpv" id="lpv"><div class="lpvh"><button class="btn" id="lpvx">Close</button><button class="btn" id="lpvp">Previous page</button><button class="btn" id="lpvn">Next page</button><button class="btn" id="lpvz">Zoom</button><button class="btn" id="lpvb">Open in Book page</button><b id="lpvt"></b></div><div class="lpvs" id="lpvs"><div class="lpvw" id="lpvw"></div><div class="lpl" id="lpvl"></div></div></div>
 <div class="md" id="md"><div class="mdc" id="mdc"><h3 id="mdt"></h3><p id="mdx"></p><div id="mds"></div><button class="btn pri" id="mdclose">Close</button></div></div>
 
 <script>
@@ -236,8 +238,8 @@ $('#md').addEventListener('click',function(e){if(e.target.id==='md')closeMd()});
 var ST={mc:{},rev:{},pn:{},bk:{}};  // mc[id]={tries,ok,rev}; pn[id]=true when revealed
 var gut=[]; // per page layout info
 function clearSrc(){document.querySelectorAll('.sf,.ar').forEach(function(n){n.parentNode.removeChild(n)});document.querySelectorAll('.srcbar').forEach(function(b){b.style.display='none'})}
-function srcBtns(c,box){
-  function mk(e,rel){var bt=el('button','btn sm src',(rel?'Show related text on page ':'Show on page ')+e.pg);bt.addEventListener('click',function(){showSrc(c,e,rel)});box.appendChild(bt)}
+function srcBtns(c,box,viaV){
+  function mk(e,rel){var bt=el('button','btn sm src',(rel?'Show related text on page ':'Show on page ')+e.pg);bt.addEventListener('click',function(){if(viaV)lpvOpen(e.pg,e,rel,c);else showSrc(c,e,rel)});box.appendChild(bt)}
   (c.sp||[]).forEach(function(e){mk(e,false)});(c.rp||[]).forEach(function(e){mk(e,true)});
 }
 function showSrc(c,e,rel){
@@ -264,7 +266,7 @@ function ansBox(c){
   b.appendChild(el('span','src','Source: '+c.src));
   if(c.err)c.err.forEach(function(e){var bx=el('span','ask');bx.appendChild(el('span','badge err',e.k==='logic'?'Logic error in the book':'Typo in the book'));bx.appendChild(document.createTextNode(e.m));b.appendChild(bx)});
   if(c.ask)b.appendChild(el('span','ask',c.ask));
-  var sb=el('div','acts');srcBtns(c,sb);if(sb.firstChild)b.appendChild(sb);
+  var sb=el('div','acts');srcBtns(c,sb,true);if(sb.firstChild)b.appendChild(sb);
   return b;
 }
 function buildGoto(){
@@ -497,6 +499,7 @@ function buildLearn(){
       d.appendChild(sm);
       var body=el('div','lb');
       body.appendChild(el('div','q',c.q));
+      var snip=el('div','snip');body.appendChild(snip);var snDone=false;d.addEventListener('toggle',function(){if(d.open&&!snDone){snDone=true;snipFor(c,snip)}});
       if(c.mk)body.appendChild(el('span','tag',c.mk));
       var st=el('ol','hid');c.steps.forEach(function(s){var li=el('li');mineText(li,s);st.appendChild(li)});
       var slot=el('div');
@@ -751,9 +754,69 @@ function defCard(d,i,onCh){
       box.appendChild(el('b',null,'Build the sentence'));box.appendChild(line);box.appendChild(area);box.appendChild(msg);box.appendChild(rs);box.appendChild(cl);draw();
     });
     a.appendChild(hm);a.appendChild(sm2);a.appendChild(kn);a.appendChild(ag);a.appendChild(bt);
+    var vp=el('button','btn sm','View page '+d[2]);vp.addEventListener('click',function(){lpvOpen(d[2])});a.appendChild(vp);
     var gp=el('button','btn sm','Go to page '+d[2]);gp.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+d[2]);if(s)s.scrollIntoView()},60)});a.appendChild(gp);
     c.appendChild(a);if(KNOWN[i])c.classList.add('k');paint();return c}
 
+
+
+// ---------- PAGE VIEWER (inside Learn) ----------
+var LV={b:null,e:null,rel:false,c:null},PIMG={};
+function pageObj(b){for(var i=0;i<D.pages.length;i++)if(String(D.pages[i].b)===String(b))return D.pages[i];return null}
+function addFrames(im,e,rel){
+  var first=null;
+  e.g.forEach(function(segs){
+    segs.forEach(function(s){var d=el('div','sf'+(rel?' rel':''));d.style.left=(s[0]-.4)+'%';d.style.width=(s[2]-s[0]+.8)+'%';d.style.top=(s[1]-.15)+'%';d.style.height=(s[3]-s[1]+.3)+'%';im.appendChild(d);if(!first)first=d});
+    var s0=segs[0],a=document.createElementNS('http://www.w3.org/2000/svg','svg');a.setAttribute('class','ar');a.setAttribute('viewBox','0 0 36 22');
+    var pth=document.createElementNS('http://www.w3.org/2000/svg','path');pth.setAttribute('d','M1 11 H28 M20 3 L32 11 L20 19');pth.setAttribute('fill','none');pth.setAttribute('stroke','#d81b60');pth.setAttribute('stroke-width','4');pth.setAttribute('stroke-linecap','round');pth.setAttribute('stroke-linejoin','round');a.appendChild(pth);
+    a.style.left=(s0[0]-.6)+'%';a.style.top=((s0[1]+s0[3])/2)+'%';im.appendChild(a);
+  });
+  return first;
+}
+function lpvOpen(b,e,rel,c){LV.b=b;LV.e=e||null;LV.rel=!!rel;LV.c=c||null;lpvRender();$('#lpv').classList.add('on')}
+function lpvClose(){$('#lpv').classList.remove('on')}
+function lpvRender(){
+  var p=pageObj(LV.b);if(!p)return;
+  var w=$('#lpvw');w.textContent='';var L=$('#lpvl');L.textContent='';
+  $('#lpvt').textContent='Page '+p.b;
+  var im=el('div','im');im.style.aspectRatio='1 / '+p.h.toFixed(4);
+  var img=new Image();img.alt='Book page '+p.b;img.src=p.img;img.draggable=false;im.appendChild(img);
+  var hls=[];
+  p.hints.forEach(function(h,k){hls[k]=[];h.s.forEach(function(s){var d=el('div','hl '+h.c);d.style.left=(s[0]-.3)+'%';d.style.width=(s[2]-s[0]+.6)+'%';d.style.top=s[1]+'%';d.style.height=(s[3]-s[1])+'%';im.appendChild(d);hls[k].push(d)})});
+  var first=LV.e?addFrames(im,LV.e,LV.rel):null;
+  w.appendChild(im);
+  if(LV.c&&LV.e)L.appendChild(el('p','cnt',(LV.rel?'Related text for ':'Where the answer comes from: ')+LV.c.qn));
+  var order=p.hints.map(function(h,k){return k}).sort(function(a,b){return (p.hints[a].c==='o'?0:1)-(p.hints[b].c==='o'?0:1)||a-b});
+  if(order.length){L.appendChild(el('h3','lh','Hints on this page'));L.appendChild(el('p','note','Orange: the teacher taught it. Blue: the rest of the page. Tap one to see where it is.'))}
+  order.forEach(function(k){var h=p.hints[k];
+    var b=el('button','hi '+h.c,(h.df?'Definition: ':'')+h.t);var tx=el('p','hx');tx.style.display='none';tx.textContent=h.df?'Book: '+h.df+'\n\n'+h.x:h.x;
+    b.addEventListener('click',function(){var on=tx.style.display==='none';tx.style.display=on?'block':'none';hls.forEach(function(a){a.forEach(function(d){d.classList.remove('foc')})});if(on){hls[k].forEach(function(d){d.classList.add('foc')});if(hls[k][0])hls[k][0].scrollIntoView({block:'center'})}});
+    L.appendChild(b);L.appendChild(tx)});
+  if(p.typos.length){L.appendChild(el('h3','lh','Mistakes in the book on this page'));p.typos.forEach(function(x){var b=el('div','hi r',(x.k==='logic'?'Logic error: ':'Typo: ')+x.m);L.appendChild(b)})}
+  var i=D.pages.indexOf(p);$('#lpvp').disabled=i<=0;$('#lpvn').disabled=i>=D.pages.length-1;
+  $('#lpvs').scrollTop=0;
+  if(first)setTimeout(function(){first.scrollIntoView({block:'center'})},60);
+}
+$('#lpvx').addEventListener('click',lpvClose);
+$('#lpvz').addEventListener('click',function(){$('#lpv').classList.toggle('z')});
+$('#lpvp').addEventListener('click',function(){var i=D.pages.indexOf(pageObj(LV.b));if(i>0){LV.b=D.pages[i-1].b;LV.e=null;lpvRender()}});
+$('#lpvn').addEventListener('click',function(){var i=D.pages.indexOf(pageObj(LV.b));if(i<D.pages.length-1){LV.b=D.pages[i+1].b;LV.e=null;lpvRender()}});
+$('#lpvb').addEventListener('click',function(){var b=LV.b,e=LV.e,r=LV.rel,c=LV.c;lpvClose();if(e&&c)showSrc(c,e,r);else{showTab('book');setTimeout(function(){var s=document.getElementById('pg'+b);if(s)s.scrollIntoView()},60)}});
+function snipFor(c,host){
+  var e=(c.sp&&c.sp[0])||(c.rp&&c.rp[0]);host.textContent='';
+  if(!e){var vb=el('button','btn sm','View page '+c.pg);vb.addEventListener('click',function(){lpvOpen(c.pg,null,false,c)});host.appendChild(vb);return}
+  var p=pageObj(e.pg);if(!p)return;
+  var x1=100,y1=100,x2=0,y2=0;e.g.forEach(function(g){g.forEach(function(s){x1=Math.min(x1,s[0]);y1=Math.min(y1,s[1]);x2=Math.max(x2,s[2]);y2=Math.max(y2,s[3])})});
+  x1=Math.max(0,x1-3);x2=Math.min(100,x2+3);y1=Math.max(0,y1-2);y2=Math.min(100,y2+2);
+  host.appendChild(el('p','note','From the book, page '+e.pg+' (tap to open the whole page):'));
+  var cv=document.createElement('canvas');cv.setAttribute('role','img');cv.setAttribute('aria-label','Book page '+e.pg+' - the part about this question');host.appendChild(cv);
+  function draw(im){var sw=(x2-x1)/100*im.naturalWidth,sh=(y2-y1)/100*(im.naturalWidth*p.h),sx=x1/100*im.naturalWidth,sy=y1/100*(im.naturalWidth*p.h);
+    var W=Math.min(900,Math.round(sw)),H=Math.max(40,Math.round(W*sh/sw));cv.width=W;cv.height=H;var cx=cv.getContext('2d');cx.drawImage(im,sx,sy,sw,sh,0,0,W,H);
+    cx.strokeStyle='rgba(216,27,96,.9)';cx.lineWidth=3;}
+  var im=PIMG[e.pg];if(!im){im=new Image();im.src=p.img;PIMG[e.pg]=im}
+  if(im.complete&&im.naturalWidth)draw(im);else im.addEventListener('load',function(){draw(im)});
+  cv.addEventListener('click',function(){lpvOpen(e.pg,e,false,c)});
+}
 
 // ---------- GUIDE ----------
 var learnFilterStage=null,GREAD={},GRES={},GCUR=null;
@@ -804,8 +867,9 @@ function showGuide(g){
   h.appendChild(el('p','note','Four steps. Each step shows ✔ when it is done.'));
   function stepBox(n,title,done){var b=el('div','fc'+(done?' k':''));b.appendChild(el('div','term',(done?'✔ ':'✘ ')+n+'. '+title));h.appendChild(b);return b}
   var s1=stepBox(1,'Read',st[0]);
-  s1.appendChild(el('p',null,'Open the book pages '+p1+' to '+p2+'. Tap the 💡 hints. Orange hints are what the teacher taught.'));
-  var a1=el('div','acts');var gp=el('button','btn','Open page '+p1);gp.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+p1);if(s)s.scrollIntoView()},60)});a1.appendChild(gp);
+  s1.appendChild(el('p',null,'Read the book pages '+p1+' to '+p2+' here. Under each page you find its hints. Orange hints are what the teacher taught.'));
+  var a1=el('div','acts');var pgs=[];pages.forEach(function(x){if(pgs.indexOf(x)<0)pgs.push(x)});pgs.sort(function(a,b){return a-b}).forEach(function(x){var vb=el('button','btn pri','View page '+x);vb.addEventListener('click',function(){lpvOpen(x)});a1.appendChild(vb)});
+  var gp=el('button','btn','Open in Book page');gp.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+p1);if(s)s.scrollIntoView()},60)});a1.appendChild(gp);
   var dn=el('button','btn'+(st[0]?' on':''),st[0]?'I have read it ✔':'I have read it');dn.addEventListener('click',function(){GREAD[g]=!GREAD[g];showGuide(g)});a1.appendChild(dn);s1.appendChild(a1);
   var s2=stepBox(2,'Remember this',st[1]);
   if(df.length){s2.appendChild(el('p',null,'Say each definition from memory. Tap Hide more until all words are hidden, then tap I know it.'));df.forEach(function(x){s2.appendChild(defCard(x[0],x[1],function(){showGuide(g)}))})}
