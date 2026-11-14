@@ -549,8 +549,8 @@ function buildLearn(){
       b2.addEventListener('click',function(){if(slot.firstChild){slot.textContent='';b2.textContent='Show answer'}else{
         slot.appendChild(ansBox(c));
         var rr=el('div','rate');rr.appendChild(el('p','note',wf.value.trim()?'Compare with what you wrote. How did you do?':'You did not write anything first. How did you do?'));
-        var rs=[['I was right',1],['Partly',0],['Wrong',0]],bs=[];
-        rs.forEach(function(x){var b=el('button','btn',x[0]);b.addEventListener('click',function(){bs.forEach(function(y){y.classList.remove('sel')});b.classList.add('sel');setR(!!x[1]&&!!wf.value.trim())});bs.push(b);rr.appendChild(b)});
+        var rs=[['I was right',1],['Partly',0],['Wrong',0]],bs=[];var pm=el('p','note','');
+        rs.forEach(function(x){var b=el('button','btn',x[0]);b.addEventListener('click',function(){bs.forEach(function(y){y.classList.remove('sel')});b.classList.add('sel');var okk=!!x[1]&&!!wf.value.trim();setR(okk);if(okk)showPr(pm,true);else if(x[1])pm.textContent='Write your own answer first, then tap I was right.',pm.className='note';else showPr(pm,false)});bs.push(b);rr.appendChild(b)});rr.appendChild(pm);
         rr.appendChild(el('p','note','Only "I was right" after writing your own answer makes the question Ready.'));
         slot.appendChild(rr);b2.textContent='Hide answer';LS[c.id]=1;sm.classList.add('seen');upd()}});
       rb.addEventListener('click',function(){setR(!READY[c.id])});
@@ -565,7 +565,11 @@ function buildLearn(){
   chips.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;learnFilter=b.dataset.f;chips.querySelectorAll('.chip').forEach(function(x){x.classList.toggle('on',x===b)});render()});
   render();
 }
-var LS={},READY={},KNOWN={},SBW={},PASSED=false;
+var LS={},READY={},KNOWN={},SBW={},PASSED=false,GSC={};
+var PRAISE=['Well done!','You are a champion!','Excellent work!','Great job!','Brilliant!','Wonderful!','You nailed it!','Keep it up!','Superb!','Fantastic!','Very good!','You are doing great!','Outstanding!','Perfect!','Impressive work!'],PRLAST=-1;
+function praise(){var i;do{i=Math.floor(Math.random()*PRAISE.length)}while(i===PRLAST);PRLAST=i;return PRAISE[i]}
+function gentle(){return 'Almost there, try again.'}
+function showPr(box,ok){box.textContent=ok?praise():gentle();box.className=ok?'note okc pr':'note'}
 function cardsAll(){return D.L.filter(function(c){return !c.dup})}
 function plan(){
   var n=cardsAll();var unseen=n.filter(function(c){return !LS[c.id]}).length;
@@ -710,13 +714,15 @@ function finishExam(){
   var h=$('#exam');h.textContent='';
   h.appendChild(el('h2',null,EXS.second?'Second chance result':'Result'));
   var res=el('div','res');h.appendChild(res);
+  var fb=el('p','note');h.appendChild(fb);var fbP=praise();
   var tline=el('p','note',EXS.timer?('Time: '+Math.floor(secs/60)+':'+('0'+secs%60).slice(-2)):'');h.appendChild(tline);
   var cov=el('div');h.appendChild(cov);
   var weak=el('div');h.appendChild(weak);
   var list=el('div');h.appendChild(list);
   function upd(){
     var sc=0,bad=[],gs={};EXS.q.forEach(function(o){var ok=grade(o);if(!EXS.second){READY[o.q.l]=ok;if(o.conf==='s'&&!o.peek&&!ok)SBW[o.q.l]=1;else if(ok)delete SBW[o.q.l]}var g=gOf(o.q);gs[g]=gs[g]||[0,0];gs[g][1]++;if(ok){sc++;gs[g][0]++}else bad.push(o)});
-    res.textContent=sc+' / '+N;if(!EXS.second&&N===20&&sc>=18)PASSED=true;if(EXS.guide)GRES[EXS.guide]=(sc===N);
+    res.textContent='Your score: '+sc+' of '+N;if(!EXS.second&&N===20&&sc>=18)PASSED=true;if(EXS.guide){GRES[EXS.guide]=true;GSC[EXS.guide]=[sc,N]}
+    var exc=sc*10>=N*9;fb.className=exc?'cnt okc':'note';fb.textContent=exc?(fbP+' Your score is excellent.'):'Try again as many times as you like until your score is excellent.';
     cov.textContent='';cov.appendChild(el('h2',null,'Coverage by section'));
     GO.forEach(function(g){if(!gs[g])return;var r=el('div','cvr');r.appendChild(el('span',null,GN[g]));r.appendChild(el('b',gs[g][0]===gs[g][1]?'okc':'',gs[g][0]+' / '+gs[g][1]));cov.appendChild(r)});
     weak.textContent='';
@@ -750,7 +756,7 @@ function finishExam(){
     function paint(){var ok=grade(o);r.className='rv '+(ok?'ok':'no');h1.textContent=ok?'✔ 1 mark':'✘ 0 marks'}
     o.paint=paint;paint();
   });
-  var rt=el('button','btn pri','Retry');rt.addEventListener('click',examIntro);h.appendChild(rt);
+  var rt=el('button','btn pri','Retry');var rids=EXS.q.map(function(o){return o.q.l}),rg=EXS.guide,r2=EXS.second;rt.addEventListener('click',function(){if(rg&&!r2)startExam(rids.length,rids,false,rg);else examIntro()});h.appendChild(rt);
   if(EXS.guide){var gb=el('button','btn pri','Back to the Guide');gb.style.marginLeft='8px';gb.addEventListener('click',function(){showTab('learn');buildLearn();GCUR=nextStage();showGuide()});h.appendChild(gb)}
   var op=el('p','note','Open questions (marked by you) count 1 mark only when you ticked every point.');h.insertBefore(op,list);
   upd();window.scrollTo(0,0);
@@ -773,11 +779,11 @@ function defCard(d,i,onCh){
     }
     c.appendChild(lvEl);c.appendChild(tx);c.appendChild(bs);
     var a=el('div','acts');a.style.marginTop='8px';
-    var hm=el('button','btn','Hide more');var sm2=el('button','btn','Show more');var kn=el('button','btn','I know it');var ag=el('button','btn','Again');var bt=el('button','btn','Build the sentence');
+    var kmsg=el('p','note','');var hm=el('button','btn','Hide more');var sm2=el('button','btn','Show more');var kn=el('button','btn','I know it');var ag=el('button','btn','Again');var bt=el('button','btn','Build the sentence');
     hm.addEventListener('click',function(){if(lv<4){lv++;paint()}});
     sm2.addEventListener('click',function(){if(lv>0){lv--;paint()}});
-    kn.addEventListener('click',function(){KNOWN[i]=1;c.classList.add('k');if(onCh)onCh()});
-    ag.addEventListener('click',function(){delete KNOWN[i];c.classList.remove('k');lv=0;bs.textContent='';paint();if(onCh)onCh()});
+    kn.addEventListener('click',function(){KNOWN[i]=1;c.classList.add('k');showPr(kmsg,true);if(onCh)onCh()});
+    ag.addEventListener('click',function(){delete KNOWN[i];c.classList.remove('k');lv=0;bs.textContent='';kmsg.textContent='';paint();if(onCh)onCh()});
     bt.addEventListener('click',function(){
       bs.textContent='';var box=el('div','bs');bs.appendChild(box);
       var pool=shuffle(words.map(function(w,k){return k})),got=[];
@@ -785,7 +791,7 @@ function defCard(d,i,onCh){
       function draw(){
         line.textContent=got.length?got.map(function(k){return words[k]}).join(' '):'Tap the words in order.';
         area.textContent='';
-        pool.forEach(function(k){if(got.indexOf(k)>-1)return;var b=el('button','opt',words[k]);b.addEventListener('click',function(){got.push(k);draw();if(got.length===words.length){var ok=got.every(function(x,j){return words[x]===words[j]});msg.textContent=ok?'Correct ✔':'Not yet. Tap Reset and try again.'}});area.appendChild(b)});
+        pool.forEach(function(k){if(got.indexOf(k)>-1)return;var b=el('button','opt',words[k]);b.addEventListener('click',function(){got.push(k);draw();if(got.length===words.length){var ok=got.every(function(x,j){return words[x]===words[j]});if(ok)showPr(msg,true);else{msg.textContent='Almost there, try again. Tap Reset.';msg.className='note'}}});area.appendChild(b)});
       }
       var rs=el('button','btn','Reset');rs.addEventListener('click',function(){got=[];msg.textContent='';draw()});
       var cl=el('button','btn','Close');cl.addEventListener('click',function(){bs.textContent=''});
@@ -794,7 +800,7 @@ function defCard(d,i,onCh){
     a.appendChild(hm);a.appendChild(sm2);a.appendChild(kn);a.appendChild(ag);a.appendChild(bt);
     var vp=el('button','btn sm','View page '+d[2]);vp.addEventListener('click',function(){lpvOpen(d[2])});a.appendChild(vp);
     var gp=el('button','btn sm','Go to page '+d[2]);gp.addEventListener('click',function(){showTab('book');setTimeout(function(){var s=document.getElementById('pg'+d[2]);if(s)s.scrollIntoView()},60)});a.appendChild(gp);
-    c.appendChild(a);if(KNOWN[i])c.classList.add('k');paint();return c}
+    c.appendChild(a);c.appendChild(kmsg);if(KNOWN[i])c.classList.add('k');paint();return c}
 
 
 
@@ -895,7 +901,7 @@ function showGuide(g){
     h.appendChild(el('h3','lh','Unit '+u+' - Unit test'));
     var open=x.gs.filter(function(s){return !stageDone(s)});
     h.appendChild(el('p',open.length?'note':'cnt',open.length?'Not every stage of this unit is finished yet: '+open.map(function(s){return GN[s]}).join(', ')+'. You can still try the test.':'All stages are finished. Take the test on every question of Unit '+u+'.'));
-    h.appendChild(el('p','note','Unit '+u+' has '+ids.length+' questions. Pass means every question right with no eye.'));
+    h.appendChild(el('p','note','Unit '+u+' has '+ids.length+' questions. Your score shows at the end. Move on whatever the score, and retry any time.'));
     var s=el('button','btn pri','Start Unit '+u+' test');s.addEventListener('click',function(){showTab('exam');startExam(ids.length,ids,false,g)});h.appendChild(s);
     var nx=el('button','btn','Next stage');nx.style.marginLeft='8px';nx.addEventListener('click',function(){GCUR=GRES[g]?nextStage():(function(){var all=gUnits();return u<3?(all[u].gs[0]):'EXAM'})();showGuide()});h.appendChild(nx);
     return}
@@ -917,7 +923,7 @@ function showGuide(g){
   s3.appendChild(el('p',null,'Write your answer first, then show the answer and tap I was right. Not ready yet: '+nr+' of '+ids2.length+'.'));
   var q3=el('button','btn','Open these questions');q3.addEventListener('click',function(){learnFilter='g:'+g;learnFilterStage=g;buildLearn();window.scrollTo(0,0)});s3.appendChild(q3);
   var s4=stepBox(4,'Stage check',st[3]);
-  s4.appendChild(el('p',null,'The exam way: '+ids2.length+' questions, no hints. Mark Sure or Not sure. '+(GRES[g]===false?'Last try was not perfect. Try again.':'')));
+  s4.appendChild(el('p',null,'The exam way: '+ids2.length+' questions, no hints. Mark Sure or Not sure. '+(GSC[g]?'Last score: '+GSC[g][0]+' of '+GSC[g][1]+'. Start it again any time.':'')));
   var q4=el('button','btn pri','Start stage check');q4.addEventListener('click',function(){showTab('exam');startExam(ids2.length,ids2,false,g)});s4.appendChild(q4);
   var left=st.filter(function(x){return !x}).length;
   h.appendChild(el('p',left?'note':'cnt',left?'Steps left: '+left+'. You can move on, but this stage will stay marked ✘.':'This stage is done.'));
