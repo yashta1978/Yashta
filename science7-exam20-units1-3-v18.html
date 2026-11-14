@@ -507,14 +507,17 @@ function buildLearn(){
   host.appendChild(el('h2',null,'Learn'));
   host.appendChild(el('p','note','Tap a question to open it. Tap Hint if you are stuck. Then tap Show answer.'));
   var prog=el('p','cnt','');host.appendChild(prog);
+  if(learnFilter==='all'||learnFilter==='tm')host.appendChild(modeRow(learnFilter,function(m){learnFilter=m;buildLearn()}));
   host.appendChild(guideBox());
   if(learnFilter.indexOf('g:')===0){var gbk=el('button','btn pri','Back to the Guide');gbk.style.margin='8px 0';gbk.addEventListener('click',function(){learnFilter='all';showGuide(learnFilterStage||GCUR)});host.appendChild(gbk);host.appendChild(el('p','note','Showing only the questions of '+(GN[learnFilter.slice(2)]||'this stage')+'. Tap All to see every question.'))}
   var planHost=el('div');host.appendChild(planHost);
   var chips=el('div','chips');
-  var defs=[['all','All'],['2','Unit 2'],['3','Unit 3'],['1','Unit 1'],['new','Not seen yet'],['nr','Not ready yet'],['tm','Teacher-marked'],['mine','Mine, not from the book']];
+  var defs=[['all','All'],['2','Unit 2'],['3','Unit 3'],['1','Unit 1'],['new','Not seen yet'],['nr','Not ready yet'],['mine','Mine, not from the book']];
+  if(learnFilter==='tm')host.appendChild(el('p','note','Showing the '+markedQs().length+' questions marked by the teacher, then her definitions and hints. Tap All to see everything.'));
   defs.forEach(function(d){var b=el('button','chip'+(learnFilter===d[0]?' on':''),d[1]);b.dataset.f=d[0];chips.appendChild(b)});
-  host.appendChild(chips);
+  if(learnFilter!=='tm')host.appendChild(chips);
   var list=el('div');host.appendChild(list);
+  var extra=el('div');host.appendChild(extra);
   function seen(c){return !!LS[c.id]}
   function upd(){var n=cards.filter(seen).length;prog.textContent='Answers seen: '+n+' of '+cards.length+'   |   Ready: '+nReady()+' of '+D.EX.length;planHost.textContent='';planHost.appendChild(planBox("Today's plan",'Do these steps in order. You do not need the book or the teacher.'))}
   function pass(c){
@@ -560,6 +563,7 @@ function buildLearn(){
       list.appendChild(d);
     });
     if(!shown)list.appendChild(el('p','note','Nothing here.'));
+    extra.textContent='';if(learnFilter==='tm')markedExtras(extra,null);
     upd();
   }
   chips.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;learnFilter=b.dataset.f;chips.querySelectorAll('.chip').forEach(function(x){x.classList.toggle('on',x===b)});render()});
@@ -591,6 +595,16 @@ function planBox(title,intro){
     if(!s[1]&&s[3]){var g=el('button','btn sm','Go');g.setAttribute('aria-label','Go: '+s[0]);g.addEventListener('click',s[3]);box.appendChild(g)}});
   box.appendChild(el('p',all?'cnt':'note',all?'You are ready for the exam. Start it with confidence.':'Finish the steps marked ✘ and you will be ready.'));
   return box;
+}
+function markedQs(){return D.EX.filter(function(q){var c=LB[q.l];return c&&(c.mk||c.st==='t')}).map(function(q){return q.l})}
+function modeRow(cur,fn){var r=el('div','chips');[['all','All'],['tm','Marked by the teacher']].forEach(function(d){var b=el('button','chip'+(cur===d[0]?' on':''),d[1]);b.addEventListener('click',function(){fn(d[0])});r.appendChild(b)});return r}
+function markedExtras(host,onCh){
+  var hs=[];D.pages.forEach(function(p){(p.hints||[]).forEach(function(h){if(h.c==='o')hs.push([p.b,h])})});
+  host.appendChild(el('h2',null,'Definitions marked by the teacher ('+D.DEFS.length+')'));
+  D.DEFS.forEach(function(d,i){host.appendChild(defCard(d,i,onCh))});
+  host.appendChild(el('h2',null,'Hints marked by the teacher ('+hs.length+')'));
+  host.appendChild(el('p','note','Tap a hint to open its book page.'));
+  hs.forEach(function(x){var b=el('button','opt',' Page '+x[0]+': '+x[1].t);b.style.display='block';b.style.width='100%';b.addEventListener('click',function(){lpvOpen(x[0])});host.appendChild(b)});
 }
 function nReady(){return D.EX.filter(function(q){return READY[q.l]}).length}
 function hasEx(id){return D.EX.some(function(q){return q.l===id})}
@@ -638,7 +652,7 @@ function examIntro(){
   var nr=D.EX.filter(function(q){return !READY[q.l]}).map(function(q){return q.l});
   if(nr.length&&nr.length<D.EX.length){var b3=el('button','btn','Practise not-ready questions ('+nr.length+')');b3.addEventListener('click',function(){ready(nr.length,nr)});a.appendChild(b3)}
   var tmIds=D.EX.filter(function(q){var c=LB[q.l];return c&&(c.mk||c.st==='t')}).map(function(q){return q.l});
-  if(tmIds.length){var b4=el('button','btn','Practise teacher-marked questions ('+tmIds.length+')');b4.addEventListener('click',function(){ready(tmIds.length,tmIds)});a.appendChild(b4)}
+  if(tmIds.length){var b4=el('button','btn','Practise questions marked by the teacher ('+tmIds.length+')');b4.addEventListener('click',function(){ready(tmIds.length,tmIds)});a.appendChild(b4)}
   h.appendChild(a);
   h.appendChild(el('h2',null,'Practise one section'));
   var sa=el('div','acts');
@@ -935,8 +949,16 @@ function showGuide(g){
 }
 
 // ---------- SUMMARY ----------
+var sumMode='all';
 function buildSum(){
   var h=$('#sum');h.textContent='';h.appendChild(el('h2',null,'Summary'));
+  h.appendChild(modeRow(sumMode,function(m){sumMode=m;buildSum();window.scrollTo(0,0)}));
+  if(sumMode==='tm'){
+    h.appendChild(el('p','note','Only what the teacher marked. Tap All to see the whole summary.'));
+    var mq=markedQs();h.appendChild(el('h2',null,'Questions marked by the teacher ('+mq.length+')'));
+    mq.forEach(function(id){var c=LB[id];var b=el('button','opt','Page '+c.pg+'  '+c.qn+': '+(c.q.length>80?c.q.slice(0,77)+'...':c.q));b.style.display='block';b.style.width='100%';b.addEventListener('click',function(){openLearn(id)});h.appendChild(b)});
+    var kc2=el('p','cnt','');function upk2(){kc2.textContent='I know it: '+Object.keys(KNOWN).length+' of '+D.DEFS.length}
+    markedExtras(h,upk2);h.appendChild(kc2);upk2();return}
   h.appendChild(el('p','note','Everything important in one place. Read the facts, test yourself on the definitions, then check the mistakes in the book and the answers that are not from the book.'));
   h.appendChild(el('h2',null,'Key facts'));
   var f=el('div','facts');D.FACTS.forEach(function(x){var d=el('div');d.appendChild(el('b',null,x[0]+': '));d.appendChild(document.createTextNode(x[1]));f.appendChild(d)});h.appendChild(f);
