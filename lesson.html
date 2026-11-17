@@ -1,0 +1,66 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><title>Lesson</title>
+<style>html,body{margin:0;height:100%;background:#fff;overflow:hidden}iframe{position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff}</style></head><body>
+<iframe id="f" allow="fullscreen; autoplay; microphone"></iframe>
+<script>
+/* Lesson wrapper: opens the lesson file unchanged inside a frame and, only on a registered device,
+   sends open count, active time and the score text the lesson itself shows. No lesson file is modified. */
+(function(){
+var Q={};location.search.replace(/^\?/,'').split('&').forEach(function(p){var a=p.split('=');if(a[0])Q[a[0]]=decodeURIComponent(a[1]||'')});
+var F=/^[\w.-]+\.html$/.test(Q.f||'')?Q.f:'',WHO=(Q.w==='ara'||Q.w==='vina')?Q.w:'';
+var fr=document.getElementById('f');if(!F){document.body.textContent='?';return}
+var DEVK='bk-device-v1',TESTK='bk-test-v1',NOSEND=Q.nosend==='1';
+function dev(){try{var d=JSON.parse(localStorage.getItem(DEVK)||'null');if(d&&d.role==='student'&&d.token&&d.repo&&(d.who||WHO)&&localStorage.getItem(TESTK)!=='1')return d}catch(e){}return null}
+var SLUG=F.replace(/\.html$/,''),cur={f:F,slug:SLUG,title:''},lastAct=Date.now(),pend={sec:0,clicks:0,opens:0},sc={},best=null,dirty=false;
+function p2(n){return(n<10?'0':'')+n}function today(){var d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+function act(){lastAct=Date.now()}
+['pointerdown','keydown','touchstart','scroll'].forEach(function(ev){addEventListener(ev,act,true)});
+function parseRatio(t){var m=/(\d+(?:[.,]\d+)?)\s*(?:\/|من|of|out of)\s*(\d+(?:[.,]\d+)?)/i.exec(t);if(!m)return null;var a=parseFloat(m[1].replace(',','.')),b=parseFloat(m[2].replace(',','.'));return b>0&&a<=b?{a:a,b:b,r:a/b,t:m[0].replace(/\s+/g,' ')}:null}
+function scan(doc){try{
+  var n=doc.querySelectorAll('[id*="score" i],[id*="counter" i],[id*="prog" i],[class*="score" i],[class*="counter" i],[id*="result" i],[id*="total" i]');
+  for(var i=0;i<n.length&&i<80;i++){var e=n[i],t=(e.innerText||e.textContent||'').replace(/\s+/g,' ').trim();
+    if(!t||t.length>60||!/\d/.test(t))continue;
+    var k=(e.id||String(e.className).split(' ')[0]||e.tagName).slice(0,30);
+    if(!(k in sc)&&Object.keys(sc).length>=8)continue;
+    if(sc[k]!==t){sc[k]=t;dirty=true}
+    var r=parseRatio(t);if(r&&(!best||r.r>best.r)&&r.b>=3){best=r;dirty=true}}
+}catch(e){}}
+function hook(){try{var w=fr.contentWindow,doc=fr.contentDocument;if(!doc)return;
+  var h=w.location.pathname.split('/').pop();if(/^[\w.-]+\.html$/.test(h)&&h!==cur.f){cur={f:h,slug:h.replace(/\.html$/,''),title:''};sc={};best=null;pend.opens++;dirty=true}
+  cur.title=doc.title||cur.title;document.title=cur.title||document.title;
+  ['pointerdown','keydown','touchstart','input'].forEach(function(ev){doc.addEventListener(ev,function(){act();if(ev==='pointerdown'||ev==='touchstart')pend.clicks++},true)});
+  scan(doc)}catch(e){}}
+fr.addEventListener('load',function(){hook()});
+fr.src=F;pend.opens=1;
+setInterval(function(){
+  if(document.visibilityState==='visible'&&Date.now()-lastAct<45000){pend.sec++;dirty=true}
+  try{if(fr.contentDocument&&(pend.sec%3===0))scan(fr.contentDocument)}catch(e){}
+},1000);
+/* ---- sending ---- */
+var R=null,sha=null,busy=false,api=function(d){return(d.api||'https://api.github.com')+'/repos/'+d.repo+'/contents/reports/'+(d.who||WHO)+'-lessons.json'};
+function hd(d){return{'Authorization':'Bearer '+d.token,'Accept':'application/vnd.github+json'}}
+async function pull(d){var r=await fetch(api(d)+'?t='+Date.now(),{headers:hd(d),cache:'no-store'});
+  if(r.status===404){R={v:1,kind:'lessons',who:d.who||WHO,lessons:{}};sha=null;return}
+  if(!r.ok)throw new Error('GET '+r.status);var j=await r.json();sha=j.sha;R=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));if(!R.lessons)R.lessons={}}
+function apply(s){
+  var L=R.lessons[cur.slug]||(R.lessons[cur.slug]={f:cur.f,title:cur.title,first:new Date().toISOString(),opens:0,days:{},sc:{}});
+  L.f=cur.f;if(cur.title)L.title=cur.title;L.upd=new Date().toISOString();L.opens=(L.opens||0)+s.opens;
+  var k=today(),D=L.days[k]||(L.days[k]={sec:0,clicks:0});D.sec+=s.sec;D.clicks+=s.clicks;
+  if(Object.keys(sc).length)L.sc=Object.assign({},sc);
+  if(best&&(!L.best||best.r>=L.best.r))L.best=best;
+  R.who=R.who||(dev()||{}).who||WHO;R.upd=L.upd}
+async function flush(){var d=dev();if(!d||NOSEND||busy)return;if(!(pend.sec||pend.clicks||pend.opens||dirty))return;
+  busy=true;var s={sec:pend.sec,clicks:pend.clicks,opens:pend.opens};pend.sec=pend.clicks=pend.opens=0;dirty=false;
+  try{for(var tries=0;tries<3;tries++){
+      if(!R||tries>0)await pull(d);
+      var snap=JSON.parse(JSON.stringify(R));apply(s);
+      var body={message:'lessons report',content:btoa(unescape(encodeURIComponent(JSON.stringify(R))))};if(sha)body.sha=sha;
+      var r=await fetch(api(d),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},hd(d)),body:JSON.stringify(body)});
+      if(r.ok){var j=await r.json();sha=j.content&&j.content.sha;return}
+      R=null;if(r.status!==409&&r.status!==422)throw new Error('PUT '+r.status)}
+    throw new Error('conflict')
+  }catch(e){pend.sec+=s.sec;pend.clicks+=s.clicks;pend.opens+=s.opens;dirty=true}finally{busy=false}}
+setInterval(flush,20000);setTimeout(flush,4000);
+addEventListener('pagehide',flush);document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flush()});
+window.__lw={flush:flush,pend:pend,get sc(){return sc},get best(){return best}};
+})();
+</script></body></html>

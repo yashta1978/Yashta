@@ -1642,7 +1642,7 @@ function devGet(){try{return JSON.parse(localStorage.getItem(DEVK)||'null')}catc
 function devSet(o){try{if(o)localStorage.setItem(DEVK,JSON.stringify(o));else localStorage.removeItem(DEVK)}catch(e){}}
 function isTest(){try{return localStorage.getItem(TESTK)==='1'}catch(e){return false}}
 function setTest(v){try{if(v)localStorage.setItem(TESTK,'1');else localStorage.removeItem(TESTK)}catch(e){}}
-function canReport(){var d=devGet();return !!(d&&d.role==='student'&&d.book===D.meta.book&&d.token&&d.repo&&!isTest())}
+function canReport(){var d=devGet();return !!(d&&d.role==='student'&&(!d.book||d.book==='*'||d.book===D.meta.book)&&d.token&&d.repo&&!isTest())}
 function posInfo(){
   var c=pCur();if(c<0)return {done:true,label:'Path complete'};
   var x=PSEQ[c],o={i:c,n:PSEQ.length,label:pLabel(x),k:x.k};
@@ -1705,7 +1705,7 @@ function openMenu(){
   var st=el('p','note','');c.appendChild(st);
   function ago(ms){if(!ms)return 'never';var m=Math.round((Date.now()-ms)/60000);return m<1?'just now':(m<90?m+' min ago':Math.round(m/60)+' h ago')}
   function refresh(){var dd=devGet();
-    st.textContent=!dd?'Not registered. This device does not send reports.':(dd.role==='student'&&dd.book===D.meta.book?('Registered for this book ('+dd.book+'). '+(isTest()?'TEST SESSION: reports are paused.':'Reports are sent. Last report: '+ago(SYNC.last)+(SYNC.err?(' ('+SYNC.err+')'):'')+'.')):('Registered, but not for this book ('+(dd.book||dd.role)+'). No reports from here.'))}
+    st.textContent=!dd?'Not registered. This device does not send reports.':(dd.role==='student'&&(!dd.book||dd.book==='*'||dd.book===D.meta.book)?('Registered ('+(dd.book&&dd.book!=='*'?dd.book:'all books')+'). '+(isTest()?'TEST SESSION: reports are paused.':'Reports are sent. Last report: '+ago(SYNC.last)+(SYNC.err?(' ('+SYNC.err+')'):'')+'.')):('Registered, but not for this book ('+(dd.book||dd.role)+'). No reports from here.'))}
   refresh();
   var msg=el('p','note','');c.appendChild(msg);
   var code=el('textarea','wf');code.rows=3;code.placeholder='Setup code';code.spellcheck=false;code.setAttribute('aria-label','Setup code');
@@ -1714,8 +1714,8 @@ function openMenu(){
   var acts=el('div','acts');c.appendChild(acts);
   var reg=el('button','btn pri','Register this device');
   reg.addEventListener('click',async function(){
-    try{var o=await bkDecode(code.value,pass.value);if(o.role!=='student')throw new Error('This code is not for a lesson device.');if(o.book!==D.meta.book)throw new Error('This code is for another book ('+o.book+').');
-      devSet({role:o.role,book:o.book,repo:o.repo,token:o.token,api:o.api||'',enc:code.value.trim(),id:Math.random().toString(36).slice(2,8)});SYNC.sha=null;msg.className='note okc';msg.textContent='Registered.';code.value='';pass.value='';refresh();markDirty()}
+    try{var o=await bkDecode(code.value,pass.value);if(o.role!=='student')throw new Error('This code is not for a lesson device.');if(o.book&&o.book!=='*'&&o.book!==D.meta.book)throw new Error('This code is for another book ('+o.book+').');
+      devSet({role:o.role,book:o.book||'*',repo:o.repo,token:o.token,api:o.api||'',enc:code.value.trim(),id:Math.random().toString(36).slice(2,8)});SYNC.sha=null;msg.className='note okc';msg.textContent='Registered.';code.value='';pass.value='';refresh();markDirty()}
     catch(e){msg.className='note';msg.textContent=e.message}
   });acts.appendChild(reg);
   var dd=devGet();
@@ -1727,6 +1727,7 @@ function openMenu(){
   }
   document.body.appendChild(w);
 }
+setTimeout(function(){if(canReport())markDirty()},1500);
 (function(){var m=el('button','btn','Menu');m.id='menub';m.setAttribute('aria-label','Menu for parents');m.addEventListener('click',openMenu);document.body.appendChild(m);if(isTest()){}})();
 markDirty();
 

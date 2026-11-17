@@ -42,7 +42,26 @@ async function load(book){
   if(r.status===404)return {none:true};if(!r.ok)throw new Error('GitHub '+r.status);
   var j=await r.json();return JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
 }
+function lessonsCard(rep){
+  var who={ara:'آرا',vina:'فينا'}[rep.who]||rep.who||'';var c=el('div','card');c.appendChild(el('h2',null,'دروس '+who));
+  var a=ago(rep.upd);c.appendChild(el('p',a.h>24?'warn':'ok','آخر نشاط: '+a.t));
+  var tk=dkey(new Date()),arr=[],tsec=0,topen=0;
+  Object.keys(rep.lessons||{}).forEach(function(k){var L=rep.lessons[k];L._k=k;arr.push(L);var d=(L.days||{})[tk];if(d&&d.sec>=30){tsec+=d.sec;topen++}});
+  c.appendChild(el('p',null,'اليوم: '+topen+' درساً — '+Math.round(tsec/60)+' دقيقة دراسة'));
+  arr.sort(function(x,y){return (y.upd||'')<(x.upd||'')?-1:1});
+  if(!arr.length)c.appendChild(el('p','note','لم تفتح أي درس بعد.'));
+  arr.forEach(function(L){
+    var ds=Object.keys(L.days||{}),tot=0;ds.forEach(function(k){tot+=L.days[k].sec||0});var td=(L.days||{})[tk],al=ago(L.upd);
+    var b=el('div');b.style.cssText='border-top:1px solid var(--line);padding:8px 0';
+    b.appendChild(el('div',null,(L.title||L._k)));
+    var best=L.best?(' — أعلى نتيجة ظهرت في الدرس: '+L.best.t):((L.sc&&Object.keys(L.sc).length)?(' — ما يعرضه الدرس: '+Object.keys(L.sc).map(function(k){return L.sc[k]}).slice(0,3).join(' | ')):' — لا نتيجة ظاهرة في الدرس');
+    b.appendChild(el('div','note','آخر فتح: '+al.t+' — فتحه '+(L.opens||1)+' مرة — اليوم: '+Math.round(((td&&td.sec)||0)/60)+' دقيقة — الإجمالي: '+Math.round(tot/60)+' دقيقة'+best));
+    c.appendChild(b)});
+  c.appendChild(el('p','note','النتيجة تُقرأ من العدّاد الذي يعرضه الدرس نفسه، وليست كل الدروس تعرض نتيجة. الوقت يُحسب عند النشاط الفعلي فقط.'));
+  return c;
+}
 function bookCard(book,rep,err){
+  if(rep&&rep.kind==='lessons')return lessonsCard(rep);
   var c=el('div','card');c.appendChild(el('h2',null,book.label||book.id));
   if(err){c.appendChild(el('p','warn','تعذّر جلب التقرير: '+err));return c}
   if(rep.none){c.appendChild(el('p','warn','لا يوجد تقرير بعد. لم يُسجَّل جهاز البنت أو لم تبدأ.'));return c}
@@ -65,21 +84,38 @@ function bookCard(book,rep,err){
   c.appendChild(el('p','note','هذه إشارات من نشاطها وليست تشخيصاً.'));
   return c;
 }
+async function listBooks(){
+  var r=await fetch((CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports?t='+Date.now(),{headers:{'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'},cache:'no-store'});
+  if(r.status===404)return [];if(!r.ok)throw new Error('GitHub '+r.status);
+  var a=await r.json(),out=[];
+  (a||[]).forEach(function(f){if(f&&f.type==='file'&&/\.json$/.test(f.name))out.push(f.name.replace(/\.json$/,''))});
+  return out.sort();
+}
 async function render(){
-  var app=$('#app');var out=[];
-  for(var i=0;i<CFG.books.length;i++){var b=CFG.books[i];try{out.push(bookCard(b,await load(b)))}catch(e){out.push(bookCard(b,null,e.message))}}
+  var app=$('#app');var out=[],ids=[],lerr=null;
+  try{ids=await listBooks()}catch(e){lerr=e.message}
+  var lab={};(CFG.books||[]).forEach(function(b){lab[b.id]=b.label});
+  for(var i=0;i<ids.length;i++){var b={id:ids[i],label:lab[ids[i]]||ids[i]};try{var rep=await load(b);if(!lab[b.id]&&rep&&rep.title)b.label=rep.title;out.push(bookCard(b,rep))}catch(e){out.push(bookCard(b,null,e.message))}}
   app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
   var top=el('div','note','آخر تحديث للوحة: '+new Date().toLocaleTimeString('ar')+' — تتحدّث تلقائياً كل 30 ثانية');app.appendChild(top);
+  if(lerr){var w=el('div','card');w.appendChild(el('p','warn','تعذّر جلب قائمة التقارير: '+lerr));app.appendChild(w)}
+  else if(!ids.length){var e0=el('div','card');e0.appendChild(el('p','note','لا توجد تقارير بعد. يظهر كل كتاب هنا تلقائياً بعد أن تفتحه البنت من جهاز مسجَّل.'));app.appendChild(e0)}
   out.forEach(function(x){app.appendChild(x)});
 }
 function lock(msg){
   clearInterval(TIMER);var app=$('#app');app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
-  var c=el('div','card');var saved=null;try{saved=localStorage.getItem(KEY)}catch(e){}
-  var ta=el('textarea');ta.rows=3;ta.placeholder='رمز الإعداد (مرة واحدة على هذا الجهاز)';ta.value=saved||'';
-  var pw=el('input');pw.type='password';pw.placeholder='كلمة السر';pw.autocomplete='off';
+  var c=el('div','card');
+  var pw=el('input');pw.type='password';pw.inputMode='numeric';pw.placeholder='رقمك';pw.autocomplete='off';
   var m=el('p','warn',msg||'');var go=el('button','pri','دخول');
-  go.addEventListener('click',async function(){try{var o=await bkDecode(ta.value,pw.value);if(o.role!=='monitor')throw new Error('هذا الرمز ليس رمز مراقب.');CFG=o;try{localStorage.setItem(KEY,ta.value.trim())}catch(e){}pw.value='';await render();TIMER=setInterval(render,30000)}catch(e){m.textContent=e.message==='Wrong passphrase or damaged code.'?'كلمة السر خاطئة أو الرمز تالف.':e.message}});
-  c.appendChild(ta);c.appendChild(pw);c.appendChild(go);c.appendChild(m);app.appendChild(c);
+  async function enter(num){try{
+    var r=await fetch('reports-config.json',{cache:'no-store'});if(!r.ok)throw new Error('ملف الإعداد غير موجود.');var cfg=await r.json();var o=null;
+    for(var i=0;i<(cfg.e||[]).length;i++){if(cfg.e[i].k!=='p')continue;try{o=await bkDecode(cfg.e[i].c,num);break}catch(x){}}
+    if(!o||o.role!=='monitor')throw new Error('الرقم خاطئ.');
+    CFG=o;pw.value='';await render();TIMER=setInterval(render,30000)}catch(e){m.textContent=e.message}}
+  go.addEventListener('click',function(){m.textContent='…';enter(pw.value.trim())});
+  c.appendChild(pw);c.appendChild(go);c.appendChild(m);app.appendChild(c);
+  var sp=null;try{sp=sessionStorage.getItem('bk-mon-pass');sessionStorage.removeItem('bk-mon-pass')}catch(e){}
+  if(sp)enter(sp);
 }
 lock('');
 </script></body></html>
