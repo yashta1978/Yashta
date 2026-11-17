@@ -142,7 +142,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
     <a href="math7-chapter1-review-v1.html">Chapter 1 Review, Test and Test Prep – v1</a>
     <a href="math7-algebraic-expressions-2-1-v1.html">Algebraic Expressions — Lesson 2-1 – v1</a>
     <strong>Ara — Grade 7 · Science</strong>
-    <a href="science7-book-v28.html">Science 7 Book — Units 1–3 (Mastery Path) – v28</a>
+    <a href="science7-book-v29.html">Science 7 Book — Units 1–3 (Mastery Path) – v28</a>
     <strong>Ara — Grade 7 · Social Studies</strong>
     <a href="komelayeti-7a-wanaya-5-ba-deng.html" dir="rtl" lang="ku">چەرخێن مێژوویی ٣٢٠٠ ب.ز — with audio</a>
     <a href="komelayeti-7a-wanaya-5.html" dir="rtl" lang="ku">چەرخێن مێژوویی ٣٢٠٠ ب.ز — no audio</a>
@@ -176,6 +176,8 @@ async function bkKey(pass,salt){var base=await crypto.subtle.importKey('raw',new
 async function bkEncode(obj,pass){var salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));var k=await bkKey(pass,salt);var ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(JSON.stringify(obj))));var all=new Uint8Array(28+ct.length);all.set(salt,0);all.set(iv,16);all.set(ct,28);return 'BKS1.'+bkB64u(all)}
 async function bkDecode(code,pass){code=String(code||'').trim();if(code.indexOf('BKS1.')!==0)throw new Error('This is not a setup code.');var all=bkUnb64u(code.slice(5));var k=await bkKey(pass,all.slice(0,16));try{var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:all.slice(16,28)},k,all.slice(28));return JSON.parse(new TextDecoder().decode(pt))}catch(e){throw new Error('Wrong passphrase or damaged code.')}}
 
+function bkND(s){return String(s||'').replace(/[\u0660-\u0669]/g,function(c){return String(c.charCodeAt(0)-0x0660)}).replace(/[\u06F0-\u06F9]/g,function(c){return String(c.charCodeAt(0)-0x06F0)}).replace(/\s+/g,'')}
+
 (function(){
 var DEVK='bk-device-v1',TESTK='bk-test-v1',CFGU='reports-config.json';
 function devGet(){try{return JSON.parse(localStorage.getItem(DEVK)||'null')}catch(e){return null}}
@@ -196,16 +198,16 @@ window.parentsCard=function(){
   function refresh(){var d=devGet();st.textContent=!d?'This device is not registered. It does not send progress reports.':(d.role!=='student'?'Registered. No reports from here.':(isTest()?'Registered. TEST SESSION: reports are paused.':'Registered. Progress reports are sent.'));
     acts.textContent='';if(d){
       var tt=el('button',null,isTest()?'End the test session':'Start a test session');
-      tt.onclick=async function(){try{await bkDecode(d.enc,num.value);setTest(!isTest());msg.className='ok';msg.textContent=isTest()?'Test session: nothing is reported.':'Reports resume.';num.value='';refresh()}catch(e){msg.className='er';msg.textContent='Enter your number first.'}};acts.appendChild(tt);
+      tt.onclick=async function(){try{await bkDecode(d.enc,bkND(num.value));setTest(!isTest());msg.className='ok';msg.textContent=isTest()?'Test session: nothing is reported.':'Reports resume.';num.value='';refresh()}catch(e){msg.className='er';msg.textContent='Enter your number first.'}};acts.appendChild(tt);
       var un=el('button',null,'Remove registration');
-      un.onclick=async function(){try{await bkDecode(d.enc,num.value);devSet(null);setTest(false);msg.className='ok';msg.textContent='Removed.';num.value='';refresh()}catch(e){msg.className='er';msg.textContent='Enter your number first.'}};acts.appendChild(un);
+      un.onclick=async function(){try{await bkDecode(d.enc,bkND(num.value));devSet(null);setTest(false);msg.className='ok';msg.textContent='Removed.';num.value='';refresh()}catch(e){msg.className='er';msg.textContent='Enter your number first.'}};acts.appendChild(un);
     }}
   var go=el('button','pri','Enter');
   go.onclick=async function(){
     msg.className='';msg.textContent='…';
-    try{var cfg=await loadCfg();var r=await tryNumber(cfg,num.value.trim());
+    try{var cfg=await loadCfg();var r=await tryNumber(cfg,bkND(num.value));
       if(!r)throw new Error('Wrong number.');
-      if(r.kind==='p'){try{sessionStorage.setItem('bk-mon-pass',num.value.trim())}catch(e){}location.href='monitor.html';return}
+      if(r.kind==='p'){try{sessionStorage.setItem('bk-mon-pass',bkND(num.value))}catch(e){}location.href='monitor.html';return}
       var o=r.payload;if(o.role!=='student')throw new Error('Wrong number.');
       devSet({role:'student',book:'*',who:o.who||'',repo:o.repo,token:o.token,api:o.api||'',enc:r.c,id:Math.random().toString(36).slice(2,8)});
       setTest(false);msg.className='ok';msg.textContent='Registered.';num.value='';refresh();
@@ -357,7 +359,7 @@ var LESSONS = {
     ],
     science: [
       { title: "Science 7 Book — Units 1–3 (Mastery Path) – v28", sub: "Book pages 8–61 · Path, Book page, Exam /20, Summary",
-        lang: "en", dir: "ltr", tag: "EN", href: "science7-book-v28.html" }
+        lang: "en", dir: "ltr", tag: "EN", href: "science7-book-v29.html" }
     ]
   }
 };
@@ -443,6 +445,7 @@ function viewHome() {
       el("span", { "class": "arrow", text: "›", "aria-hidden": "true" })
     ]));
   });
+  if (window.parentsCard) grid.appendChild(window.parentsCard());
   function tn(lang, dir, title, text) {
     return el("div", { "class": "tn", lang: lang, dir: dir }, [
       el("h3", { text: title }), el("p", { text: text })
@@ -457,7 +460,6 @@ function viewHome() {
       "ئەز ڕێزێ ل ماندیبوون و ڕەنجێن هەمی مامۆستایان دگرم. ئەڤ وانە هاریکارییەکا بچویکە ژ من بۆ وان. سوپاسی و سەرکەفتن بۆ هەمی مامۆستا و قوتابیان.")
     , el("p", { "class": "sign", dir: "ltr", text: "\u2014 Mahir Chalky" })
   ]));
-  if (window.parentsCard) grid.appendChild(window.parentsCard());
   app.replaceChildren(grid);
 }
 

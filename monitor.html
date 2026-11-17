@@ -21,13 +21,15 @@ async function bkEncode(obj,pass){var salt=crypto.getRandomValues(new Uint8Array
 async function bkDecode(code,pass){code=String(code||'').trim();if(code.indexOf('BKS1.')!==0)throw new Error('This is not a setup code.');var all=bkUnb64u(code.slice(5));var k=await bkKey(pass,all.slice(0,16));try{var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:all.slice(16,28)},k,all.slice(28));return JSON.parse(new TextDecoder().decode(pt))}catch(e){throw new Error('Wrong passphrase or damaged code.')}}
 
 var $=function(s){return document.querySelector(s)};
+function bkND(s){return String(s||'').replace(/[\u0660-\u0669]/g,function(c){return String(c.charCodeAt(0)-0x0660)}).replace(/[\u06F0-\u06F9]/g,function(c){return String(c.charCodeAt(0)-0x06F0)}).replace(/\s+/g,'')}
+
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 var KEY='bkm-code-v1',CFG=null,TIMER=null;
 function p2(n){return (n<10?'0':'')+n}
 function fmtDate(k){var p=k.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
 function dkey(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
 function ago(iso){if(!iso)return {t:'لا يوجد',h:1e9};var m=Math.round((Date.now()-new Date(iso).getTime())/60000);var t=m<1?'الآن':(m<90?('قبل '+m+' دقيقة'):(m<2880?('قبل '+Math.round(m/60)+' ساعة'):('قبل '+Math.round(m/1440)+' يوم')));return {t:t,h:m/60}}
-function stepAr(s){return {reading:'القراءة',questions:'تعلّم الإجابات',definitions:'التعريفات','page check':'فحص الصفحة','section check':'فحص القسم'}[s]||s||''}
+function stepAr(s,p){if(s==='round')return 'جولة مهام'+(p&&p.rn?(' '+p.rn+' من '+p.rt):'');return {reading:'القراءة',questions:'تعلّم الإجابات',definitions:'التعريفات','page check':'فحص الصفحة','section check':'فحص القسم'}[s]||s||''}
 var FIRST='0000-00-00';
 function verdict(d,isToday,work,key){
   if(key&&key<FIRST)return {c:'n',t:'قبل البدء'};
@@ -67,7 +69,7 @@ function bookCard(book,rep,err){
   if(rep.none){c.appendChild(el('p','warn','لا يوجد تقرير بعد. لم يُسجَّل جهاز البنت أو لم تبدأ.'));return c}
   var a=ago(rep.upd);c.appendChild(el('p',a.h>24?'warn':'ok','آخر تقرير: '+a.t+(a.h>24?' (انقطع الإرسال: تحقق من الجهاز)':'')));
   var pos=rep.pos||{};
-  c.appendChild(el('p',null,pos.done?'أنهت المسار كاملاً.':('الآن: '+pos.label+(pos.pg?(' — صفحة '+pos.pg+' ('+(pos.pk+1)+' من '+pos.pn+') — '+stepAr(pos.step)):(pos.step?(' — '+stepAr(pos.step)):'')))));
+  c.appendChild(el('p',null,pos.done?'أنهت المسار كاملاً.':('الآن: '+pos.label+(pos.pg?(' — صفحة '+pos.pg+' ('+(pos.pk+1)+' من '+pos.pn+') — '+stepAr(pos.step,pos)):(pos.step?(' — '+stepAr(pos.step,pos)):'')))));
   var pr=rep.prog||{done:0,total:1},pc=Math.round(100*pr.done/pr.total);
   c.appendChild(el('p',null,'التقدّم: '+pr.done+' من '+pr.total+' خطوة متقنة ('+pc+'٪)'));
   var b=el('div','bar'),i=el('i');i.style.width=pc+'%';b.appendChild(i);c.appendChild(b);
@@ -112,10 +114,10 @@ function lock(msg){
     for(var i=0;i<(cfg.e||[]).length;i++){if(cfg.e[i].k!=='p')continue;try{o=await bkDecode(cfg.e[i].c,num);break}catch(x){}}
     if(!o||o.role!=='monitor')throw new Error('الرقم خاطئ.');
     CFG=o;pw.value='';await render();TIMER=setInterval(render,30000)}catch(e){m.textContent=e.message}}
-  go.addEventListener('click',function(){m.textContent='…';enter(pw.value.trim())});
+  go.addEventListener('click',function(){m.textContent='…';enter(bkND(pw.value))});
   c.appendChild(pw);c.appendChild(go);c.appendChild(m);app.appendChild(c);
   var sp=null;try{sp=sessionStorage.getItem('bk-mon-pass');sessionStorage.removeItem('bk-mon-pass')}catch(e){}
-  if(sp)enter(sp);
+  if(sp)enter(bkND(sp));
 }
 lock('');
 </script></body></html>
