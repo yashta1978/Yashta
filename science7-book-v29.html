@@ -1022,7 +1022,7 @@ function buildSum(){
 
 
 // ---------- v22: saved progress, spaced review, Today ----------
-var PS={s:{},u:{},v:{},b:{},st:{},wd:{},log:{},dw:{},rn:{}};   // Path: s[stage], u[unit], v[pages viewed]
+var PS={s:{},u:{},v:{},b:{},st:{},wd:{},log:{},dw:{},rn:{},pp:{}};   // Path: s[stage], u[unit], v[pages viewed]
 var REV={};            // id -> {b: box 1..4, d: due date yyyy-mm-dd}
 var SKEY=D.meta.skey,SAVEOK=true,LASTJSON='';
 var BOXD=[1,3,7,14];   // days until the next review for box 1..4 (work days only: Sunday to Thursday)
@@ -1121,7 +1121,7 @@ function applySnap(o){
   function fill(dst,src){Object.keys(dst).forEach(function(k){delete dst[k]});if(src&&typeof src==='object'){Object.keys(src).forEach(function(k){dst[k]=src[k]})}}
   fill(LS,o.LS);fill(READY,o.READY);fill(KNOWN,o.KNOWN);fill(SBW,o.SBW);fill(GSC,o.GSC);fill(GREAD,o.GREAD);fill(GRES,o.GRES);fill(REV,o.REV);
   PASSED=!!o.PASSED;
-  if(o.PS&&typeof o.PS==='object'){PS.s=(o.PS.s&&typeof o.PS.s==='object')?o.PS.s:{};PS.u=(o.PS.u&&typeof o.PS.u==='object')?o.PS.u:{};PS.v=(o.PS.v&&typeof o.PS.v==='object')?o.PS.v:{};PS.b=(o.PS.b&&typeof o.PS.b==='object')?o.PS.b:{};PS.st=(o.PS.st&&typeof o.PS.st==='object')?o.PS.st:{};PS.wd=(o.PS.wd&&typeof o.PS.wd==='object')?o.PS.wd:{};PS.log=(o.PS.log&&typeof o.PS.log==='object')?o.PS.log:{};PS.dw=(o.PS.dw&&typeof o.PS.dw==='object')?o.PS.dw:{};PS.rn=(o.PS.rn&&typeof o.PS.rn==='object')?o.PS.rn:{}}
+  if(o.PS&&typeof o.PS==='object'){PS.s=(o.PS.s&&typeof o.PS.s==='object')?o.PS.s:{};PS.u=(o.PS.u&&typeof o.PS.u==='object')?o.PS.u:{};PS.v=(o.PS.v&&typeof o.PS.v==='object')?o.PS.v:{};PS.b=(o.PS.b&&typeof o.PS.b==='object')?o.PS.b:{};PS.st=(o.PS.st&&typeof o.PS.st==='object')?o.PS.st:{};PS.wd=(o.PS.wd&&typeof o.PS.wd==='object')?o.PS.wd:{};PS.log=(o.PS.log&&typeof o.PS.log==='object')?o.PS.log:{};PS.dw=(o.PS.dw&&typeof o.PS.dw==='object')?o.PS.dw:{};PS.rn=(o.PS.rn&&typeof o.PS.rn==='object')?o.PS.rn:{};PS.pp=(o.PS.pp&&typeof o.PS.pp==='object')?o.PS.pp:{}}
   Object.keys(REV).forEach(function(id){var r=REV[id];if(!LB[id]||!r||typeof r.b!=='number'||typeof r.d!=='string')delete REV[id]});
 }
 function saveNow(){try{var s=JSON.stringify(snapshot());if(s!==LASTJSON){localStorage.setItem(SKEY,s);LASTJSON=s}}catch(e){SAVEOK=false}}
@@ -1356,10 +1356,17 @@ function flowDef(host,g,d,i,k,n){
 
 // ----- mastery check items (objective, built only from the book's own questions and definitions) -----
 function pickN(a,n){return shuffle(a).slice(0,n)}
-function mkItems(qs,defs,u){
+var STOPW={the:1,and:1,for:1,are:1,that:1,with:1,from:1,this:1,which:1,its:1,can:1,any:1,all:1,into:1,was:1,were:1,has:1,have:1,had:1,not:1,but:1,they:1,their:1,them:1,these:1,those:1,than:1,then:1,also:1,such:1,each:1,other:1,out:1,one:1,part:1,use:1,used:1};
+function stemW(w){return w.length>5?w.replace(/(ing|edly|ed|es|ly|s)$/,''):w.replace(/s$/,'')}
+function stemsOf(t){var o=[],seen={};String(t).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).forEach(function(w){if(w.length<3||STOPW[w])return;var x=stemW(w);if(!seen[x]){seen[x]=1;o.push(x)}});return o}
+function near(a,b){if(a===b)return true;if(a.length<5||b.length<5||Math.abs(a.length-b.length)>1)return false;var i=0,j=0,d=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++;continue}d++;if(d>1)return false;if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++}}return d+(a.length-i)+(b.length-j)<=1}
+function covers(ans,model){var A=stemsOf(ans),M=stemsOf(model);if(!M.length)return 0;var n=0;M.forEach(function(m){if(A.some(function(a){return near(a,m)}))n++});return n/M.length}
+function gradeWr(it,txt){if(it.pts&&it.pts.length){var need=Math.ceil(it.pts.length*0.7),n=0;it.pts.forEach(function(p){if(covers(txt,p)>=0.5)n++});return n>=need}return covers(txt,it.m)>=0.6}
+function mkItems(qs,defs,u,wr){
   var out=[],ops=(u==null?D.EX:unitQs(u)).filter(function(x){return x.t==='op'});
   qs.forEach(function(q){
     var c=LB[q.l],src=c?('Source: '+c.src):'';
+    if(wr&&q.t!=='mc'&&q.t!=='ord'){out.push({k:'wr',q:q.q,m:q.m||'',pts:q.pts||[],why:(q.m||'')+((q.pts&&q.pts.length)?'\n\nPoints: '+q.pts.join('  |  '):''),src:src,id:q.l,ty:'q'});return}
     if(q.t==='mc'){var idx=shuffle(q.o.map(function(_,i){return i}));out.push({k:'one',q:q.q,o:idx.map(function(i){return q.o[i]}),a:idx.indexOf(q.a),why:q.o[q.a]+'. '+(q.w||''),src:src,id:q.l,ty:'q'})}
     else if(q.t==='ord'){out.push({k:'ord',q:q.q,it:q.it.slice(),why:q.it.join(' > '),src:src,id:q.l,ty:'q'})}
     else{
@@ -1375,7 +1382,7 @@ function mkItems(qs,defs,u){
     }
   });
   defs.forEach(function(x){
-    var d=x[0],i=x[1],terms=[];D.DEFS.forEach(function(y){if(y[0]!==d[0]&&terms.indexOf(y[0])<0)terms.push(y[0])});
+    var d=x[0],i=x[1],terms=[];if(wr){out.push({k:'wr',q:'Write the definition of: '+d[0],m:d[1],pts:[],why:d[0]+': '+d[1],src:'Source: p.'+d[2],id:'D'+i,di:i,ty:'d'});return}D.DEFS.forEach(function(y){if(y[0]!==d[0]&&terms.indexOf(y[0])<0)terms.push(y[0])});
     var os=shuffle([d[0]].concat(pickN(terms,3)));out.push({k:'one',q:'Which term has this definition?\n\n'+d[1],o:os,a:os.indexOf(d[0]),why:d[0]+': '+d[1],src:'Source: p.'+d[2],id:'D'+i,di:i,ty:'d'});
   });
   return out;
@@ -1395,6 +1402,16 @@ function runCheck(host,items,title,need,onEnd){
     }else if(it.k==='multi'){
       var sel={};it.o.forEach(function(o,k){var b=el('button','opt',o);b.addEventListener('click',function(){sel[k]=!sel[k];b.classList.toggle('sel',sel[k])});box.appendChild(b)});
       var ok=el('button','btn pri','Check my choice');ok.addEventListener('click',function(){var good=it.o.every(function(o,k){return !!sel[k]===(it.cs.indexOf(o)>-1)});done(good)});box.appendChild(ok);
+    }else if(it.k==='wr'){
+      var ta=el('textarea','wf');ta.placeholder='Write it from memory. Do not look.';ta.setAttribute('aria-label','Your answer');box.appendChild(ta);
+      var slot=el('div'),cmp=el('button','btn pri','Compare with the book');
+      cmp.addEventListener('click',function(){
+        if(!ta.value.trim()){msg.textContent='Write your answer first.';return}
+        cmp.disabled=true;ta.readOnly=true;slot.textContent='';
+        var mdl=el('div','ans');mdl.appendChild(el('b',null,'Book answer'));var tt=el('div');tt.style.whiteSpace='pre-line';tt.textContent=it.why;mdl.appendChild(tt);slot.appendChild(mdl);
+        if(ta.value.trim().split(/\s+/).length>=3&&gradeWr(it,ta.value)){slot.appendChild(el('p','okc','Your answer covers the key ideas of the book.'));var c2=el('button','btn pri','Continue');c2.addEventListener('click',function(){done(true)});slot.appendChild(c2)}
+        else{slot.appendChild(el('p','note','Compare with your answer. If you wrote the same ideas, even in other words, you were right. Be honest: this is only for you.'));var y=el('button','btn pri','I wrote it right'),n2=el('button','btn','I missed parts');n2.style.marginLeft='8px';y.addEventListener('click',function(){done(true)});n2.addEventListener('click',function(){done(false)});slot.appendChild(y);slot.appendChild(n2)}
+      });box.appendChild(cmp);box.appendChild(slot);
     }else{
       var pool=shuffle(it.it),got=[],ln=el('p','note','Tap the items in the right order.'),ar=el('div');box.appendChild(ln);box.appendChild(ar);
       (function dr(){ar.textContent='';pool.forEach(function(x){if(got.indexOf(x)>-1)return;var b=el('button','opt',x);b.addEventListener('click',function(){got.push(x);ln.textContent=got.join(' > ');if(got.length===it.it.length)done(got.every(function(y,k){return y===it.it[k]}));else dr()});ar.appendChild(b)})})();
@@ -1441,7 +1458,11 @@ function reopenMissed(miss,gs){
 var ROUND=3;
 function pageItems(g,pg){var st=pageState(g,pg),a=[];st.qs.forEach(function(q){a.push({t:'q',q:q})});st.df.forEach(function(x){a.push({t:'d',d:x})});return a}
 function itDone(g,it){var s=psOf(g);return it.t==='q'?((s.q[it.q.l]||0)>=4):((s.d[it.d[1]]||0)>=3)}
-function roundsOf(g,pg){var a=pageItems(g,pg),r=[];for(var i=0;i<a.length;i+=ROUND)r.push(a.slice(i,i+ROUND));return r}
+function itW(it){var t;if(it.t==='d')t=it.d[0][1];else{var q=it.q;t=q.t==='mc'?(q.o[q.a]+' '+(q.w||'')):q.t==='ord'?q.it.join(' '):(q.m||'')}return String(t).split(/\s+/).filter(Boolean).length}
+var BIG=45,BUDGET=70;
+function roundsOf(g,pg){var a=pageItems(g,pg),r=[],cur=[],sum=0;a.forEach(function(it){var w=itW(it);if(w>=BIG){if(cur.length){r.push(cur);cur=[];sum=0}r.push([it]);return}if(cur.length&&(cur.length>=ROUND||sum+w>BUDGET)){r.push(cur);cur=[];sum=0}cur.push(it);sum+=w});if(cur.length)r.push(cur);return r}
+function ppGet(g,a,b){var k=g+':'+a+':'+b;if(!PS.pp)PS.pp={};return PS.pp[k]||(PS.pp[k]={ok:false,n:0})}
+function ppOk(g,a,b){return !!ppGet(g,a,b).ok}
 function rnKey(g,pg,r){return g+':'+pg+':'+r}
 function rnGet(g,pg,r){var k=rnKey(g,pg,r);if(!PS.rn)PS.rn={};return PS.rn[k]||(PS.rn[k]={ok:false,go:0})}
 function roundsOk(g,pg){var R=roundsOf(g,pg);for(var r=0;r<R.length;r++)if(!rnGet(g,pg,r).ok)return false;return true}
@@ -1479,7 +1500,7 @@ function renderRound(host,g,pg){
   sb.addEventListener('click',function(){
     host.textContent='';host.appendChild(el('h3','lh','Page '+pg+' - round '+(r+1)+' of '+R.length));
     var qs=items.filter(function(x){return x.t==='q'}).map(function(x){return x.q}),df=items.filter(function(x){return x.t==='d'}).map(function(x){return x.d});
-    var its=shuffle(mkItems(qs,df,uOf(g)));
+    var its=shuffle(mkItems(qs,df,uOf(g),true));
     if(!its.length){o.ok=true;saveNow();return renderStage(g)}
     var need=Math.ceil(MASTERY*its.length);
     runCheck(host,its,'Round '+(r+1),need,function(pass,miss,score,N,area){
@@ -1496,7 +1517,7 @@ function renderPage(host,g,pg,k,n){
     host.appendChild(el('p','note','Step 1: read the page.'));
     var rc=el('div','fc');rc.appendChild(el('div','term','Page '+pg));
     rc.appendChild(el('p',null,'Open the page and read it slowly. Orange hints show what the teacher taught. Blue hints explain the rest. Keep it open for at least '+READ_MIN+' seconds.'));
-    (function(){var R=roundsOf(g,pg),tot=pageItems(g,pg).length;if(tot)rc.appendChild(el('p','note','Next: you will study what the teacher marked on this page ('+tot+' thing'+(tot===1?'':'s')+') in '+R.length+' small round'+(R.length===1?'':'s')+' of up to '+ROUND+'. Each round: study, a short check, and a score. Then a quick check of the whole page.'))})();if(READ_MIN>0)rc.appendChild(el('p','note','Reading time on this page: '+Math.min(PS.dw[pg]||0,READ_MIN)+' of '+READ_MIN+' seconds.'));
+    (function(){var R=roundsOf(g,pg),tot=pageItems(g,pg).length;if(tot)rc.appendChild(el('p','note','Next: you will study what the teacher marked on this page ('+tot+' thing'+(tot===1?'':'s')+') in '+R.length+' small round'+(R.length===1?'':'s')+' (a big thing alone, or up to '+ROUND+' short ones). Each round: learn it, write it from memory, and get a score. Then a quick check of the page, and of every two pages.'))})();if(READ_MIN>0)rc.appendChild(el('p','note','Reading time on this page: '+Math.min(PS.dw[pg]||0,READ_MIN)+' of '+READ_MIN+' seconds.'));
     var ob=el('button','btn pri','Open the page');ob.addEventListener('click',function(){LPV_CB=function(){renderStage(g)};lpvOpen(pg)});rc.appendChild(ob);host.appendChild(rc);
   }else if(!(st.q&&st.d)||!roundsOk(g,pg)){
     renderRound(host,g,pg);
@@ -1506,7 +1527,7 @@ function renderPage(host,g,pg,k,n){
     var sb=el('button','btn pri','Start the page check');
     sb.addEventListener('click',function(){
       host.textContent='';host.appendChild(el('h3','lh','Page '+pg+'  ('+(k+1)+' of '+n+')'));
-      var items=shuffle(mkItems(st.qs,st.df,uOf(g)));
+      var items=shuffle(mkItems(st.qs,st.df,uOf(g),true));
       if(!items.length){st.o.ok=true;saveNow();return renderStage(g)}
       runCheck(host,items,'Page '+pg,items.length,function(pass,miss,score,N,area){
         st.o.n=(st.o.n||0)+1;
@@ -1517,15 +1538,33 @@ function renderPage(host,g,pg,k,n){
     host.appendChild(sb);
   }
 }
+function renderPair(host,g,a,b){
+  var o=ppGet(g,a,b);host.appendChild(el('h3','lh','Pages '+a+' and '+b));
+  host.appendChild(el('p','note','A check of these two pages together. You need 80% to go on.'));
+  var sb=el('button','btn pri','Start the two-page check');
+  sb.addEventListener('click',function(){
+    host.textContent='';host.appendChild(el('h3','lh','Pages '+a+' and '+b));
+    var qs=pageQs(g,a).concat(pageQs(g,b)),df=pageDefs(g,a).concat(pageDefs(g,b));
+    var items=mkItems(qs,df,uOf(g),true);items=items.length>8?pickN(items,8):shuffle(items);
+    if(!items.length){o.ok=true;saveNow();return renderStage(g)}
+    var need=Math.ceil(MASTERY*items.length);
+    runCheck(host,items,'Pages '+a+' and '+b,need,function(pass,miss,score,N,area){
+      o.n=(o.n||0)+1;
+      if(pass){o.ok=true;logMs();saveNow();var c=el('button','btn pri','Continue');c.addEventListener('click',function(){renderStage(g)});area.appendChild(c)}
+      else{o.ok=false;reopenMissed(miss,[g]);saveNow();var r=el('button','btn pri','Study what I missed');r.addEventListener('click',function(){renderStage(g)});area.appendChild(r)}
+    });
+  });host.appendChild(sb);
+}
 function renderStage(g){
   var h=$('#path');h.textContent='';var s=psOf(g),qs=stageQs(g),df=stageDefs(g),pgs=stagePages(g);
   h.appendChild(backBtn());
   h.appendChild(el('h2',null,GN[g]));
-  var k=0;for(;k<pgs.length;k++)if(!pageState(g,pgs[k]).done)break;
-  var r1=el('div','cvr');r1.appendChild(el('span',null,'Pages mastered'));r1.appendChild(el('b',k>=pgs.length?'okc':'',Math.min(k,pgs.length)+' of '+pgs.length));h.appendChild(r1);
+  var k=0,pairAt=-1;for(;k<pgs.length;k++){if(!pageState(g,pgs[k]).done)break;if(k%2===1&&!ppOk(g,pgs[k-1],pgs[k])){pairAt=k;break}}
+  var r1=el('div','cvr');r1.appendChild(el('span',null,'Pages mastered'));r1.appendChild(el('b',k>=pgs.length?'okc':'',Math.min(pairAt>=0?k+1:k,pgs.length)+' of '+pgs.length));h.appendChild(r1);
   var r2=el('div','cvr');r2.appendChild(el('span',null,'Section check'));r2.appendChild(el('b',s.m.ok?'okc':'',s.m.ok?'Done':'To do'));h.appendChild(r2);
   var host=el('div');h.appendChild(host);
-  if(k<pgs.length){renderPage(host,g,pgs[k],k,pgs.length)}
+  if(pairAt>=0){renderPair(host,g,pgs[pairAt-1],pgs[pairAt])}
+  else if(k<pgs.length){renderPage(host,g,pgs[k],k,pgs.length)}
   else if(!s.m.ok){
     host.appendChild(el('h3','lh','Section check'));
     host.appendChild(el('p','note','You mastered every page. Now a check of the whole section, with no hints. You need 80% to open the next step.'));
@@ -1693,8 +1732,8 @@ function canReport(){var d=devGet();return !!(d&&d.role==='student'&&(!d.book||d
 function posInfo(){
   var c=pCur();if(c<0)return {done:true,label:'Path complete'};
   var x=PSEQ[c],o={i:c,n:PSEQ.length,label:pLabel(x),k:x.k};
-  if(x.k==='s'){var pgs=stagePages(x.g),k=0;while(k<pgs.length&&pageState(x.g,pgs[k]).done)k++;o.pk=k;o.pn=pgs.length;
-    if(k<pgs.length){var st=pageState(x.g,pgs[k]);o.pg=pgs[k];o.step=!st.rd?'reading':((!(st.q&&st.d)||!roundsOk(x.g,pgs[k]))?'round':'page check');if(st.rd&&o.step==='round'){var _r=rnCur(x.g,pgs[k]);o.rn=_r+1;o.rt=roundsOf(x.g,pgs[k]).length}}else o.step='section check'}
+  if(x.k==='s'){var pgs=stagePages(x.g),k=0,pa=-1;while(k<pgs.length&&pageState(x.g,pgs[k]).done){if(k%2===1&&!ppOk(x.g,pgs[k-1],pgs[k])){pa=k;break}k++}o.pk=pa>=0?pa+1:k;o.pn=pgs.length;
+    if(pa>=0){o.pg=pgs[pa];o.step='pair check'}else if(k<pgs.length){var st=pageState(x.g,pgs[k]);o.pg=pgs[k];o.step=!st.rd?'reading':((!(st.q&&st.d)||!roundsOk(x.g,pgs[k]))?'round':'page check');if(st.rd&&o.step==='round'){var _r=rnCur(x.g,pgs[k]);o.rn=_r+1;o.rt=roundsOf(x.g,pgs[k]).length}}else o.step='section check'}
   return o;
 }
 function buildReport(){
