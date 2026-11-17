@@ -1453,19 +1453,28 @@ function renderRound(host,g,pg){
   host.appendChild(el('p','note','Round '+(r+1)+' of '+R.length+' on this page.'));
   if(pend.length){
     o.ok=false;
-    if(!o.go){
-      var c=el('div','fc');c.appendChild(el('div','term','Your task'));
-      c.appendChild(el('p',null,'Study these '+items.length+' things from page '+pg+', one after another. Then you will be checked on just these, and you will get a score.'));
-      var ol=el('ol');items.forEach(function(it){ol.appendChild(el('li',null,rnLabel(it)))});c.appendChild(ol);
-      var gb=el('button','btn pri','Start studying');gb.addEventListener('click',function(){o.go=1;saveNow();renderStage(g)});c.appendChild(gb);
-      var vp=el('button','btn sm','View page '+pg);vp.style.marginLeft='8px';vp.addEventListener('click',function(){lpvOpen(pg)});c.appendChild(vp);
-      host.appendChild(c);return;
-    }
-    var it=pend[0],ix=items.indexOf(it);
-    if(it.t==='q')flowQ(host,g,it.q,ix,items.length);else flowDef(host,g,it.d[0],it.d[1],ix,items.length);
-    return;
+    var c=el('div','fc');c.appendChild(el('div','term','Your task'));
+    c.appendChild(el('p',null,'Learn these '+pend.length+' thing'+(pend.length===1?'':'s')+' from page '+pg+' until you can say them without looking. Then press the button. After that you will be checked on just these, and you will get a score.'));
+    pend.forEach(function(it,ix){
+      var b2=el('div','fc');b2.style.margin='10px 0';
+      if(it.t==='q'){
+        var cq=LB[it.q.l]||{},q=it.q;
+        b2.appendChild(el('div','term',(ix+1)+'. Question '+(cq.qn||'')));qText(b2,q.q);
+        if(q.t==='mc'){b2.appendChild(el('p',null,'Answer: '+q.o[q.a]+'. '+(q.w||'')))}
+        else if(q.t==='ord'){b2.appendChild(el('p',null,'Correct order: '+q.it.join(' > ')))}
+        else{b2.appendChild(ansBox(cq));var pts=q.pts||[];if(pts.length){b2.appendChild(el('p','note','Points you need to get the mark:'));var ol2=el('ol');pts.forEach(function(pp){var li=el('li');mineText(li,pp);ol2.appendChild(li)});b2.appendChild(ol2)}}
+        b2.appendChild(el('p','note','Source: p.'+(cq.pg||pg)));
+      }else{
+        b2.appendChild(el('div','term',(ix+1)+'. Definition: '+it.d[0][0]));b2.appendChild(el('p',null,it.d[0][1]));b2.appendChild(el('p','note','Source: p.'+it.d[0][2]));
+      }
+      c.appendChild(b2);
+    });
+    var gb=el('button','btn pri','I memorized them');gb.addEventListener('click',function(){
+      var s2=psOf(g);pend.forEach(function(it){if(it.t==='q')s2.q[it.q.l]=4;else s2.d[it.d[1]]=3});saveNow();renderStage(g)});c.appendChild(gb);
+    var vp=el('button','btn sm','View page '+pg);vp.style.marginLeft='8px';vp.addEventListener('click',function(){lpvOpen(pg)});c.appendChild(vp);
+    host.appendChild(c);return;
   }
-  host.appendChild(el('p','note','You studied all '+items.length+' things of this round. Now a check on just these.'));
+  host.appendChild(el('p','note','You memorized all '+items.length+' things of this round. Now a check on just these.'));
   var sb=el('button','btn pri','Start the round check');
   sb.addEventListener('click',function(){
     host.textContent='';host.appendChild(el('h3','lh','Page '+pg+' - round '+(r+1)+' of '+R.length));
@@ -1475,7 +1484,7 @@ function renderRound(host,g,pg){
     var need=Math.ceil(MASTERY*its.length);
     runCheck(host,its,'Round '+(r+1),need,function(pass,miss,score,N,area){
       if(pass){o.ok=true;logMs();saveNow();var c2=el('button','btn pri','Next');c2.addEventListener('click',function(){renderStage(g)});area.appendChild(c2)}
-      else{o.ok=false;o.go=1;reopenMissed(miss,[g]);saveNow();var r2=el('button','btn pri','Study what I missed');r2.addEventListener('click',function(){renderStage(g)});area.appendChild(r2)}
+      else{o.ok=false;reopenMissed(miss,[g]);saveNow();var r2=el('button','btn pri','Study what I missed');r2.addEventListener('click',function(){renderStage(g)});area.appendChild(r2)}
     });
   });
   host.appendChild(sb);
