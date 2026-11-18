@@ -106,7 +106,8 @@ async function listBooks(){
   return out.sort();
 }
 var det0=null;
-var SN={arabic:'عربي',islamic:'إسلامي',english:'إنجليزي',kurdish:'كوردي',math:'رياضيات',science:'علوم','social-studies':'اجتماعيات','social-value':'قيم اجتماعية','reading-writing':'قراءة وكتابة',music:'موسيقى',art:'فنون',pe:'رياضة',ict:'حاسوب'};
+var SN={arabic:'Arabic',islamic:'Islamic',english:'English',kurdish:'Kurdish',math:'Math',science:'Science','social-studies':'Social Studies','social-value':'Social Value','reading-writing':'Reading & Writing',music:'Music',art:'Art',pe:'PE',ict:'ICT'};
+var EXAMS={ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'}]};
 var LB={vina:{science:'sci6','social-studies':'soc6'},ara:{science:'sci7'}};
 var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','english'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
 ara:{0:['arabic','science','music','math','social-studies','kurdish','english'],1:['science','kurdish','math','reading-writing','social-studies','social-value','english'],2:['arabic','social-value','pe','math','kurdish','english','science'],3:['ict','science','art','english','arabic','kurdish','math'],4:['english','arabic','social-studies','math','science','english','islamic']}};
@@ -148,6 +149,15 @@ async function render(){
   [['f','vina','فينا'],['a','ara','آرا']].forEach(function(g){
     var c=el('div','card');c.appendChild(el('h2',null,g[2]+' — المهام'));
     var days=nextDays(5);
+    (EXAMS[g[1]]||[]).filter(function(x){return x.date>=dkey(new Date())}).forEach(function(x){
+      c.appendChild(el('h3',null,'امتحان قريب'));
+      var key='exam:'+x.date+':'+g[1]+':'+x.sid,mk=MARKS[key];
+      var btn=el('button',mk?null:'pri',mk?'إلغاء':'تمّت');btn.style.cssText='min-width:84px;padding:6px 12px;min-height:40px';
+      var msg=el('p','warn','');msg.style.margin='0';
+      btn.addEventListener('click',async function(){btn.disabled=true;msg.className='note';msg.textContent='…';try{await setMark(key,!mk);await render()}catch(e){msg.className='warn';msg.style.margin='6px 0';msg.textContent=e.message;btn.disabled=false}});
+      var line=el('div');line.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0;min-height:48px';
+      var tx=el('span',mk?'okc':'warn');if(mk)tx.appendChild(document.createTextNode('✓ '));var nb=el('bdi',null,x.name);nb.dir='ltr';tx.appendChild(nb);tx.appendChild(document.createTextNode('  —  '+x.sub));
+      line.appendChild(tx);line.appendChild(btn);c.appendChild(line);c.appendChild(msg)});
     days.forEach(function(dy,di){
       var box=di===0?c:null,det=null;
       if(di>0){if(!det0){det0=el('details');det0.appendChild(el('summary',null,'الأيام القادمة'));c.appendChild(det0)}box=det0}
@@ -164,7 +174,7 @@ async function render(){
         var msg=el('p','warn','');msg.style.margin='0';
         btn.addEventListener('click',async function(){btn.disabled=true;msg.className='note';msg.textContent='…';try{await setMark(key,!mk);await render()}catch(e){msg.className='warn';msg.style.margin='6px 0';msg.textContent=e.message;btn.disabled=false}});
         var line=el('div');line.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0;min-height:48px';
-        var tx=el('span',cls,(mk?'✓ ':'')+SN[sid]+'  —  '+st.join('  |  '));line.appendChild(tx);line.appendChild(btn);
+        var tx=el('span',cls);if(mk)tx.appendChild(document.createTextNode('✓ '));var nb=el('bdi',null,SN[sid]);nb.dir='ltr';tx.appendChild(nb);tx.appendChild(document.createTextNode('  —  '+st.join('  |  ')));line.appendChild(tx);line.appendChild(btn);
         if(bid&&x){var dd=el('details');var sm=el('summary','rs');sm.appendChild(line);tx.textContent+='  ▾';dd.appendChild(sm);x.card.className='';dd.appendChild(x.card);dd.appendChild(msg);box.appendChild(dd)}
         else{box.appendChild(line);box.appendChild(msg)}
       });
