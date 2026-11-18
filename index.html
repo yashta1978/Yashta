@@ -549,8 +549,8 @@ var HOMEWORK = { vina: {
   ara: {
   "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v29.html", key: "", plain: true, get: function () { return null; } }
 } };
-var DAYN = ["\u0627\u0644\u0623\u062d\u062f","\u0627\u0644\u0627\u062b\u0646\u064a\u0646","\u0627\u0644\u062b\u0644\u0627\u062b\u0627\u0621","\u0627\u0644\u0623\u0631\u0628\u0639\u0627\u0621","\u0627\u0644\u062e\u0645\u064a\u0633","\u0627\u0644\u062c\u0645\u0639\u0629","\u0627\u0644\u0633\u0628\u062a"];
-var EXAMS = { ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "\u0627\u0644\u0627\u062b\u0646\u064a\u0646 23/11/2026 \u00b7 \u0627\u0644\u0648\u062d\u062f\u0629 3 \u00b7 \u0627\u0644\u0642\u0633\u0645\u0627\u0646 1 \u0648 2", href: "science7-quiz-unit3-s1-s2-v1.html" } ] };
+var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var EXAMS = { ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-quiz-unit3-s1-s2-v1.html" } ] };
 function pendingExams(id) {
   var t = new Date(), today = t.getFullYear() + "-" + p2(t.getMonth() + 1) + "-" + p2(t.getDate());
   return (EXAMS[id] || []).filter(function (x) { return x.date >= today; });
@@ -584,11 +584,11 @@ function tasksCard(id) {
   var pend = 0, tot = 0, names = [];
   if (days[0]) days[0].hw.forEach(function (r) { tot++; if (!r.st) { pend++; names.push(r.h.title.split(" \u2014 ")[0]); } });
   var ex = pendingExams(id);
-  var meta = !days[0] ? "\u0644\u0627 \u0634\u064a\u0621 \u0628\u0639\u062f" : (tot ? (pend ? "\u063a\u062f\u0627\u064b: " + names.join(", ") : "\u063a\u062f\u0627\u064b: \u0643\u0644 \u0634\u064a\u0621 \u062a\u0645 \u2713") : "\u0644\u0627 \u0648\u0627\u062c\u0628 \u0644\u063a\u062f\u0627\u064b \u0628\u0639\u062f");
-  if (ex.length) meta = "\u0627\u0645\u062a\u062d\u0627\u0646: " + ex[0].name + " \u00b7 " + meta;
+  var meta = !days[0] ? "Nothing yet" : (tot ? (pend ? "Tomorrow: " + names.join(", ") : "Tomorrow: all done \u2713") : "No homework yet for tomorrow");
+  if (ex.length) meta = "Quiz: " + ex[0].name + " \u00b7 " + meta;
   var badge = el("span", { "class": "tbadge" + (tot && !pend && !ex.length ? " ok" : ""), text: ex.length ? String(pend + ex.length) : (tot ? (pend ? String(pend) : "\u2713") : "\u2013") });
-  return el("a", { "class": "card subject tcard", href: "#" + id + "/tasks", dir: "rtl", lang: "ar" }, [
-    el("span", {}, [el("span", { "class": "name", text: "\u0627\u0644\u0645\u0647\u0627\u0645" }), el("span", { "class": "meta", text: meta })]),
+  return el("a", { "class": "card subject tcard", href: "#" + id + "/tasks" }, [
+    el("span", {}, [el("span", { "class": "name", text: "Tasks" }), el("span", { "class": "meta", text: meta })]),
     badge
   ]);
 }
@@ -620,18 +620,18 @@ function applyMarks(root) {
 function viewTasks(id) {
   var s = DATA[id], days = tasksData(id);
   if (!days) return viewStudent(id);
-  hint.textContent = s.name + " \u00b7 \u0627\u0644\u0645\u0647\u0627\u0645";
-  document.title = s.name + " \u2014 \u0627\u0644\u0645\u0647\u0627\u0645";
-  var wrap = el("div", { "class": "theme-" + s.theme + " tpage", dir: "rtl", lang: "ar" }, [
-    el("div", { "class": "crumbs" }, [backLink("#" + id, s.name), el("span", { "class": "where", text: s.name + " \u203a \u0627\u0644\u0645\u0647\u0627\u0645" })]),
-    el("h2", { "class": "view-title", text: "\u0627\u0644\u0645\u0647\u0627\u0645" })
+  hint.textContent = s.name + " \u00b7 Tasks";
+  document.title = s.name + " \u2014 Tasks";
+  var wrap = el("div", { "class": "theme-" + s.theme + " tpage" }, [
+    el("div", { "class": "crumbs" }, [backLink("#" + id, s.name), el("span", { "class": "where", text: s.name + " \u203a Tasks" })]),
+    el("h2", { "class": "view-title", text: "Tasks" })
   ]);
   pendingExams(id).forEach(function (x) {
-    wrap.appendChild(el("div", { "class": "day" }, [document.createTextNode("\u0627\u0645\u062a\u062d\u0627\u0646 \u0642\u0631\u064a\u0628")]));
+    wrap.appendChild(el("div", { "class": "day" }, [document.createTextNode("Upcoming exam")]));
     var g0 = el("div", { "class": "tgrid" }, []);
     g0.appendChild(el("a", { "class": "task now", href: x.href, "data-mk": "exam:" + x.date + ":" + id + ":" + x.sid }, [
       el("span", {}, [el("span", { "class": "sn", dir: "ltr", text: x.name }), el("span", { "class": "ss", text: x.sub })]),
-      el("span", { "class": "st", text: "\u0627\u062f\u0631\u0633 \u0627\u0644\u0622\u0646" })
+      el("span", { "class": "st", text: "Study now" })
     ]));
     wrap.appendChild(g0);
   });
@@ -639,20 +639,20 @@ function viewTasks(id) {
   days.forEach(function (dy) {
     var box = wrap;
     if (!dy.first) {
-      if (!more) { more = el("details", { "class": "tmore" }, [el("summary", { text: "\u0627\u0644\u0623\u064a\u0627\u0645 \u0627\u0644\u0642\u0627\u062f\u0645\u0629" })]); wrap.appendChild(more); }
+      if (!more) { more = el("details", { "class": "tmore" }, [el("summary", { text: "Upcoming days" })]); wrap.appendChild(more); }
       box = more;
     }
-    box.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: "\u063a\u062f\u0627\u064b" }) : null].filter(Boolean)));
+    box.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: "Tomorrow" }) : null].filter(Boolean)));
     var g = el("div", { "class": "tgrid" }, []);
     dy.rows.forEach(function (r) {
       if (!r.h) {
-        g.appendChild(el("div", { "class": "task none", "data-mk": dy.key + ":" + id + ":" + r.sid }, [el("span", { "class": "sn", dir: "ltr", text: r.name }), el("span", { "class": "st", text: "\u0644\u0627 \u064a\u0648\u062c\u062f \u062f\u0631\u0633" })]));
+        g.appendChild(el("div", { "class": "task none", "data-mk": dy.key + ":" + id + ":" + r.sid }, [el("span", { "class": "sn", dir: "ltr", text: r.name }), el("span", { "class": "st", text: "No lesson" })]));
         return;
       }
       var st = r.st;
       g.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href, "data-mk": dy.key + ":" + id + ":" + r.sid }, [
         el("span", {}, [el("span", { "class": "sn", dir: "ltr", text: r.h.title.split(" \u2014 ")[0] }), el("span", { "class": "ss", dir: "auto", text: r.h.title.split(" \u2014 ")[1] || "" })]),
-        el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : (r.h.plain ? "\u0627\u0641\u062a\u062d" : "\u0627\u062f\u0631\u0633 \u0627\u0644\u0622\u0646") })
+        el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : (r.h.plain ? "Open" : "Study now") })
       ]));
     });
     box.appendChild(g);
