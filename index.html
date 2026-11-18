@@ -101,6 +101,7 @@ a.task.now{border-color:#f59e0b;background:#fff7e6}a.task.done{border-color:#16a
 .task .st{font-weight:800;font-size:15px;white-space:nowrap;padding:6px 12px;border-radius:999px;background:#fff}
 a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#15803d;border:1.5px solid #16a34a}
 .task.none{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:8px 16px;border-radius:14px;background:#f8fafc;border:2px dashed #d8dee6;color:#6b7280}.task.none .sn{font-weight:600;font-size:16px}.task.none .st{font-weight:600;font-size:14px;background:transparent}.tmore>summary{font-weight:800;font-size:16px;margin:20px 2px 4px;cursor:pointer;min-height:44px;display:flex;align-items:center}
+.mkb{color:#15803d;font-weight:800}.task.mk.none{background:#f0fdf4;border-color:#16a34a;border-style:solid}.task.mk .sn{color:#15803d}
 .twait{margin:10px 2px 0;padding:10px 14px;border-radius:12px;background:#f3f4f6;color:#666;font-size:14px;line-height:1.7}
 .twait b{color:#444}
 </style>
@@ -566,7 +567,7 @@ function tasksData(id) {
       if (h) { var r = { sid: sid, h: h, st: hwState(h) }; hw.push(r); rows.push(r); }
       else rows.push({ sid: sid, name: sub ? sub.title : sid });
     });
-    days.push({ first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, rows: rows });
+    days.push({ key: x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate()), first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, rows: rows });
   }
   return days;
 }
@@ -580,6 +581,31 @@ function tasksCard(id) {
     el("span", {}, [el("span", { "class": "name", text: "Tasks" }), el("span", { "class": "meta", text: meta })]),
     badge
   ]);
+}
+function marksCfg() {
+  try {
+    var p = JSON.parse(localStorage.getItem("bk-parent-v1") || "null");
+    if (p && p.cfg && p.cfg.repo && p.cfg.token) return p.cfg;
+    var d = JSON.parse(localStorage.getItem("bk-device-v1") || "null");
+    if (d && d.repo && d.token) return d;
+  } catch (e) {}
+  return null;
+}
+function loadMarkMap() {
+  var c = marksCfg(); if (!c) return Promise.resolve({});
+  return fetch((c.api || "https://api.github.com") + "/repos/" + c.repo + "/contents/reports/parent-marks.json?t=" + Date.now(),
+    { headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json" }, cache: "no-store" })
+    .then(function (r) { if (!r.ok) return {}; return r.json().then(function (j) { return JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g, ""))))) || {}; }); })
+    .catch(function () { return {}; });
+}
+function applyMarks(root) {
+  loadMarkMap().then(function (m) {
+    root.querySelectorAll("[data-mk]").forEach(function (n) {
+      if (!m[n.getAttribute("data-mk")] || n.querySelector(".mkb")) return;
+      n.classList.add("mk");
+      var sn = n.querySelector(".sn"); if (sn) sn.insertBefore(el("span", { "class": "mkb", text: "\u2713 " }), sn.firstChild);
+    });
+  });
 }
 function viewTasks(id) {
   var s = DATA[id], days = tasksData(id);
@@ -601,11 +627,11 @@ function viewTasks(id) {
     var g = el("div", { "class": "tgrid" }, []);
     dy.rows.forEach(function (r) {
       if (!r.h) {
-        g.appendChild(el("div", { "class": "task none" }, [el("span", { "class": "sn", text: r.name }), el("span", { "class": "st", text: "No lesson" })]));
+        g.appendChild(el("div", { "class": "task none", "data-mk": dy.key + ":" + id + ":" + r.sid }, [el("span", { "class": "sn", text: r.name }), el("span", { "class": "st", text: "No lesson" })]));
         return;
       }
       var st = r.st;
-      g.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href }, [
+      g.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href, "data-mk": dy.key + ":" + id + ":" + r.sid }, [
         el("span", {}, [el("span", { "class": "sn", text: r.h.title.split(" \u2014 ")[0] }), el("span", { "class": "ss", text: r.h.title.split(" \u2014 ")[1] || "" })]),
         el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : (r.h.plain ? "Open" : "Study now") })
       ]));
@@ -613,6 +639,7 @@ function viewTasks(id) {
     box.appendChild(g);
   });
   app.replaceChildren(wrap);
+  applyMarks(wrap);
 }
 
 function viewStudent(id) {
