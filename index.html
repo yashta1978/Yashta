@@ -87,11 +87,21 @@ noscript .plain a{display:block;padding:10px 0}
 .by{display:block;margin:10px 0 0;text-align:center;font-size:24px;font-weight:700;color:var(--accent)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 
-.tasks{margin:0 0 18px}.tasks h2{font-size:20px;margin:6px 2px}
-.tasks .day{font-weight:700;margin:12px 2px 4px;color:#444}
-a.task,div.task{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:8px 14px;margin:6px 0;border-radius:12px;background:#fff;border:2px solid #d8dee6;color:#222;text-decoration:none}
-a.task.now{border-color:#f59e0b;background:#fff7e6}a.task.done{border-color:#16a34a;background:#f0fdf4}div.task.wait{color:#777;background:#f3f4f6}
-.task .st{font-weight:700;font-size:15px;white-space:nowrap}
+a.card.tcard{background:linear-gradient(135deg,#fff7e6,#fde7c3);border-color:#f59e0b;min-height:84px;grid-column:1/-1}
+a.card.tcard .name{font-size:22px;font-weight:800}
+a.card.tcard .meta{display:block;margin-top:4px;font-size:14px;color:#6b4a00}
+.tbadge{flex:none;min-width:34px;height:34px;padding:0 10px;border-radius:999px;background:#f59e0b;color:#fff;font-weight:800;font-size:17px;display:inline-flex;align-items:center;justify-content:center}
+.tbadge.ok{background:#16a34a}
+.tpage .day{font-weight:800;font-size:17px;margin:20px 2px 8px;color:#333}
+.tpage .day small{font-weight:600;color:#777;margin-inline-start:6px}
+.tgrid{display:grid;gap:10px}
+a.task{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:10px 16px;border-radius:14px;background:#fff;border:2px solid #d8dee6;color:#222;text-decoration:none}
+a.task .sn{font-weight:700;font-size:17px}a.task .ss{display:block;font-size:13px;color:#666;font-weight:500;margin-top:2px}
+a.task.now{border-color:#f59e0b;background:#fff7e6}a.task.done{border-color:#16a34a;background:#f0fdf4}
+.task .st{font-weight:800;font-size:15px;white-space:nowrap;padding:6px 12px;border-radius:999px;background:#fff}
+a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#15803d;border:1.5px solid #16a34a}
+.twait{margin:10px 2px 0;padding:10px 14px;border-radius:12px;background:#f3f4f6;color:#666;font-size:14px;line-height:1.7}
+.twait b{color:#444}
 </style>
 </head>
 <body>
@@ -123,7 +133,7 @@ a.task.now{border-color:#f59e0b;background:#fff7e6}a.task.done{border-color:#16a
     <a href="science6-producers-consumers-decomposers.html">Producers, Consumers and Decomposers</a>
     <a href="science6-book-v5.html">Science 6 Book — Section 2: Vegetative Propagation (pp. 90–102) – v5</a>
     <strong>Vina — Grade 6 · Social Studies</strong>
-    <a href="komelayeti-6a-shorish-1919-1920-v1.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v1</a>
+    <a href="komelayeti-6a-shorish-1919-1920-v2.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v2</a>
     <strong>Vina — Grade 6 · Islamic</strong>
     <a href="islamic6-lessons-1-5-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2</a>
     <strong>Vina — Grade 6 · Art</strong>
@@ -289,8 +299,8 @@ var LESSONS = {
         lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v5.html" }
     ],
     "social-studies": [
-      { title: "شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v1", sub: "ص٣١ · واجب يومي",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-shorish-1919-1920-v1.html" }
+      { title: "شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v2", sub: "ص٣١ · واجب يومي",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-shorish-1919-1920-v2.html" }
     ],
     islamic: [
       { title: "وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2",
@@ -496,7 +506,7 @@ var TIMETABLE = { vina: {
   4: ["social-studies","english","arabic","kurdish","science","social-value","math"] } };
 var HOMEWORK = { vina: {
   "science": { title: "Science — Vegetative Propagation", href: "science6-book-v5.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
-  "social-studies": { title: "Social Studies — 1919–1920", href: "komelayeti-6a-shorish-1919-1920-v1.html", key: "bk-soc6-v1", get: function (o) { return o && o.hw; } }
+  "social-studies": { title: "Social Studies — 1919–1920", href: "komelayeti-6a-shorish-1919-1920-v2.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 function p2(n) { return (n < 10 ? "0" : "") + n; }
@@ -505,31 +515,59 @@ function hwState(h) {
   try { var raw = localStorage.getItem(h.key); if (raw) v = h.get(JSON.parse(raw)); } catch (e) {}
   return v && v.done ? v : null;
 }
-function tasksBlock(id) {
+function tasksData(id) {
   var tt = TIMETABLE[id]; if (!tt) return null;
-  var box = el("div", { "class": "tasks" }, [el("h2", { text: "Tasks" })]);
-  var d = new Date(), shown = 0;
+  var d = new Date(), shown = 0, days = [];
   for (var k = 1; k <= 8 && shown < 5; k++) {
     var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + k), wd = x.getDay();
     if (wd === 5 || wd === 6) continue;
     var first = shown === 0; shown++;
-    var seen = {}, rows = [];
+    var seen = {}, hw = [], wait = [];
     tt[wd].forEach(function (sid) {
       if (seen[sid]) return; seen[sid] = 1;
       var h = (HOMEWORK[id] || {})[sid], sub = SUBJECTS.filter(function (z) { return z.id === sid; })[0];
-      if (!h && !first) return;
-      rows.push({ sid: sid, h: h, name: h ? h.title : sub.title });
+      if (h) hw.push({ sid: sid, h: h, st: hwState(h) });
+      else if (first && sub) wait.push(sub.title);
     });
-    if (!rows.length) continue;
-    box.appendChild(el("div", { "class": "day", text: (first ? "Tomorrow — " : "") + DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear() }));
-    rows.sort(function (a, b) { return (b.h ? 1 : 0) - (a.h ? 1 : 0); });
-    rows.forEach(function (r) {
-      if (!r.h) { box.appendChild(el("div", { "class": "task wait" }, [el("span", { text: r.name }), el("span", { "class": "st", text: "Homework not received yet" })])); return; }
-      var st = hwState(r.h);
-      box.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href }, [el("span", { text: r.name }), el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : "Study now" })]));
-    });
+    if (!hw.length && !wait.length) continue;
+    days.push({ first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, wait: wait });
   }
-  return box;
+  return days;
+}
+function tasksCard(id) {
+  var days = tasksData(id); if (!days) return null;
+  var pend = 0, tot = 0, names = [];
+  if (days[0]) days[0].hw.forEach(function (r) { tot++; if (!r.st) { pend++; names.push(r.h.title.split(" \u2014 ")[0]); } });
+  var meta = !days[0] ? "Nothing yet" : (tot ? (pend ? "Tomorrow: " + names.join(", ") : "Tomorrow: all done \u2713") : "No homework yet for tomorrow");
+  var badge = el("span", { "class": "tbadge" + (tot && !pend ? " ok" : ""), text: tot ? (pend ? String(pend) : "\u2713") : "\u2013" });
+  return el("a", { "class": "card subject tcard", href: "#" + id + "/tasks" }, [
+    el("span", {}, [el("span", { "class": "name", text: "Tasks" }), el("span", { "class": "meta", text: meta })]),
+    badge
+  ]);
+}
+function viewTasks(id) {
+  var s = DATA[id], days = tasksData(id);
+  if (!days) return viewStudent(id);
+  hint.textContent = s.name + " \u00b7 Tasks";
+  document.title = s.name + " \u2014 Tasks";
+  var wrap = el("div", { "class": "theme-" + s.theme + " tpage" }, [
+    el("div", { "class": "crumbs" }, [backLink("#" + id, s.name), el("span", { "class": "where", text: s.name + " \u203a Tasks" })]),
+    el("h2", { "class": "view-title", text: "Tasks" })
+  ]);
+  days.forEach(function (dy) {
+    wrap.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: "Tomorrow" }) : null].filter(Boolean)));
+    var g = el("div", { "class": "tgrid" }, []);
+    dy.hw.forEach(function (r) {
+      var st = r.st;
+      g.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href }, [
+        el("span", {}, [el("span", { "class": "sn", text: r.h.title.split(" \u2014 ")[0] }), el("span", { "class": "ss", text: r.h.title.split(" \u2014 ")[1] || "" })]),
+        el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : "Study now" })
+      ]));
+    });
+    wrap.appendChild(g);
+    if (dy.wait.length) wrap.appendChild(el("div", { "class": "twait" }, [el("b", { text: "Homework not received yet: " }), document.createTextNode(dy.wait.join(", "))]));
+  });
+  app.replaceChildren(wrap);
 }
 
 function viewStudent(id) {
@@ -540,8 +578,8 @@ function viewStudent(id) {
     el("div", { "class": "crumbs" }, [backLink("#", "Home"), el("span", { "class": "where", text: s.name + " · " + s.grade })]),
     el("h2", { "class": "view-title", text: "Choose a subject" })
   ]);
-  var tb = tasksBlock(id); if (tb) wrap.appendChild(tb);
   var grid = el("div", { "class": "grid" }, []);
+  var tc = tasksCard(id); if (tc) grid.appendChild(tc);
   s.subjects.forEach(function (sub) {
     if ((BANNERS[id] || []).indexOf(sub.id) > -1) {
       var cnt = sub.lessons.length;
@@ -597,7 +635,7 @@ function route() {
   var h = decodeURIComponent((location.hash || "").replace(/^#\/?/, ""));
   var parts = h.split("/");
   if (parts[0] && DATA[parts[0]]) {
-    if (parts[1]) viewSubject(parts[0], parts[1]); else viewStudent(parts[0]);
+    if (parts[1] === "tasks") viewTasks(parts[0]); else if (parts[1]) viewSubject(parts[0], parts[1]); else viewStudent(parts[0]);
   } else {
     viewHome();
   }
