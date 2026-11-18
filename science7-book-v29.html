@@ -673,7 +673,7 @@ function examIntro(){
     s.addEventListener('click',function(){startExam(n,ids)});c.addEventListener('click',examIntro);
     var a=el('div','acts');a.appendChild(s);a.appendChild(c);h.appendChild(a);
   }
-  EXL=!pathDone();if(EXL){examLocked(h,ready);return}
+  EXL=false;
   h.appendChild(planBox('Before the exam checklist'));
   h.appendChild(el('p','cnt','You are ready on '+nReady()+' of '+D.EX.length+' questions. Use Learn to prepare, then tap Ready on each question you can answer.'));
   var a=el('div','acts');
@@ -753,6 +753,40 @@ function grade(o){
   if(q.t==='fl')return keysOk(o.ans||'',q.keys);
   var s=EXS.self[o.n]||{};return q.pts.every(function(_,k){return s[k]});
 }
+function studyHere(id){
+  var c=LB[id];if(!c)return;var q0=D.EX.filter(function(q){return q.l===id})[0]||{};
+  var old=document.getElementById('sgov');if(old)old.remove();
+  var ov=el('div');ov.id='sgov';ov.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:60;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center';
+  var sh=el('div','fc');sh.style.cssText='background:#fff;width:100%;max-width:640px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px;margin:0;box-sizing:border-box';
+  ov.appendChild(sh);document.body.appendChild(ov);
+  function close(){ov.remove()}
+  ov.addEventListener('click',function(e){if(e.target===ov)close()});
+  function top(t){var b=el('div');b.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:8px';b.appendChild(el('div','term',t));var x=el('button','btn sm','Close');x.addEventListener('click',close);b.appendChild(x);return b}
+  function learn(){
+    sh.textContent='';sh.appendChild(top('Study it now'));
+    qText(sh,c.q||q0.q||'');sh.appendChild(ansBox(c));
+    var pts=q0.pts||[];if(pts.length){sh.appendChild(el('p','note','Points you need to get the mark:'));var ol=el('ol');pts.forEach(function(pp){var li=el('li');mineText(li,pp);ol.appendChild(li)});sh.appendChild(ol)}
+    var vp=el('button','btn sm','View page '+c.pg);vp.addEventListener('click',function(){lpvOpen(c.pg)});sh.appendChild(vp);
+    var m=el('button','btn pri','I memorized it');m.style.marginLeft='8px';m.addEventListener('click',check);sh.appendChild(m);
+  }
+  function check(){
+    sh.textContent='';sh.appendChild(top('Check yourself'));
+    qText(sh,'Write it from memory:\n\n'+(c.q||q0.q||''));
+    var ta=el('textarea','wf');ta.placeholder='Write it from memory. Do not look.';ta.setAttribute('aria-label','Your answer');sh.appendChild(ta);
+    var slot=el('div'),msg=el('p','note',''),cmp=el('button','btn pri','Compare with the book');
+    function passed(){var g=id.split('-')[0];if(psOf(g)){psOf(g).q[id]=4;psOf(g).m.ok=false}saveNow();slot.appendChild(el('p','okc','Mastered. Close this and go on with your result.'));var cl=el('button','btn pri','Close');cl.addEventListener('click',close);slot.appendChild(cl)}
+    function again(){var a2=el('button','btn pri','Study it again');a2.addEventListener('click',learn);slot.appendChild(a2)}
+    cmp.addEventListener('click',function(){
+      if(!ta.value.trim()){msg.textContent='Write your answer first.';return}
+      cmp.disabled=true;ta.readOnly=true;slot.textContent='';slot.appendChild(ansBox(c));
+      if(ta.value.trim().split(/\s+/).length>=3&&gradeWr({m:String(c.ans||''),pts:q0.pts||[]},ta.value)){slot.appendChild(el('p','okc','Your answer covers the key ideas of the book.'));passed()}
+      else{slot.appendChild(el('p','note','Compare with your answer. If you wrote the same ideas, even in other words, you were right. Be honest: this is only for you.'));var y=el('button','btn pri','I wrote it right'),n2=el('button','btn','I missed parts');n2.style.marginLeft='8px';
+        y.addEventListener('click',function(){y.disabled=n2.disabled=true;passed()});n2.addEventListener('click',function(){y.disabled=n2.disabled=true;again()});slot.appendChild(y);slot.appendChild(n2)}
+    });
+    sh.appendChild(cmp);sh.appendChild(msg);sh.appendChild(slot);
+  }
+  learn();
+}
 function finishExam(){
   clearInterval(tm);var secs=Math.floor((Date.now()-EXS.t0)/1000);var N=EXS.q.length;
   var h=$('#exam');h.textContent='';
@@ -772,12 +806,12 @@ function finishExam(){
     weak.textContent='';
     if(bad.length){weak.appendChild(el('h2',null,'Weak spots'));
       var seen={};bad.forEach(function(o){var id=o.q.l;if(seen[id])return;seen[id]=1;var c=LB[id];
-        var b=el('button','btn',(c?c.sec+' '+c.qn:id)+'  -  open in Learn');b.style.margin='4px 6px 4px 0';b.addEventListener('click',function(){openLearn(id)});weak.appendChild(b)})}
+        var b=el('button','btn',(c?c.sec+' '+c.qn:id)+'  -  open in Learn');b.style.margin='4px 6px 4px 0';b.addEventListener('click',function(){openLearn(id)});var sn=el('button','btn pri','Study it now');sn.style.margin='4px 6px 4px 0';sn.addEventListener('click',function(){studyHere(id)});weak.appendChild(sn);weak.appendChild(b)})}
     else weak.appendChild(el('p',null,'No weak spots. Full marks.'));
     if(bad.length){var ids=bad.map(function(o){return o.q.l});var sc2=el('button','btn pri','Second chance ('+bad.length+')');sc2.style.margin='8px 0';sc2.addEventListener('click',function(){startExam(ids.length,ids,true)});weak.appendChild(sc2)}
     var sbw=EXS.q.filter(function(o){return o.conf==='s'&&!o.peek&&!grade(o)}),nsr=EXS.q.filter(function(o){return o.conf==='n'&&!o.peek&&grade(o)});
     if(sbw.length){weak.appendChild(el('h2',null,'Sure but wrong ('+sbw.length+')'));weak.appendChild(el('p','note','You were sure, but the answer was wrong. These are the most important to fix.'));
-      sbw.forEach(function(o){var c=LB[o.q.l];var b=el('button','btn',(c?c.sec+' '+c.qn:o.q.l)+'  -  open in Learn');b.style.margin='4px 6px 4px 0';b.addEventListener('click',function(){openLearn(o.q.l)});weak.appendChild(b)})}
+      sbw.forEach(function(o){var c=LB[o.q.l];var b=el('button','btn',(c?c.sec+' '+c.qn:o.q.l)+'  -  open in Learn');b.style.margin='4px 6px 4px 0';b.addEventListener('click',function(){openLearn(o.q.l)});var sn=el('button','btn pri','Study it now');sn.style.margin='4px 6px 4px 0';sn.addEventListener('click',function(){studyHere(o.q.l)});weak.appendChild(sn);weak.appendChild(b)})}
     if(nsr.length)weak.appendChild(el('p','note','Not sure but right: '+nsr.length+'. You know more than you think.'));
     weak.appendChild(el('p','note',EXS.second?'The second chance does not change your marks or the Ready state.':'Ready now: '+nReady()+' of '+D.EX.length+'. Questions you missed or looked at went back to Not ready yet in Learn.'));
   }
@@ -1022,7 +1056,7 @@ function buildSum(){
 
 
 // ---------- v22: saved progress, spaced review, Today ----------
-var PS={s:{},u:{},v:{},b:{},st:{},wd:{},log:{},dw:{},rn:{},pp:{}};   // Path: s[stage], u[unit], v[pages viewed]
+var PS={s:{},u:{},v:{},b:{},st:{},wd:{},log:{},dw:{},rn:{},pp:{},last:-1};   // Path: s[stage], u[unit], v[pages viewed]
 var REV={};            // id -> {b: box 1..4, d: due date yyyy-mm-dd}
 var SKEY=D.meta.skey,SAVEOK=true,LASTJSON='';
 var BOXD=[1,3,7,14];   // days until the next review for box 1..4 (work days only: Sunday to Thursday)
@@ -1121,7 +1155,7 @@ function applySnap(o){
   function fill(dst,src){Object.keys(dst).forEach(function(k){delete dst[k]});if(src&&typeof src==='object'){Object.keys(src).forEach(function(k){dst[k]=src[k]})}}
   fill(LS,o.LS);fill(READY,o.READY);fill(KNOWN,o.KNOWN);fill(SBW,o.SBW);fill(GSC,o.GSC);fill(GREAD,o.GREAD);fill(GRES,o.GRES);fill(REV,o.REV);
   PASSED=!!o.PASSED;
-  if(o.PS&&typeof o.PS==='object'){PS.s=(o.PS.s&&typeof o.PS.s==='object')?o.PS.s:{};PS.u=(o.PS.u&&typeof o.PS.u==='object')?o.PS.u:{};PS.v=(o.PS.v&&typeof o.PS.v==='object')?o.PS.v:{};PS.b=(o.PS.b&&typeof o.PS.b==='object')?o.PS.b:{};PS.st=(o.PS.st&&typeof o.PS.st==='object')?o.PS.st:{};PS.wd=(o.PS.wd&&typeof o.PS.wd==='object')?o.PS.wd:{};PS.log=(o.PS.log&&typeof o.PS.log==='object')?o.PS.log:{};PS.dw=(o.PS.dw&&typeof o.PS.dw==='object')?o.PS.dw:{};PS.rn=(o.PS.rn&&typeof o.PS.rn==='object')?o.PS.rn:{};PS.pp=(o.PS.pp&&typeof o.PS.pp==='object')?o.PS.pp:{}}
+  if(o.PS&&typeof o.PS==='object'){PS.s=(o.PS.s&&typeof o.PS.s==='object')?o.PS.s:{};PS.u=(o.PS.u&&typeof o.PS.u==='object')?o.PS.u:{};PS.v=(o.PS.v&&typeof o.PS.v==='object')?o.PS.v:{};PS.b=(o.PS.b&&typeof o.PS.b==='object')?o.PS.b:{};PS.st=(o.PS.st&&typeof o.PS.st==='object')?o.PS.st:{};PS.wd=(o.PS.wd&&typeof o.PS.wd==='object')?o.PS.wd:{};PS.log=(o.PS.log&&typeof o.PS.log==='object')?o.PS.log:{};PS.dw=(o.PS.dw&&typeof o.PS.dw==='object')?o.PS.dw:{};PS.rn=(o.PS.rn&&typeof o.PS.rn==='object')?o.PS.rn:{};PS.pp=(o.PS.pp&&typeof o.PS.pp==='object')?o.PS.pp:{};PS.last=(typeof o.PS.last==='number')?o.PS.last:-1}
   Object.keys(REV).forEach(function(id){var r=REV[id];if(!LB[id]||!r||typeof r.b!=='number'||typeof r.d!=='string')delete REV[id]});
 }
 function saveNow(){try{var s=JSON.stringify(snapshot());if(s!==LASTJSON){localStorage.setItem(SKEY,s);LASTJSON=s}}catch(e){SAVEOK=false}}
@@ -1229,7 +1263,12 @@ function pDone(x){
   if(x.k==='u'){var o=PS.u[x.u];return !!(o&&o.ok&&o.sig===stageCnt(x.u))}
   return !!(PS.b&&PS.b.ok&&PS.b.sig===PSEQ.length-1);
 }
-function pUnlocked(i){for(var j=0;j<i;j++)if(!pDone(PSEQ[j]))return false;return true}
+function pUnlocked(i){var x=PSEQ[i];if(x.k==='s')return true;
+  if(x.k==='u')return STG.every(function(g){return uOf(g)!==x.u||pDone({k:'s',g:g})});
+  return PSEQ.every(function(y){return y.k==='b'||pDone(y)})}
+function pLast(){var i=PS.last;return (typeof i==='number'&&i>=0&&i<PSEQ.length&&!pDone(PSEQ[i]))?i:pCur()}
+function pStarted(x){if(x.k!=='s')return false;return stagePages(x.g).some(function(pg){return PS.v[pg]})}
+function pState(x,i){if(pDone(x))return 'Mastered';if(x.k==='s')return pStarted(x)?'In progress':'New';return pUnlocked(i)?'Open':'Finish the sections first'}
 function pCur(){for(var i=0;i<PSEQ.length;i++)if(!pDone(PSEQ[i]))return i;return -1}
 function pathDone(){return pCur()===-1}
 function pLabel(x){return x.k==='s'?GN[x.g]:(x.k==='u'?('Unit '+x.u+' test'):'Whole book test')}
@@ -1239,8 +1278,8 @@ function unitQs(u){return D.EX.filter(function(q){return uOf(gOf(q))===u})}
 function wordEq(a,b){var x=norm(a),y=norm(b);return x===y||x+'s'===y||x===y+'s'||x+'es'===y||x===y+'es'}
 function backBtn(){var d=el('div','pa-top');var b=el('button','btn sm','Map');b.addEventListener('click',function(){renderPath()});d.appendChild(b);
   var tot=PSEQ.length,dn=PSEQ.filter(pDone).length;var bar=el('div','pa-bar');var bi=el('i');bi.style.width=Math.round(100*dn/tot)+'%';bar.appendChild(bi);d.appendChild(bar);
-  d.appendChild(el('p','note','Step '+Math.min(dn+1,tot)+' of '+tot));return d}
-function goNext(){var c=pCur();if(c>-1)openItem(c);else renderPath()}
+  d.appendChild(el('p','note',dn+' of '+tot+' steps mastered'));return d}
+function goNext(){var n=-1,from=(typeof PS.last==='number'?PS.last:-1);for(var i=from+1;i<PSEQ.length;i++)if(!pDone(PSEQ[i])&&pUnlocked(i)){n=i;break}if(n<0){var c=pCur();if(c>-1&&pUnlocked(c))n=c}if(n>-1)openItem(n);else renderPath()}
 function qText(host,s){var p=el('p',null,s);p.style.whiteSpace='pre-line';host.appendChild(p);return p}
 
 // ----- fill-the-missing-words (fading): frac of the key words are hidden, the student types them -----
@@ -1681,13 +1720,14 @@ function openReviewP(u){
 function openItem(i){
   var x=PSEQ[i];
   if(!pUnlocked(i)){return}
+  PS.last=i;saveNow();
   if(x.k==='s'){var dy=dayOf(x.g);if(!PS.wd[dy]){PS.wd[dy]=1;saveNow();if(weakList().length){renderWeak(function(){renderStage(x.g)},true);return}}}
   if(x.k==='s')renderStage(x.g);else if(x.k==='u')renderUnit(x.u);else renderBook();
 }
 function renderPath(){
   var h=$('#path');if(!h)return;h.textContent='';
   h.appendChild(el('h2',null,'Your Path'));
-  h.appendChild(el('p','note','Master each step to open the next one. The Path teaches you, checks you and brings the old questions back for review, so you do not need anyone to guide you.'));
+  h.appendChild(el('p','note','Start anywhere you like: any section, any lesson. Come back to the older ones whenever you have time. The Path teaches you, checks you and brings the old questions back for review, so you do not need anyone to guide you.'));
   var tot=PSEQ.length,dn=PSEQ.filter(pDone).length;
   var bar=el('div','pa-bar');var bi=el('i');bi.style.width=Math.round(100*dn/tot)+'%';bar.appendChild(bi);h.appendChild(bar);
   h.appendChild(el('p','note',dn+' of '+tot+' steps mastered'));
@@ -1696,12 +1736,13 @@ function renderPath(){
   UNITS.forEach(function(u){var n=dueList().filter(function(id){return uOf(id.split('-')[0])===u}).length;if(n){var ub=el('button','btn','Review of Unit '+u+' ('+n+' due)');ub.style.margin='4px 6px 4px 0';ub.addEventListener('click',function(){openReviewP(u)});h.appendChild(ub)}});
   var wk=weakList().length;
   if(wk){var wb=el('button','btn','Practise my weak points ('+wk+')');wb.style.margin='6px 0';wb.addEventListener('click',function(){renderWeak()});h.appendChild(wb)}
-  var cur=pCur();
-  if(cur>-1){var cb=el('button','btn pri','Continue: '+pLabel(PSEQ[cur]));cb.style.margin='8px 0';cb.addEventListener('click',function(){openItem(cur)});h.appendChild(cb)}
-  else{h.appendChild(el('p','okc','You mastered the whole Path. The Exam /20 is now open.'));var eb=el('button','btn pri','Go to the Exam /20');eb.addEventListener('click',function(){showTab('exam')});h.appendChild(eb)}
+  var cur=pLast();
+  if(cur>-1){var cb=el('button','btn pri','Continue where I stopped: '+pLabel(PSEQ[cur]));cb.style.margin='8px 0';cb.addEventListener('click',function(){openItem(cur)});h.appendChild(cb)}
+  else h.appendChild(el('p','okc','You mastered the whole Path. Well done!'));
+  var eb=el('button','btn','Exam /20 (open any time)');eb.style.margin='6px 0';eb.addEventListener('click',function(){showTab('exam')});h.appendChild(eb);
   PSEQ.forEach(function(x,i){
     var d=pDone(x),un=pUnlocked(i),b=el('button','opt'+(d?' good':''));
-    var row=el('span','pa-st');row.appendChild(el('span',null,pLabel(x)));row.appendChild(el('b',null,d?'Mastered':(i===cur?'Current':(un?'Open':'Locked'))));b.appendChild(row);
+    var row=el('span','pa-st');row.appendChild(el('span',null,pLabel(x)));row.appendChild(el('b',null,pState(x,i)));b.appendChild(row);
     b.disabled=!un&&!d;b.addEventListener('click',function(){openItem(i)});h.appendChild(b);
   });
 }
@@ -1730,16 +1771,16 @@ function isTest(){try{return localStorage.getItem(TESTK)==='1'}catch(e){return f
 function setTest(v){try{if(v)localStorage.setItem(TESTK,'1');else localStorage.removeItem(TESTK)}catch(e){}}
 function canReport(){var d=devGet();return !!(d&&d.role==='student'&&(!d.book||d.book==='*'||d.book===D.meta.book)&&d.token&&d.repo&&!isTest())}
 function posInfo(){
-  var c=pCur();if(c<0)return {done:true,label:'Path complete'};
+  var c=pLast();if(c<0)return {done:true,label:'Path complete'};
   var x=PSEQ[c],o={i:c,n:PSEQ.length,label:pLabel(x),k:x.k};
-  if(x.k==='s'){var pgs=stagePages(x.g),k=0,pa=-1;while(k<pgs.length&&pageState(x.g,pgs[k]).done){if(k%2===1&&!ppOk(x.g,pgs[k-1],pgs[k])){pa=k;break}k++}o.pk=pa>=0?pa+1:k;o.pn=pgs.length;
+  if(x.k==='s'){var pgs=stagePages(x.g),k=0,pa=-1;while(k<pgs.length&&pageState(x.g,pgs[k]).done){if(k%2===1&&!ppOk(x.g,pgs[k-1],pgs[k])){pa=k;break}k++}o.pk=pa>=0?pa:k;o.pn=pgs.length;
     if(pa>=0){o.pg=pgs[pa];o.step='pair check'}else if(k<pgs.length){var st=pageState(x.g,pgs[k]);o.pg=pgs[k];o.step=!st.rd?'reading':((!(st.q&&st.d)||!roundsOk(x.g,pgs[k]))?'round':'page check');if(st.rd&&o.step==='round'){var _r=rnCur(x.g,pgs[k]);o.rn=_r+1;o.rt=roundsOf(x.g,pgs[k]).length}}else o.step='section check'}
   return o;
 }
 function buildReport(){
   var days={};Object.keys(PS.log).sort().slice(-60).forEach(function(k){var L=PS.log[k];
     days[k]={sec:L.sec||0,read:Object.keys(L.pg||{}).filter(function(b){return L.pg[b]>=Math.max(READ_MIN,1)}).map(Number),a:L.a||0,w:L.w||0,f:L.f||0,ms:L.ms||0}});
-  return {v:1,book:D.meta.book,title:D.meta.title,upd:new Date().toISOString(),pos:posInfo(),prog:{done:PSEQ.filter(pDone).length,total:PSEQ.length},
+  return {v:1,book:D.meta.book,title:D.meta.title,upd:new Date().toISOString(),pos:posInfo(),prog:{done:PSEQ.filter(pDone).length,total:PSEQ.length},secs:PSEQ.filter(function(x){return x.k==='s'}).map(function(x){return {n:GN[x.g],s:pDone(x)?'done':(pStarted(x)?'prog':'new')}}),
     weak:weakList(5).map(function(x){var i=keyInfo(x.k);return {t:i.txt.slice(0,90),pg:i.pg,k:i.kind,w:x.w}}),days:days};
 }
 async function ghReq(method,path,body){var d=devGet();return fetch((d.api||'https://api.github.com')+'/repos/'+d.repo+'/contents/'+path,{method:method,headers:{'Authorization':'Bearer '+d.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined})}

@@ -168,8 +168,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
 
 <footer>Each lesson opens in its own language.</footer>
 
-<script id="hub-device">
-// shared: passphrase-protected setup codes (AES-GCM, PBKDF2). Nothing leaves the device.
+<script id="hub-device">// shared: passphrase-protected setup codes (AES-GCM, PBKDF2). Nothing leaves the device.
 function bkB64u(b){var s='';new Uint8Array(b).forEach(function(x){s+=String.fromCharCode(x)});return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function bkUnb64u(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var r=atob(s),a=new Uint8Array(r.length);for(var i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a}
 async function bkKey(pass,salt){var base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:150000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
@@ -179,20 +178,22 @@ async function bkDecode(code,pass){code=String(code||'').trim();if(code.indexOf(
 function bkND(s){return String(s||'').replace(/[\u0660-\u0669]/g,function(c){return String(c.charCodeAt(0)-0x0660)}).replace(/[\u06F0-\u06F9]/g,function(c){return String(c.charCodeAt(0)-0x06F0)}).replace(/\s+/g,'')}
 
 (function(){
-var DEVK='bk-device-v1',TESTK='bk-test-v1',CFGU='reports-config.json';
+var DEVK='bk-device-v1',TESTK='bk-test-v1',PARK='bk-parent-v1',CFGU='reports-config.json';
+function parGet(){try{var o=JSON.parse(localStorage.getItem(PARK)||'null');return o&&o.cfg&&o.cfg.repo&&o.cfg.token?o.cfg:null}catch(e){return null}}
+function parSet(c){try{if(c)localStorage.setItem(PARK,JSON.stringify({cfg:c}));else localStorage.removeItem(PARK)}catch(e){}}
 function devGet(){try{return JSON.parse(localStorage.getItem(DEVK)||'null')}catch(e){return null}}
 function devSet(o){try{if(o)localStorage.setItem(DEVK,JSON.stringify(o));else localStorage.removeItem(DEVK)}catch(e){}}
 function isTest(){try{return localStorage.getItem(TESTK)==='1'}catch(e){return false}}
 function setTest(v){try{if(v)localStorage.setItem(TESTK,'1');else localStorage.removeItem(TESTK)}catch(e){}}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-var css=document.createElement('style');css.textContent='.parents{margin-top:14px;border:1px dashed var(--line,#ccd);border-radius:14px;padding:10px 14px;font-size:14px;color:var(--ink,#234);background:transparent}.parents summary{cursor:pointer;font-weight:600;min-height:32px;display:flex;align-items:center}.parents input{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:10px;margin:8px 0;border:2px solid #ccd;border-radius:10px;letter-spacing:4px;text-align:center}.parents button{font:inherit;padding:10px 14px;margin:4px 4px 4px 0;border-radius:10px;border:2px solid #1f6fd1;background:#fff;min-height:44px}.parents button.pri{background:#1f6fd1;color:#fff}.parents .ok{color:#1a7f37}.parents .er{color:#b42318}.parents p{margin:6px 0}';document.head.appendChild(css);
+var css=document.createElement('style');css.textContent='.parents{margin-top:14px;border:1px dashed var(--line,#ccd);border-radius:14px;padding:10px 14px;font-size:14px;color:var(--ink,#234);background:transparent}.parents summary{cursor:pointer;font-weight:600;min-height:32px;display:flex;align-items:center}.parents input{width:100%;box-sizing:border-box;font:inherit;font-size:18px;padding:10px;margin:8px 0;border:2px solid #ccd;border-radius:10px;letter-spacing:4px;text-align:center}.parents button{font:inherit;padding:10px 14px;margin:4px 4px 4px 0;border-radius:10px;border:2px solid #1f6fd1;background:#fff;min-height:44px}.parents button.pri{background:#1f6fd1;color:#fff}.parents .ok{color:#1a7f37}.parents .er{color:#b42318}.parents p{margin:6px 0}.pdash{margin-top:14px}.pdash:empty{display:none}.pdbtn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 18px;border-radius:24px;background:#1f6feb;color:#fff;text-decoration:none;font-weight:600;font-size:16px}';document.head.appendChild(css);
 async function loadCfg(){var r=await fetch(CFGU,{cache:'no-store'});if(!r.ok)throw new Error('Setup file not found.');return await r.json()}
 async function tryNumber(cfg,num){
   for(var i=0;i<(cfg.e||[]).length;i++){var e=cfg.e[i];try{var o=await bkDecode(e.c,num);return {kind:e.k,payload:o,c:e.c}}catch(x){}}
   return null;
 }
 window.parentsCard=function(){
-  var box=el('details','parents');box.appendChild(el('summary',null,'Parents'));
+  var wrap=el('div','parents-wrap'),dash=el('div','pdash');var box=el('details','parents');box.appendChild(el('summary',null,'Parents'));
   var st=el('p',null,''),msg=el('p',null,''),acts=el('div');
   var num=document.createElement('input');num.type='password';num.inputMode='numeric';num.autocomplete='off';num.placeholder='Number';num.setAttribute('aria-label','Number');
   function refresh(){var d=devGet();st.textContent=!d?'This device is not registered. It does not send progress reports.':(d.role!=='student'?'Registered. No reports from here.':(isTest()?'Registered. TEST SESSION: reports are paused.':'Registered. Progress reports are sent.'));
@@ -201,23 +202,30 @@ window.parentsCard=function(){
       tt.onclick=async function(){try{await bkDecode(d.enc,bkND(num.value));setTest(!isTest());msg.className='ok';msg.textContent=isTest()?'Test session: nothing is reported.':'Reports resume.';num.value='';refresh()}catch(e){msg.className='er';msg.textContent='Enter your number first.'}};acts.appendChild(tt);
       var un=el('button',null,'Remove registration');
       un.onclick=async function(){try{await bkDecode(d.enc,bkND(num.value));devSet(null);setTest(false);msg.className='ok';msg.textContent='Removed.';num.value='';refresh()}catch(e){msg.className='er';msg.textContent='Enter your number first.'}};acts.appendChild(un);
-    }}
+    }
+    dash.textContent='';
+    if(parGet()){
+      var a=el('a','pdbtn','\u{1F4CA} Open dashboard');a.href='monitor.html';a.target='_blank';a.rel='noopener';a.setAttribute('aria-label','Open dashboard');dash.appendChild(a);
+      var fg=el('button',null,'Forget this device');fg.onclick=function(){parSet(null);msg.className='ok';msg.textContent='This device was forgotten.';refresh()};acts.appendChild(fg);
+      if(!d)st.textContent='This device is registered for the dashboard.';
+    }
+  }
   var go=el('button','pri','Enter');
   go.onclick=async function(){
     msg.className='';msg.textContent='…';
     try{var cfg=await loadCfg();var r=await tryNumber(cfg,bkND(num.value));
       if(!r)throw new Error('Wrong number.');
-      if(r.kind==='p'){try{sessionStorage.setItem('bk-mon-pass',bkND(num.value))}catch(e){}location.href='monitor.html';return}
+      if(r.kind==='p'){if(!r.payload||r.payload.role!=='monitor')throw new Error('Wrong number.');parSet(r.payload);msg.className='ok';msg.textContent='Registered for the dashboard.';num.value='';refresh();return}
       var o=r.payload;if(o.role!=='student')throw new Error('Wrong number.');
       devSet({role:'student',book:'*',who:o.who||'',repo:o.repo,token:o.token,api:o.api||'',enc:r.c,id:Math.random().toString(36).slice(2,8)});
       setTest(false);msg.className='ok';msg.textContent='Registered.';num.value='';refresh();
     }catch(e){msg.className='er';msg.textContent=e.message}
   };
   box.appendChild(st);box.appendChild(num);box.appendChild(go);box.appendChild(msg);box.appendChild(acts);refresh();
-  return box;
+  wrap.appendChild(dash);wrap.appendChild(box);
+  return wrap;
 };
 })();
-
 </script>
 <script>
 /* ---- Data: add a lesson to a subject's list below and it appears automatically ---- */

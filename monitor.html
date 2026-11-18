@@ -24,7 +24,10 @@ var $=function(s){return document.querySelector(s)};
 function bkND(s){return String(s||'').replace(/[\u0660-\u0669]/g,function(c){return String(c.charCodeAt(0)-0x0660)}).replace(/[\u06F0-\u06F9]/g,function(c){return String(c.charCodeAt(0)-0x06F0)}).replace(/\s+/g,'')}
 
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-var KEY='bkm-code-v1',CFG=null,TIMER=null;
+var KEY='bkm-code-v1',PKEY='bk-parent-v1',CFG=null,TIMER=null;
+function parGet(){try{var o=JSON.parse(localStorage.getItem(PKEY)||'null');return o&&o.cfg&&o.cfg.repo&&o.cfg.token?o.cfg:null}catch(e){return null}}
+function parSet(c){try{if(c)localStorage.setItem(PKEY,JSON.stringify({cfg:c}));else localStorage.removeItem(PKEY)}catch(e){}}
+function forgetDev(){parSet(null);lock('تم نسيان هذا الجهاز. أدخل رقمك لتفتح اللوحة.')}
 function p2(n){return (n<10?'0':'')+n}
 function fmtDate(k){var p=k.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
 function dkey(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
@@ -73,6 +76,7 @@ function bookCard(book,rep,err){
   var pr=rep.prog||{done:0,total:1},pc=Math.round(100*pr.done/pr.total);
   c.appendChild(el('p',null,'التقدّم: '+pr.done+' من '+pr.total+' خطوة متقنة ('+pc+'٪)'));
   var b=el('div','bar'),i=el('i');i.style.width=pc+'%';b.appendChild(i);c.appendChild(b);
+  if(rep.secs&&rep.secs.length){var cn={done:0,prog:0,new:0};rep.secs.forEach(function(x){cn[x.s]=(cn[x.s]||0)+1});c.appendChild(el('p',null,'الأقسام: '+cn.done+' متقنة، '+cn.prog+' قيد الدراسة، '+cn.new+' جديدة'));c.appendChild(el('p','note',rep.secs.map(function(x){return (x.s==='done'?'✓ ':x.s==='prog'?'… ':'○ ')+x.n}).join('  |  ')))}
   var days=rep.days||{};FIRST=Object.keys(days).sort()[0]||dkey(new Date());var tk=dkey(new Date()),td=days[tk]||{sec:0,read:[],a:0,w:0,f:0,ms:0};
   c.appendChild(el('h3',null,'اليوم'));
   var v=verdict(td,true,true),line=el('p');var dot=el('span','dot '+v.c);line.appendChild(dot);line.appendChild(document.createTextNode(v.t));c.appendChild(line);
@@ -94,18 +98,19 @@ async function listBooks(){
   return out.sort();
 }
 async function render(){
-  var app=$('#app');var out=[],ids=[],lerr=null;
+  if(!CFG)return;var app=$('#app');var out=[],ids=[],lerr=null;
   try{ids=await listBooks()}catch(e){lerr=e.message}
+  if(lerr&&/GitHub 40[13]/.test(lerr)){parSet(null);return lock('الدخول المحفوظ لم يعد صالحاً. أدخل رقمك من جديد.')}
   var lab={};(CFG.books||[]).forEach(function(b){lab[b.id]=b.label});
   for(var i=0;i<ids.length;i++){var b={id:ids[i],label:lab[ids[i]]||ids[i]};try{var rep=await load(b);if(!lab[b.id]&&rep&&rep.title)b.label=rep.title;out.push(bookCard(b,rep))}catch(e){out.push(bookCard(b,null,e.message))}}
   app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
-  var top=el('div','note','آخر تحديث للوحة: '+new Date().toLocaleTimeString('ar')+' — تتحدّث تلقائياً كل 30 ثانية');app.appendChild(top);
+  var top=el('div','note','آخر تحديث للوحة: '+new Date().toLocaleTimeString('ar')+' — تتحدّث تلقائياً كل 30 ثانية');app.appendChild(top);var fgb=el('button',null,'انسَ هذا الجهاز');fgb.style.margin='6px 0';fgb.addEventListener('click',forgetDev);app.appendChild(fgb);
   if(lerr){var w=el('div','card');w.appendChild(el('p','warn','تعذّر جلب قائمة التقارير: '+lerr));app.appendChild(w)}
   else if(!ids.length){var e0=el('div','card');e0.appendChild(el('p','note','لا توجد تقارير بعد. يظهر كل كتاب هنا تلقائياً بعد أن تفتحه البنت من جهاز مسجَّل.'));app.appendChild(e0)}
   out.forEach(function(x){app.appendChild(x)});
 }
 function lock(msg){
-  clearInterval(TIMER);var app=$('#app');app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
+  clearInterval(TIMER);CFG=null;var app=$('#app');app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
   var c=el('div','card');
   var pw=el('input');pw.type='password';pw.inputMode='numeric';pw.placeholder='رقمك';pw.autocomplete='off';
   var m=el('p','warn',msg||'');var go=el('button','pri','دخول');
@@ -113,11 +118,11 @@ function lock(msg){
     var r=await fetch('reports-config.json',{cache:'no-store'});if(!r.ok)throw new Error('ملف الإعداد غير موجود.');var cfg=await r.json();var o=null;
     for(var i=0;i<(cfg.e||[]).length;i++){if(cfg.e[i].k!=='p')continue;try{o=await bkDecode(cfg.e[i].c,num);break}catch(x){}}
     if(!o||o.role!=='monitor')throw new Error('الرقم خاطئ.');
-    CFG=o;pw.value='';await render();TIMER=setInterval(render,30000)}catch(e){m.textContent=e.message}}
+    CFG=o;pw.value='';parSet(o);await render();if(CFG)TIMER=setInterval(render,30000)}catch(e){m.textContent=e.message}}
   go.addEventListener('click',function(){m.textContent='…';enter(bkND(pw.value))});
   c.appendChild(pw);c.appendChild(go);c.appendChild(m);app.appendChild(c);
   var sp=null;try{sp=sessionStorage.getItem('bk-mon-pass');sessionStorage.removeItem('bk-mon-pass')}catch(e){}
   if(sp)enter(bkND(sp));
 }
-lock('');
+(function(){var c=parGet();if(c){CFG=c;render().then(function(){TIMER=setInterval(render,30000)})}else lock('')})();
 </script></body></html>
