@@ -530,10 +530,19 @@ var TIMETABLE = { vina: {
   1: ["science","english","math","art","pe","islamic","arabic"],
   2: ["kurdish","english","social-studies","math","ict","science","english"],
   3: ["kurdish","music","pe","science","math","english","arabic"],
-  4: ["social-studies","english","arabic","kurdish","science","social-value","math"] } };
+  4: ["social-studies","english","arabic","kurdish","science","social-value","math"] },
+  ara: {
+  0: ["arabic","science","music","math","social-studies","kurdish","english"],
+  1: ["science","kurdish","math","reading-writing","social-studies","social-value","english"],
+  2: ["arabic","social-value","pe","math","kurdish","english","science"],
+  3: ["ict","science","art","english","arabic","kurdish","math"],
+  4: ["english","arabic","social-studies","math","science","english","islamic"] } };
 var HOMEWORK = { vina: {
   "science": { title: "Science — Vegetative Propagation", href: "science6-book-v5.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
   "social-studies": { title: "Social Studies — 1919–1920", href: "komelayeti-6a-shorish-1919-1920-v2.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
+},
+  ara: {
+  "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v29.html", key: "", plain: true, get: function () { return null; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 function p2(n) { return (n < 10 ? "0" : "") + n; }
@@ -588,7 +597,7 @@ function viewTasks(id) {
       var st = r.st;
       g.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href }, [
         el("span", {}, [el("span", { "class": "sn", text: r.h.title.split(" \u2014 ")[0] }), el("span", { "class": "ss", text: r.h.title.split(" \u2014 ")[1] || "" })]),
-        el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : "Study now" })
+        el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : (r.h.plain ? "Open" : "Study now") })
       ]));
     });
     wrap.appendChild(g);

@@ -101,26 +101,57 @@ async function listBooks(){
   var r=await fetch((CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports?t='+Date.now(),{headers:{'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'},cache:'no-store'});
   if(r.status===404)return [];if(!r.ok)throw new Error('GitHub '+r.status);
   var a=await r.json(),out=[];
-  (a||[]).forEach(function(f){if(f&&f.type==='file'&&/\.json$/.test(f.name))out.push(f.name.replace(/\.json$/,''))});
+  (a||[]).forEach(function(f){if(f&&f.type==='file'&&/\.json$/.test(f.name)&&f.name!=='parent-marks.json')out.push(f.name.replace(/\.json$/,''))});
   return out.sort();
+}
+var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - ل.٣١'},{id:'sci7',label:'Science 7 - Book'}];
+function apiBase(){return (CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports/parent-marks.json'}
+function ghHdr(){return {'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'}}
+async function loadMarks(){
+  var r=await fetch(apiBase()+'?t='+Date.now(),{headers:ghHdr(),cache:'no-store'});
+  if(r.status===404)return {m:{},sha:null};if(!r.ok)throw new Error('GitHub '+r.status);
+  var j=await r.json();return {m:JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))))||{},sha:j.sha};
+}
+async function setMark(id,on){
+  var cur=await loadMarks(),m=cur.m;
+  if(on){var d=new Date();m[id]={d:p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear(),t:d.toISOString()}}else delete m[id];
+  var body={message:'parent mark '+id,content:btoa(unescape(encodeURIComponent(JSON.stringify(m)))),sha:cur.sha||undefined};
+  var r=await fetch(apiBase(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHdr()),body:JSON.stringify(body)});
+  if(r.status===403||r.status===401||r.status===404)throw new Error('لا يملك رقمك صلاحية الكتابة في مستودع التقارير ('+r.status+')');
+  if(!(r.status===200||r.status===201))throw new Error('GitHub '+r.status);
+  MARKS=m;
 }
 async function render(){
   if(!CFG)return;var app=$('#app');var out=[],ids=[],lerr=null;
   try{ids=await listBooks()}catch(e){lerr=e.message}
   if(lerr&&/GitHub 40[13]/.test(lerr)){parSet(null);return lock('الدخول المحفوظ لم يعد صالحاً. أدخل رقمك من جديد.')}
+  var merr=null;try{MARKS=(await loadMarks()).m}catch(e){merr=e.message}
   var lab={};(CFG.books||[]).forEach(function(b){lab[b.id]=b.label});
-  for(var i=0;i<ids.length;i++){var b={id:ids[i],label:lab[ids[i]]||ids[i]};try{var rep=await load(b);if(!lab[b.id]&&rep&&rep.title)b.label=rep.title;out.push({b:b,rep:rep,card:bookCard(b,rep)})}catch(e){out.push({b:b,rep:null,card:bookCard(b,null,e.message)})}}
+  PLAN.forEach(function(p){if(ids.indexOf(p.id)<0)ids.push(p.id)});
+  for(var i=0;i<ids.length;i++){var pl=PLAN.filter(function(p){return p.id===ids[i]})[0];var b={id:ids[i],label:lab[ids[i]]||(pl&&pl.label)||ids[i]};try{var rep=await load(b);if(!lab[b.id]&&rep&&rep.title)b.label=rep.title;out.push({b:b,rep:rep,card:bookCard(b,rep)})}catch(e){out.push({b:b,rep:null,card:bookCard(b,null,e.message)})}}
   app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
   var top=el('div','note','آخر تحديث للوحة: '+new Date().toLocaleTimeString('ar')+' — تتحدّث تلقائياً كل 30 ثانية');app.appendChild(top);var fgb=el('button',null,'انسَ هذا الجهاز');fgb.style.margin='6px 0';fgb.addEventListener('click',forgetDev);app.appendChild(fgb);
   if(lerr){var w=el('div','card');w.appendChild(el('p','warn','تعذّر جلب قائمة التقارير: '+lerr));app.appendChild(w)}
   else if(!ids.length){var e0=el('div','card');e0.appendChild(el('p','note','لا توجد تقارير بعد. يظهر كل كتاب هنا تلقائياً بعد أن تفتحه البنت من جهاز مسجَّل.'));app.appendChild(e0)}
+  if(merr){var mw=el('div','card');mw.appendChild(el('p','warn','تعذّر جلب علامات الحسم: '+merr));app.appendChild(mw)}
   var G={f:[],a:[],o:[]};
   out.forEach(function(x){if(x.rep&&x.rep.kind==='lessons'){G.o.push(x);return}G[/[a-z]6$/i.test(x.b.id)?'f':'a'].push(x)});
   [['f','فينا — المهام'],['a','آرا — المهام']].forEach(function(g){var L=G[g[0]];if(!L.length)return;
     var c=el('div','card');c.appendChild(el('h2',null,g[1]));
-    L.forEach(function(x){var hw=x.rep&&x.rep.hw,row=el('details');var sm=el('summary');
-      var t=x.b.label||x.b.id,tx=!x.rep||x.rep.none?'لا تقرير':(hw?(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي'):'—');
-      sm.textContent=t+'  —  '+tx;if(hw)sm.className=hw.done?'okc':'warn';row.appendChild(sm);x.card.className='';row.appendChild(x.card);c.appendChild(row)});
+    L.forEach(function(x){var hw=x.rep&&x.rep.hw,row=el('details');var sm=el('summary');var mk=MARKS[x.b.id];
+      var t=x.b.label||x.b.id,noRep=!x.rep||x.rep.none;
+      var parts=[];
+      if(mk)parts.push('✓ حسمها الأب ('+mk.d+')');
+      if(!noRep&&hw)parts.push(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي');
+      else if(noRep&&!mk)parts.push('لم تبدأ');
+      sm.textContent=t+'  —  '+parts.join('  |  ');
+      sm.className=(mk||(hw&&hw.done))?'okc':(noRep||(hw&&!hw.done)?'warn':'');
+      row.appendChild(sm);
+      var bx=el('div');bx.style.cssText='margin:6px 0';var msg=el('p','warn','');
+      var btn=el('button',mk?null:'pri',mk?'إلغاء الحسم':'تمّت (حسمتُها)');
+      btn.addEventListener('click',async function(){btn.disabled=true;msg.className='note';msg.textContent='…';try{await setMark(x.b.id,!mk);await render()}catch(e){msg.className='warn';msg.textContent=e.message;btn.disabled=false}});
+      bx.appendChild(btn);bx.appendChild(msg);row.appendChild(bx);
+      x.card.className='';row.appendChild(x.card);c.appendChild(row)});
     app.appendChild(c)});
   G.o.forEach(function(x){app.appendChild(x.card)});
 }
