@@ -211,6 +211,33 @@ async function tryNumber(cfg,num){
   for(var i=0;i<(cfg.e||[]).length;i++){var e=cfg.e[i];try{var o=await bkDecode(e.c,num);return {kind:e.k,payload:o,c:e.c}}catch(x){}}
   return null;
 }
+window.hubGate=function(){
+  try{localStorage.setItem('bk-probe','1');localStorage.removeItem('bk-probe')}catch(e){return}
+  if(devGet()||parGet())return;
+  var ov=el('div','gate');ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');
+  ov.style.cssText='position:fixed;inset:0;z-index:9999;background:#2f4858;display:flex;align-items:center;justify-content:center;padding:20px;font-family:inherit';
+  var card=el('div',null);card.style.cssText='background:#fff;border-radius:20px;padding:24px 20px;max-width:360px;width:100%;text-align:center;box-sizing:border-box';
+  var h=el('h2',null,'Enter your number');h.style.cssText='margin:0 0 6px;font-size:24px;color:#2f4858';
+  var p=el('p',null,'Enter it once on this device. It keeps your lessons and results working.');p.style.cssText='margin:0 0 14px;color:#555;font-size:15px;line-height:1.6';
+  var inp=document.createElement('input');inp.type='password';inp.inputMode='numeric';inp.autocomplete='off';inp.setAttribute('aria-label','Number');
+  inp.style.cssText='width:100%;box-sizing:border-box;font:inherit;font-size:22px;padding:12px;border:2px solid #ccd;border-radius:12px;text-align:center;letter-spacing:6px';
+  var btn=el('button',null,'Enter');btn.style.cssText='margin-top:12px;width:100%;min-height:48px;font:inherit;font-size:18px;font-weight:700;border:0;border-radius:12px;background:#1f6fd1;color:#fff';
+  var msg=el('p',null,'');msg.style.cssText='min-height:22px;margin:10px 0 0;color:#b42318;font-size:15px';
+  async function go(){
+    if(btn.disabled)return;btn.disabled=true;msg.style.color='#555';msg.textContent='\u2026';
+    try{
+      var cfg=await loadCfg();var r=await tryNumber(cfg,bkND(inp.value));
+      if(!r)throw new Error('Wrong number.');
+      if(r.kind==='p'){if(!r.payload||r.payload.role!=='monitor')throw new Error('Wrong number.');parSet(r.payload)}
+      else{var o=r.payload;if(!o||o.role!=='student')throw new Error('Wrong number.');devSet({role:'student',book:'*',who:o.who||'',repo:o.repo,token:o.token,api:o.api||'',enc:r.c,id:Math.random().toString(36).slice(2,8)});setTest(false)}
+      ov.remove();document.documentElement.style.overflow='';
+      if(typeof route==='function')route();
+    }catch(e){msg.style.color='#b42318';msg.textContent=(e&&e.message==='Wrong number.')?'Wrong number. Try again.':(navigator.onLine===false?'No internet. Connect once to enter your number.':String(e&&e.message||'Error'));inp.value='';btn.disabled=false;inp.focus()}
+  }
+  btn.onclick=go;inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+  card.appendChild(h);card.appendChild(p);card.appendChild(inp);card.appendChild(btn);card.appendChild(msg);ov.appendChild(card);
+  document.body.appendChild(ov);document.documentElement.style.overflow='hidden';setTimeout(function(){inp.focus()},50);
+};
 window.parentsCard=function(){
   var wrap=el('div','parents-wrap'),dash=el('div','pdash');var box=el('details','parents');box.appendChild(el('summary',null,'Parents'));
   var st=el('p',null,''),msg=el('p',null,''),acts=el('div');
@@ -575,7 +602,7 @@ function viewStudent(id) {
   hint.textContent = s.name + " · " + s.grade;
   document.title = s.name + " — Lessons";
   var wrap = el("div", { "class": "theme-" + s.theme }, [
-    el("div", { "class": "crumbs" }, [backLink("#", "Home"), el("span", { "class": "where", text: s.name + " · " + s.grade })]),
+    el("div", { "class": "crumbs" }, [onlyStudent() ? el("span", {}) : backLink("#", "Home"), el("span", { "class": "where", text: s.name + " · " + s.grade })]),
     el("h2", { "class": "view-title", text: "Choose a subject" })
   ]);
   var grid = el("div", { "class": "grid" }, []);
@@ -631,9 +658,24 @@ function viewSubject(id, subId) {
   app.replaceChildren(wrap);
 }
 
+function onlyStudent() {
+  try {
+    if (localStorage.getItem("bk-parent-v1")) return null;
+    var d = JSON.parse(localStorage.getItem("bk-device-v1") || "null");
+    if (!d || d.role !== "student") return null;
+    var w = String(d.who || "").toLowerCase();
+    if (/vina|fina|\u0641\u064a\u0646\u0627/.test(w)) return "vina";
+    if (/^ara$|\bara\b|\u0622\u0631\u0627|\u0627\u0631\u0627|\u0626\u0627\u0631\u0627/.test(w)) return "ara";
+  } catch (e) {}
+  return null;
+}
 function route() {
   var h = decodeURIComponent((location.hash || "").replace(/^#\/?/, ""));
   var parts = h.split("/");
+  var only = onlyStudent();
+  if (only && DATA[only]) {
+    if (parts[0] !== only) { parts = [only]; history.replaceState(null, "", "#" + only); }
+  }
   if (parts[0] && DATA[parts[0]]) {
     if (parts[1] === "tasks") viewTasks(parts[0]); else if (parts[1]) viewSubject(parts[0], parts[1]); else viewStudent(parts[0]);
   } else {
@@ -642,6 +684,7 @@ function route() {
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
+if (window.hubGate) window.hubGate();
 route();
 </script>
 </body>
