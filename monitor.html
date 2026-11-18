@@ -72,13 +72,18 @@ function bookCard(book,rep,err){
   if(err){c.appendChild(el('p','warn','تعذّر جلب التقرير: '+err));return c}
   if(rep.none){c.appendChild(el('p','warn','لا يوجد تقرير بعد. لم يُسجَّل جهاز البنت أو لم تبدأ.'));return c}
   var a=ago(rep.upd);c.appendChild(el('p',a.h>24?'warn':'ok','آخر تقرير: '+a.t+(a.h>24?' (انقطع الإرسال: تحقق من الجهاز)':'')));
+  if(rep.hw){c.appendChild(el('h3',null,'الواجب اليومي'));var hw=rep.hw;c.appendChild(el('p',hw.done?'okc':'warn',hw.done?('✓ منجز — النتيجة '+hw.score+' من '+hw.n+' (الأفضل '+hw.best+') — '+hw.date):'☐ لم يُنجز بعد'));
+    c.appendChild(el('h3',null,'ما أُنجز غير ذلك (لا يُحتسب في الواجب)'))}
   var pos=rep.pos||{};
   c.appendChild(el('p',null,pos.done?'أنهت المسار كاملاً.':('الآن: '+pos.label+(pos.pg?(' — صفحة '+pos.pg+' ('+(pos.pk+1)+' من '+pos.pn+') — '+stepAr(pos.step,pos)):(pos.step?(' — '+stepAr(pos.step,pos)):'')))));
-  var hw=rep.hw||{};c.appendChild(el('p',hw.done?'okc':'note',hw.done?('✓ الواجب اليومي منجز — النتيجة '+hw.score+' من '+hw.n+' (الأفضل '+hw.best+') — '+hw.date):'☐ الواجب اليومي لم يُنجز بعد'));
   var pr=rep.prog||{done:0,total:1},pc=Math.round(100*pr.done/pr.total);
   c.appendChild(el('p',null,'التقدّم: '+pr.done+' من '+pr.total+' خطوة متقنة ('+pc+'٪)'));
   var b=el('div','bar'),i=el('i');i.style.width=pc+'%';b.appendChild(i);c.appendChild(b);
   if(rep.secs&&rep.secs.length){var cn={done:0,prog:0,new:0};rep.secs.forEach(function(x){cn[x.s]=(cn[x.s]||0)+1});c.appendChild(el('p',null,'الأقسام: '+cn.done+' متقنة، '+cn.prog+' قيد الدراسة، '+cn.new+' جديدة'));c.appendChild(el('p','note',rep.secs.map(function(x){return (x.s==='done'?'✓ ':x.s==='prog'?'… ':'○ ')+x.n}).join('  |  ')))}
+  var ex=rep.ext;if(ex){
+    (ex.units||[]).forEach(function(u){c.appendChild(el('p','note','اختبار الوحدة '+u.u+': '+(u.n?('محاولات '+u.n+'، الأفضل '+u.best+' من '+u.tot+(u.ok?' ✓ متقن':'')):'لم يُجرَّب بعد')))});
+    c.appendChild(el('p','note','تدريب إضافي (غير محتسب): '+(ex.extra&&ex.extra.n?('مرات '+ex.extra.n+'، آخر نتيجة '+ex.extra.last+' من '+ex.extra.tot+'، الأفضل '+ex.extra.best):'لم يُجرَّب بعد')));
+    c.appendChild(el('p','note','الامتحان: '+(ex.exam&&ex.exam.n?('مرات '+ex.exam.n+'، الأفضل '+ex.exam.best+' من '+ex.exam.tot):'لم يُجرَّب بعد')))}
   var days=rep.days||{};FIRST=Object.keys(days).sort()[0]||dkey(new Date());var tk=dkey(new Date()),td=days[tk]||{sec:0,read:[],a:0,w:0,f:0,ms:0};
   c.appendChild(el('h3',null,'اليوم'));
   var v=verdict(td,true,true),line=el('p');var dot=el('span','dot '+v.c);line.appendChild(dot);line.appendChild(document.createTextNode(v.t));c.appendChild(line);
