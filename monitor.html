@@ -49,6 +49,7 @@ async function load(book){
   if(r.status===404)return {none:true};if(!r.ok)throw new Error('GitHub '+r.status);
   var j=await r.json();return JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,'')))));
 }
+function stSteps(P){var t=2,d=(P.r?1:0)+(P.c?1:0);if(P.rt){t++;if(P.rn>=P.rt)d++}if(P.qt){t++;if(P.q)d++}if(P.dt){t++;if(P.d)d++}return [d,t]}
 function lessonsCard(rep){
   var who={ara:'آرا',vina:'فينا'}[rep.who]||rep.who||'';var c=el('div','card');c.appendChild(el('h2',null,'دروس '+who));
   var a=ago(rep.upd);c.appendChild(el('p',a.h>24?'warn':'ok','آخر نشاط: '+a.t));
@@ -81,6 +82,23 @@ function bookCard(book,rep,err){
   c.appendChild(el('p',null,'التقدّم: '+pr.done+' من '+pr.total+' خطوة متقنة ('+pc+'٪)'));
   var b=el('div','bar'),i=el('i');i.style.width=pc+'%';b.appendChild(i);c.appendChild(b);
   if(rep.secs&&rep.secs.length){var cn={done:0,prog:0,new:0};rep.secs.forEach(function(x){cn[x.s]=(cn[x.s]||0)+1});c.appendChild(el('p',null,'الأقسام: '+cn.done+' متقنة، '+cn.prog+' قيد الدراسة، '+cn.new+' جديدة'));c.appendChild(el('p','note',rep.secs.map(function(x){return (x.s==='done'?'✓ ':x.s==='prog'?'… ':'○ ')+x.n}).join('  |  ')))}
+  if(rep.st&&rep.st.length){
+    c.appendChild(el('h3',null,'تفاصيل مراحل الدروس'));
+    c.appendChild(el('p','note','لكل صفحة: قراءة، جولات المهام، تعلّم الإجابات، التعريفات، فحص الصفحة. ✓ أنجزته، ◐ جزء منه، ☐ لم تبدأ، — لا يوجد في هذه الصفحة. الواجب اليومي موسوم.'));
+    rep.st.forEach(function(S){
+      var tot=0,dn=0;S.pg.forEach(function(P){var z=stSteps(P);dn+=z[0];tot+=z[1]});
+      var ic=(S.m&&S.m.ok&&dn===tot)?'✓':(dn?'◐':'☐');
+      var dd=el('details'),sm=el('summary',null,ic+' '+S.n+(S.hw?'  (الواجب اليومي)':'')+'  —  '+dn+' من '+tot);dd.appendChild(sm);
+      S.pg.forEach(function(P){
+        var f=function(ok,part,t,na){return na?'— ':(ok?'✓ ':(part?'◐ ':'☐ '))+t};
+        var l=['القراءة: '+(P.r?'✓':'☐'),
+          'الجولات: '+(P.rn>=P.rt&&P.rt?'✓ ':(P.rn?'◐ ':'☐ '))+P.rn+' من '+P.rt,
+          f(P.q,false,'تعلّم الإجابات',!P.qt),
+          f(P.d,false,'التعريفات',!P.dt),
+          'فحص الصفحة: '+(P.c?'✓':'☐')+(P.cn?(' (محاولات '+P.cn+')'):'')];
+        dd.appendChild(el('p','note','صفحة '+P.p+':  '+l.join('  |  ')))});
+      dd.appendChild(el('p','note','فحص الدرس: '+(S.m&&S.m.ok?'✓ أنجزته':(S.m&&S.m.n?('◐ محاولات '+S.m.n+'، الأفضل '+S.m.best):'☐ لم تجرّبه'))));
+      c.appendChild(dd)})}
   var ex=rep.ext;if(ex){
     (ex.units||[]).forEach(function(u){c.appendChild(el('p','note','اختبار الوحدة '+u.u+': '+(u.n?('محاولات '+u.n+'، الأفضل '+u.best+' من '+u.tot+(u.ok?' ✓ متقن':'')):'لم يُجرَّب بعد')))});
     c.appendChild(el('p','note','تدريب إضافي (غير محتسب): '+(ex.extra&&ex.extra.n?('مرات '+ex.extra.n+'، آخر نتيجة '+ex.extra.last+' من '+ex.extra.tot+'، الأفضل '+ex.extra.best):'لم يُجرَّب بعد')));
@@ -167,7 +185,11 @@ async function render(){
         var bid=(LB[g[1]]||{})[sid],x=bid?byId[bid]:null,key=dy.key+':'+g[1]+':'+sid,mk=MARKS[key];
         var rep=x&&x.rep,hw=rep&&rep.hw,noRep=!rep||rep.none;
         var st=[];
-        if(bid){if(!noRep&&hw)st.push(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي');else st.push('لم تبدأ')}
+        if(bid){if(!noRep&&hw){st.push(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي');
+          if(!hw.done&&rep.st){var HS=rep.st.filter(function(S){return S.hw})[0];if(HS){var dn=0,tt=0;HS.pg.forEach(function(P){var z=stSteps(P);dn+=z[0];tt+=z[1]});st.push('◐ '+HS.n+': '+dn+' من '+tt+' خطوة')}
+            else if(rep.pos&&rep.pos.label){st.push('◐ الآن: '+rep.pos.label+(rep.pos.pg?' — صفحة '+rep.pos.pg:''))}}
+          else if(!hw.done&&rep.pos&&rep.pos.label){st.push('◐ الآن: '+rep.pos.label+(rep.pos.pg?' — صفحة '+rep.pos.pg:'')+(rep.pos.step?' — '+stepAr(rep.pos.step,rep.pos):''))}}
+        else st.push('لم تبدأ')}
         else st.push('لا يوجد درس');
         var cls=(mk||(hw&&hw.done))?'okc':(bid?'warn':'note');
         var btn=el('button',mk?null:'pri',mk?'إلغاء':'تمّت');btn.style.cssText='min-width:84px;padding:6px 12px;min-height:40px';
