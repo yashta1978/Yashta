@@ -11,7 +11,7 @@ button{font:inherit;padding:10px 16px;border:2px solid var(--line);border-radius
 .g{background:var(--g)}.y{background:var(--y)}.r{background:var(--r)}.n{background:#b8c0cc}
 .strip{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.cell{width:30px;height:30px;border-radius:6px;font-size:11px;text-align:center;line-height:30px;color:#fff}
 .note{color:#52606d;font-size:15px}.warn{color:var(--r);font-weight:700}.ok{color:var(--g);font-weight:700}
-.okc{color:#1b8a4b;font-weight:700}
+.okc{color:#1b8a4b;font-weight:700}details{border-top:1px solid var(--line);padding:6px 0}summary{min-height:44px;cursor:pointer;font-weight:700}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
 // shared: passphrase-protected setup codes (AES-GCM, PBKDF2). Nothing leaves the device.
@@ -109,12 +109,20 @@ async function render(){
   try{ids=await listBooks()}catch(e){lerr=e.message}
   if(lerr&&/GitHub 40[13]/.test(lerr)){parSet(null);return lock('الدخول المحفوظ لم يعد صالحاً. أدخل رقمك من جديد.')}
   var lab={};(CFG.books||[]).forEach(function(b){lab[b.id]=b.label});
-  for(var i=0;i<ids.length;i++){var b={id:ids[i],label:lab[ids[i]]||ids[i]};try{var rep=await load(b);if(!lab[b.id]&&rep&&rep.title)b.label=rep.title;out.push(bookCard(b,rep))}catch(e){out.push(bookCard(b,null,e.message))}}
+  for(var i=0;i<ids.length;i++){var b={id:ids[i],label:lab[ids[i]]||ids[i]};try{var rep=await load(b);if(!lab[b.id]&&rep&&rep.title)b.label=rep.title;out.push({b:b,rep:rep,card:bookCard(b,rep)})}catch(e){out.push({b:b,rep:null,card:bookCard(b,null,e.message)})}}
   app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));
   var top=el('div','note','آخر تحديث للوحة: '+new Date().toLocaleTimeString('ar')+' — تتحدّث تلقائياً كل 30 ثانية');app.appendChild(top);var fgb=el('button',null,'انسَ هذا الجهاز');fgb.style.margin='6px 0';fgb.addEventListener('click',forgetDev);app.appendChild(fgb);
   if(lerr){var w=el('div','card');w.appendChild(el('p','warn','تعذّر جلب قائمة التقارير: '+lerr));app.appendChild(w)}
   else if(!ids.length){var e0=el('div','card');e0.appendChild(el('p','note','لا توجد تقارير بعد. يظهر كل كتاب هنا تلقائياً بعد أن تفتحه البنت من جهاز مسجَّل.'));app.appendChild(e0)}
-  out.forEach(function(x){app.appendChild(x)});
+  var G={f:[],a:[],o:[]};
+  out.forEach(function(x){if(x.rep&&x.rep.kind==='lessons'){G.o.push(x);return}G[/[a-z]6$/i.test(x.b.id)?'f':'a'].push(x)});
+  [['f','فينا — المهام'],['a','آرا — المهام']].forEach(function(g){var L=G[g[0]];if(!L.length)return;
+    var c=el('div','card');c.appendChild(el('h2',null,g[1]));
+    L.forEach(function(x){var hw=x.rep&&x.rep.hw,row=el('details');var sm=el('summary');
+      var t=x.b.label||x.b.id,tx=!x.rep||x.rep.none?'لا تقرير':(hw?(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي'):'—');
+      sm.textContent=t+'  —  '+tx;if(hw)sm.className=hw.done?'okc':'warn';row.appendChild(sm);x.card.className='';row.appendChild(x.card);c.appendChild(row)});
+    app.appendChild(c)});
+  G.o.forEach(function(x){app.appendChild(x.card)});
 }
 function lock(msg){
   clearInterval(TIMER);CFG=null;var app=$('#app');app.textContent='';app.appendChild(el('h1',null,'متابعة الدروس'));

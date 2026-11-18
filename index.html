@@ -86,6 +86,12 @@ noscript .plain a{display:block;padding:10px 0}
 .hby{margin:2px 0 4px;font-size:19px;font-weight:700;color:var(--gold);letter-spacing:.3px}
 .by{display:block;margin:10px 0 0;text-align:center;font-size:24px;font-weight:700;color:var(--accent)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
+
+.tasks{margin:0 0 18px}.tasks h2{font-size:20px;margin:6px 2px}
+.tasks .day{font-weight:700;margin:12px 2px 4px;color:#444}
+a.task,div.task{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:8px 14px;margin:6px 0;border-radius:12px;background:#fff;border:2px solid #d8dee6;color:#222;text-decoration:none}
+a.task.now{border-color:#f59e0b;background:#fff7e6}a.task.done{border-color:#16a34a;background:#f0fdf4}div.task.wait{color:#777;background:#f3f4f6}
+.task .st{font-weight:700;font-size:15px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -116,6 +122,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 24px}
     <strong>Vina — Grade 6 · Science</strong>
     <a href="science6-producers-consumers-decomposers.html">Producers, Consumers and Decomposers</a>
     <a href="science6-book-v5.html">Science 6 Book — Section 2: Vegetative Propagation (pp. 90–102) – v5</a>
+    <strong>Vina — Grade 6 · Social Studies</strong>
+    <a href="komelayeti-6a-shorish-1919-1920-v1.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v1</a>
     <strong>Vina — Grade 6 · Islamic</strong>
     <a href="islamic6-lessons-1-5-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2</a>
     <strong>Vina — Grade 6 · Art</strong>
@@ -280,6 +288,10 @@ var LESSONS = {
       { title: "Science 6 Book — Section 2: Vegetative Propagation – v5", sub: "Book pages 90–102 · daily homework",
         lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v5.html" }
     ],
+    "social-studies": [
+      { title: "شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v1", sub: "ص٣١ · واجب يومي",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-shorish-1919-1920-v1.html" }
+    ],
     islamic: [
       { title: "وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2",
         lang: "ku", dir: "rtl", tag: "KU", href: "islamic6-lessons-1-5-v2.html" }
@@ -429,7 +441,7 @@ function backLink(href, label) {
   return el("a", { "class": "back", href: href, text: "← " + label });
 }
 function wrapHref(h, who) {
-  if (!who || !/^[\w.-]+\.html$/.test(h) || /^(science7-book|science6-book|monitor|index)/.test(h)) return h;
+  if (!who || !/^[\w.-]+\.html$/.test(h) || /^(science7-book|science6-book|komelayeti-6a|monitor|index)/.test(h)) return h;
   return "lesson.html?f=" + encodeURIComponent(h) + "&w=" + who;
 }
 function lessonLink(l, who) {
@@ -474,6 +486,52 @@ function viewHome() {
   app.replaceChildren(grid);
 }
 
+
+/* ---- Tasks list (Vina): tomorrow's subjects first; homework status read from each lesson's own saved progress ---- */
+var TIMETABLE = { vina: {
+  0: ["kurdish","science","english","arabic","islamic","math","social-value"],
+  1: ["science","english","math","art","pe","islamic","arabic"],
+  2: ["kurdish","english","social-studies","math","ict","science","english"],
+  3: ["kurdish","music","pe","science","math","english","arabic"],
+  4: ["social-studies","english","arabic","kurdish","science","social-value","math"] } };
+var HOMEWORK = { vina: {
+  "science": { title: "Science — Vegetative Propagation", href: "science6-book-v5.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
+  "social-studies": { title: "Social Studies — 1919–1920", href: "komelayeti-6a-shorish-1919-1920-v1.html", key: "bk-soc6-v1", get: function (o) { return o && o.hw; } }
+} };
+var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function p2(n) { return (n < 10 ? "0" : "") + n; }
+function hwState(h) {
+  var v = null;
+  try { var raw = localStorage.getItem(h.key); if (raw) v = h.get(JSON.parse(raw)); } catch (e) {}
+  return v && v.done ? v : null;
+}
+function tasksBlock(id) {
+  var tt = TIMETABLE[id]; if (!tt) return null;
+  var box = el("div", { "class": "tasks" }, [el("h2", { text: "Tasks" })]);
+  var d = new Date(), shown = 0;
+  for (var k = 1; k <= 8 && shown < 5; k++) {
+    var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + k), wd = x.getDay();
+    if (wd === 5 || wd === 6) continue;
+    var first = shown === 0; shown++;
+    var seen = {}, rows = [];
+    tt[wd].forEach(function (sid) {
+      if (seen[sid]) return; seen[sid] = 1;
+      var h = (HOMEWORK[id] || {})[sid], sub = SUBJECTS.filter(function (z) { return z.id === sid; })[0];
+      if (!h && !first) return;
+      rows.push({ sid: sid, h: h, name: h ? h.title : sub.title });
+    });
+    if (!rows.length) continue;
+    box.appendChild(el("div", { "class": "day", text: (first ? "Tomorrow — " : "") + DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear() }));
+    rows.sort(function (a, b) { return (b.h ? 1 : 0) - (a.h ? 1 : 0); });
+    rows.forEach(function (r) {
+      if (!r.h) { box.appendChild(el("div", { "class": "task wait" }, [el("span", { text: r.name }), el("span", { "class": "st", text: "Homework not received yet" })])); return; }
+      var st = hwState(r.h);
+      box.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href }, [el("span", { text: r.name }), el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : "Study now" })]));
+    });
+  }
+  return box;
+}
+
 function viewStudent(id) {
   var s = DATA[id];
   hint.textContent = s.name + " · " + s.grade;
@@ -482,6 +540,7 @@ function viewStudent(id) {
     el("div", { "class": "crumbs" }, [backLink("#", "Home"), el("span", { "class": "where", text: s.name + " · " + s.grade })]),
     el("h2", { "class": "view-title", text: "Choose a subject" })
   ]);
+  var tb = tasksBlock(id); if (tb) wrap.appendChild(tb);
   var grid = el("div", { "class": "grid" }, []);
   s.subjects.forEach(function (sub) {
     if ((BANNERS[id] || []).indexOf(sub.id) > -1) {
