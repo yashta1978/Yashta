@@ -100,6 +100,7 @@ a.task .sn{font-weight:700;font-size:17px}a.task .ss{display:block;font-size:13p
 a.task.now{border-color:#f59e0b;background:#fff7e6}a.task.done{border-color:#16a34a;background:#f0fdf4}
 .task .st{font-weight:800;font-size:15px;white-space:nowrap;padding:6px 12px;border-radius:999px;background:#fff}
 a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#15803d;border:1.5px solid #16a34a}
+.task.none{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:8px 16px;border-radius:14px;background:#f8fafc;border:2px dashed #d8dee6;color:#6b7280}.task.none .sn{font-weight:600;font-size:16px}.task.none .st{font-weight:600;font-size:14px;background:transparent}.tmore>summary{font-weight:800;font-size:16px;margin:20px 2px 4px;cursor:pointer;min-height:44px;display:flex;align-items:center}
 .twait{margin:10px 2px 0;padding:10px 14px;border-radius:12px;background:#f3f4f6;color:#666;font-size:14px;line-height:1.7}
 .twait b{color:#444}
 </style>
@@ -558,15 +559,14 @@ function tasksData(id) {
     var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + k), wd = x.getDay();
     if (wd === 5 || wd === 6) continue;
     var first = shown === 0; shown++;
-    var seen = {}, hw = [], wait = [];
+    var seen = {}, hw = [], rows = [];
     tt[wd].forEach(function (sid) {
       if (seen[sid]) return; seen[sid] = 1;
       var h = (HOMEWORK[id] || {})[sid], sub = SUBJECTS.filter(function (z) { return z.id === sid; })[0];
-      if (h) hw.push({ sid: sid, h: h, st: hwState(h) });
-      else if (first && sub) wait.push(sub.title);
+      if (h) { var r = { sid: sid, h: h, st: hwState(h) }; hw.push(r); rows.push(r); }
+      else rows.push({ sid: sid, name: sub ? sub.title : sid });
     });
-    if (!hw.length && !wait.length) continue;
-    days.push({ first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, wait: wait });
+    days.push({ first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, rows: rows });
   }
   return days;
 }
@@ -590,18 +590,27 @@ function viewTasks(id) {
     el("div", { "class": "crumbs" }, [backLink("#" + id, s.name), el("span", { "class": "where", text: s.name + " \u203a Tasks" })]),
     el("h2", { "class": "view-title", text: "Tasks" })
   ]);
+  var more = null;
   days.forEach(function (dy) {
-    wrap.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: "Tomorrow" }) : null].filter(Boolean)));
+    var box = wrap;
+    if (!dy.first) {
+      if (!more) { more = el("details", { "class": "tmore" }, [el("summary", { text: "Upcoming days" })]); wrap.appendChild(more); }
+      box = more;
+    }
+    box.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: "Tomorrow" }) : null].filter(Boolean)));
     var g = el("div", { "class": "tgrid" }, []);
-    dy.hw.forEach(function (r) {
+    dy.rows.forEach(function (r) {
+      if (!r.h) {
+        g.appendChild(el("div", { "class": "task none" }, [el("span", { "class": "sn", text: r.name }), el("span", { "class": "st", text: "No lesson" })]));
+        return;
+      }
       var st = r.st;
       g.appendChild(el("a", { "class": "task " + (st ? "done" : "now"), href: r.h.href }, [
         el("span", {}, [el("span", { "class": "sn", text: r.h.title.split(" \u2014 ")[0] }), el("span", { "class": "ss", text: r.h.title.split(" \u2014 ")[1] || "" })]),
         el("span", { "class": "st", text: st ? "\u2713 " + st.score + " / " + st.n : (r.h.plain ? "Open" : "Study now") })
       ]));
     });
-    wrap.appendChild(g);
-    if (dy.wait.length) wrap.appendChild(el("div", { "class": "twait" }, [el("b", { text: "Homework not received yet: " }), document.createTextNode(dy.wait.join(", "))]));
+    box.appendChild(g);
   });
   app.replaceChildren(wrap);
 }
