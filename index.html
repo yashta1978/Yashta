@@ -163,7 +163,7 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <a href="math7-chapter1-review-v1.html">Chapter 1 Review, Test and Test Prep – v1</a>
     <a href="math7-algebraic-expressions-2-1-v1.html">Algebraic Expressions — Lesson 2-1 – v1</a>
     <strong>Ara — Grade 7 · Science</strong>
-    <a href="science7-book-v30.html">Science 7 Book — Units 1–3 (Mastery Path) – v30</a>
+    <a href="science7-book-v31.html">Science 7 Book — Units 1–3 (Mastery Path) – v31</a>
     <strong>Ara — Grade 7 · Social Studies</strong>
     <a href="komelayeti-7a-book-v7.html" dir="rtl" lang="ku">کتێبا کۆمەلایەتی ٧ — ل.١٢–٥٧ — v6</a>
     <strong>Ara — Grade 7 · Social Value</strong>
@@ -408,8 +408,8 @@ var LESSONS = {
         lang: "en", dir: "ltr", tag: "EN", href: "math7-algebraic-expressions-2-1-v1.html" }
     ],
     science: [
-      { title: "Science 7 Book — Units 1–3 (Mastery Path) – v30", sub: "Book pages 8–61 · Path (Quiz Monday 23/11/2026 on top), Book page, Exam /20, Summary",
-        lang: "en", dir: "ltr", tag: "EN", href: "science7-book-v30.html" }
+      { title: "Science 7 Book — Units 1–3 (Mastery Path) – v31", sub: "Book pages 8–61 · Path (Quiz Monday 23/11/2026 on top), Book page, Exam /20, Summary",
+        lang: "en", dir: "ltr", tag: "EN", href: "science7-book-v31.html" }
     ]
   }
 };
@@ -532,11 +532,11 @@ var HOMEWORK = { vina: {
   "social-studies": { title: "Social Studies — شۆڕش و ڕاپەڕینێن ١٩١٩-١٩٢٠", href: "komelayeti-6a-shorish-1919-1920-v4.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 },
   ara: {
-  "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v30.html", key: "", plain: true, get: function () { return null; } },
+  "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v31.html", key: "", plain: true, get: function () { return null; } },
   "social-studies": { title: "Social Studies \u2014 Lesson 4: Kassites (pp. 56\u201357)", href: "komelayeti-7a-book-v7.html", key: "soc7-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-var EXAMS = { ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v30.html" } ] };
+var EXAMS = { ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v31.html" } ] };
 function pendingExams(id) {
   var t = new Date(), today = t.getFullYear() + "-" + p2(t.getMonth() + 1) + "-" + p2(t.getDate());
   return (EXAMS[id] || []).filter(function (x) { return x.date >= today; });
