@@ -11,6 +11,7 @@ button{font:inherit;padding:10px 16px;border:2px solid var(--line);border-radius
 .g{background:var(--g)}.y{background:var(--y)}.r{background:var(--r)}.n{background:#b8c0cc}
 .strip{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.cell{width:30px;height:30px;border-radius:6px;font-size:11px;text-align:center;line-height:30px;color:#fff}
 .note{color:#52606d;font-size:15px}.warn{color:var(--r);font-weight:700}.ok{color:var(--g);font-weight:700}
+.okc{color:#1b8a4b;font-weight:700}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
 // shared: passphrase-protected setup codes (AES-GCM, PBKDF2). Nothing leaves the device.
@@ -73,6 +74,7 @@ function bookCard(book,rep,err){
   var a=ago(rep.upd);c.appendChild(el('p',a.h>24?'warn':'ok','آخر تقرير: '+a.t+(a.h>24?' (انقطع الإرسال: تحقق من الجهاز)':'')));
   var pos=rep.pos||{};
   c.appendChild(el('p',null,pos.done?'أنهت المسار كاملاً.':('الآن: '+pos.label+(pos.pg?(' — صفحة '+pos.pg+' ('+(pos.pk+1)+' من '+pos.pn+') — '+stepAr(pos.step,pos)):(pos.step?(' — '+stepAr(pos.step,pos)):'')))));
+  var hw=rep.hw||{};c.appendChild(el('p',hw.done?'okc':'note',hw.done?('✓ الواجب اليومي منجز — النتيجة '+hw.score+' من '+hw.n+' (الأفضل '+hw.best+') — '+hw.date):'☐ الواجب اليومي لم يُنجز بعد'));
   var pr=rep.prog||{done:0,total:1},pc=Math.round(100*pr.done/pr.total);
   c.appendChild(el('p',null,'التقدّم: '+pr.done+' من '+pr.total+' خطوة متقنة ('+pc+'٪)'));
   var b=el('div','bar'),i=el('i');i.style.width=pc+'%';b.appendChild(i);c.appendChild(b);
