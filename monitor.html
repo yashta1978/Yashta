@@ -12,6 +12,7 @@ button{font:inherit;padding:10px 16px;border:2px solid var(--line);border-radius
 .strip{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}.cell{width:30px;height:30px;border-radius:6px;font-size:11px;text-align:center;line-height:30px;color:#fff}
 .note{color:#52606d;font-size:15px}.warn{color:var(--r);font-weight:700}.ok{color:var(--g);font-weight:700}
 .okc{color:#1b8a4b;font-weight:700}details{border-top:1px solid var(--line);padding:6px 0}summary{min-height:44px;cursor:pointer;font-weight:700}
+summary.rs{list-style:none;display:block}summary.rs::-webkit-details-marker{display:none}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
 // shared: passphrase-protected setup codes (AES-GCM, PBKDF2). Nothing leaves the device.
@@ -104,6 +105,13 @@ async function listBooks(){
   (a||[]).forEach(function(f){if(f&&f.type==='file'&&/\.json$/.test(f.name)&&f.name!=='parent-marks.json')out.push(f.name.replace(/\.json$/,''))});
   return out.sort();
 }
+var det0=null;
+var SN={arabic:'عربي',islamic:'إسلامي',english:'إنجليزي',kurdish:'كوردي',math:'رياضيات',science:'علوم','social-studies':'اجتماعيات','social-value':'قيم اجتماعية','reading-writing':'قراءة وكتابة',music:'موسيقى',art:'فنون',pe:'رياضة',ict:'حاسوب'};
+var LB={vina:{science:'sci6','social-studies':'soc6'},ara:{science:'sci7'}};
+var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','english'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
+ara:{0:['arabic','science','music','math','social-studies','kurdish','english'],1:['science','kurdish','math','reading-writing','social-studies','social-value','english'],2:['arabic','social-value','pe','math','kurdish','english','science'],3:['ict','science','art','english','arabic','kurdish','math'],4:['english','arabic','social-studies','math','science','english','islamic']}};
+var DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+function nextDays(n){var r=[],d=new Date();for(var k=1;k<=10&&r.length<n;k++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+k),wd=x.getDay();if(wd===5||wd===6)continue;r.push({wd:wd,name:DN[wd],label:p2(x.getDate())+'/'+p2(x.getMonth()+1)+'/'+x.getFullYear(),key:dkey(x)})}return r}
 var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - ل.٣١'},{id:'sci7',label:'Science 7 - Book'}];
 function apiBase(){return (CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports/parent-marks.json'}
 function ghHdr(){return {'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'}}
@@ -136,22 +144,31 @@ async function render(){
   if(merr){var mw=el('div','card');mw.appendChild(el('p','warn','تعذّر جلب علامات الحسم: '+merr));app.appendChild(mw)}
   var G={f:[],a:[],o:[]};
   out.forEach(function(x){if(x.rep&&x.rep.kind==='lessons'){G.o.push(x);return}G[/[a-z]6$/i.test(x.b.id)?'f':'a'].push(x)});
-  [['f','فينا — المهام'],['a','آرا — المهام']].forEach(function(g){var L=G[g[0]];if(!L.length)return;
-    var c=el('div','card');c.appendChild(el('h2',null,g[1]));
-    L.forEach(function(x){var hw=x.rep&&x.rep.hw,row=el('details');var sm=el('summary');var mk=MARKS[x.b.id];
-      var t=x.b.label||x.b.id,noRep=!x.rep||x.rep.none;
-      var parts=[];
-      if(mk)parts.push('✓ حسمها الأب ('+mk.d+')');
-      if(!noRep&&hw)parts.push(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي');
-      else if(noRep&&!mk)parts.push('لم تبدأ');
-      sm.textContent=t+'  —  '+parts.join('  |  ');
-      sm.className=(mk||(hw&&hw.done))?'okc':(noRep||(hw&&!hw.done)?'warn':'');
-      row.appendChild(sm);
-      var bx=el('div');bx.style.cssText='margin:6px 0';var msg=el('p','warn','');
-      var btn=el('button',mk?null:'pri',mk?'إلغاء الحسم':'تمّت (حسمتُها)');
-      btn.addEventListener('click',async function(){btn.disabled=true;msg.className='note';msg.textContent='…';try{await setMark(x.b.id,!mk);await render()}catch(e){msg.className='warn';msg.textContent=e.message;btn.disabled=false}});
-      bx.appendChild(btn);bx.appendChild(msg);row.appendChild(bx);
-      x.card.className='';row.appendChild(x.card);c.appendChild(row)});
+  det0=null;var byId={};out.forEach(function(x){byId[x.b.id]=x});
+  [['f','vina','فينا'],['a','ara','آرا']].forEach(function(g){
+    var c=el('div','card');c.appendChild(el('h2',null,g[2]+' — المهام'));
+    var days=nextDays(5);
+    days.forEach(function(dy,di){
+      var box=di===0?c:null,det=null;
+      if(di>0){if(!det0){det0=el('details');det0.appendChild(el('summary',null,'الأيام القادمة'));c.appendChild(det0)}box=det0}
+      box.appendChild(el('h3',null,(di===0?'غداً — ':'')+dy.name+' '+dy.label));
+      var seen={};
+      (TT[g[1]][dy.wd]||[]).forEach(function(sid){if(seen[sid])return;seen[sid]=1;
+        var bid=(LB[g[1]]||{})[sid],x=bid?byId[bid]:null,key=dy.key+':'+g[1]+':'+sid,mk=MARKS[key];
+        var rep=x&&x.rep,hw=rep&&rep.hw,noRep=!rep||rep.none;
+        var st=[];
+        if(bid){if(!noRep&&hw)st.push(hw.done?('✓ '+hw.score+' من '+hw.n):'☐ بقي');else st.push('لم تبدأ')}
+        else st.push('لا يوجد درس');
+        var cls=(mk||(hw&&hw.done))?'okc':(bid?'warn':'note');
+        var btn=el('button',mk?null:'pri',mk?'إلغاء':'تمّت');btn.style.cssText='min-width:84px;padding:6px 12px;min-height:40px';
+        var msg=el('p','warn','');msg.style.margin='0';
+        btn.addEventListener('click',async function(){btn.disabled=true;msg.className='note';msg.textContent='…';try{await setMark(key,!mk);await render()}catch(e){msg.className='warn';msg.style.margin='6px 0';msg.textContent=e.message;btn.disabled=false}});
+        var line=el('div');line.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:6px 0;min-height:48px';
+        var tx=el('span',cls,(mk?'✓ ':'')+SN[sid]+'  —  '+st.join('  |  '));line.appendChild(tx);line.appendChild(btn);
+        if(bid&&x){var dd=el('details');var sm=el('summary','rs');sm.appendChild(line);tx.textContent+='  ▾';dd.appendChild(sm);x.card.className='';dd.appendChild(x.card);dd.appendChild(msg);box.appendChild(dd)}
+        else{box.appendChild(line);box.appendChild(msg)}
+      });
+    });
     app.appendChild(c)});
   G.o.forEach(function(x){app.appendChild(x.card)});
 }
