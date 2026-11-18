@@ -166,6 +166,8 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <a href="science7-book-v29.html">Science 7 Book — Units 1–3 (Mastery Path) – v29</a>
     <a href="science7-quiz-unit3-s1-s2-v1.html">Science 7 — Unit 3 Quiz (Sections 1–2) – v1</a>
     <strong>Ara — Grade 7 · Social Studies</strong>
+    <a href="komelayeti-7a-book-v2.html" dir="rtl" lang="ku">کتێبا کۆمەلایەتی ٧ — ل.١٢–٥٧ — v2</a>
+    <strong>Previous versions</strong>
     <a href="komelayeti-7a-wanaya-5-ba-deng.html" dir="rtl" lang="ku">چەرخێن مێژوویی ٣٢٠٠ ب.ز — with audio</a>
     <a href="komelayeti-7a-wanaya-5.html" dir="rtl" lang="ku">چەرخێن مێژوویی ٣٢٠٠ ب.ز — no audio</a>
     <a href="komelayeti-7a-exam-review-20-v2.html" dir="rtl" lang="ku">پێداچوونا ئەزموونا ٢٠ نمرە — Exam review · 20 marks</a>
@@ -375,16 +377,8 @@ var LESSONS = {
         lang: "ku", dir: "rtl", tag: "KU", href: "religion-lesson.html" }
     ],
     "social-studies": [
-      { title: "چەرخێن مێژوویی ٣٢٠٠ ب.ز", sub: "Lesson 5 · with audio",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-wanaya-5-ba-deng.html" },
-      { title: "چەرخێن مێژوویی ٣٢٠٠ ب.ز", sub: "Lesson 5 · no audio",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-wanaya-5.html" },
-      { title: "پێداچوونا ئەزموونا ٢٠ نمرە — کۆمەلایەتی", sub: "Exam review · 20 marks · Lessons 1–5 (pp. 12–40)",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-exam-review-20-v2.html" },
-      { title: "لۆلۆیی — میللەتێن دێرینێن کوردستانێ", sub: "Page 43 · v1",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-lullubi-v1.html" },
-      { title: "گۆتی و میتانی", sub: "Pages 52–55 · v5",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-gutian-mitanni-v5.html" }
+      { title: "کتێبا کۆمەلایەتی ٧", sub: "Pages 12–57 · v2 · Lesson 4 Kassites = homework 19/11/2026",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-book-v2.html" }
     ],
     "social-value": [
       { title: "دام و دەزگەهێن حکومەتێ و مولکێ گشتی — ئەزموون", sub: "Exam · 20 marks · Pages 12–27 · v3",
@@ -432,6 +426,18 @@ var LESSONS = {
 /* older versions, shown under "Previous versions" in a subject */
 var PREVIOUS = {
   ara: {
+    "social-studies": [
+      { title: "چەرخێن مێژوویی ٣٢٠٠ ب.ز", sub: "Lesson 5 · with audio",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-wanaya-5-ba-deng.html" },
+      { title: "چەرخێن مێژوویی ٣٢٠٠ ب.ز", sub: "Lesson 5 · no audio",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-wanaya-5.html" },
+      { title: "پێداچوونا ئەزموونا ٢٠ نمرە — کۆمەلایەتی", sub: "Exam review · 20 marks · Lessons 1–5 (pp. 12–40)",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-exam-review-20-v2.html" },
+      { title: "لۆلۆیی — میللەتێن دێرینێن کوردستانێ", sub: "Page 43 · v1",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-lullubi-v1.html" },
+      { title: "گۆتی و میتانی", sub: "Pages 52–55 · v5",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-7a-gutian-mitanni-v5.html" }
+    ],
     kurdish: [
       { title: "دەنگ و پیت · برگە — v1", sub: "Lessons 1–2 · pp. 10–20", lang: "ku", dir: "rtl", tag: "KU", href: "kurdish7-deng-pit-birge-v1.html" }
     ],
@@ -483,7 +489,7 @@ function backLink(href, label) {
   return el("a", { "class": "back", href: href, text: "← " + label });
 }
 function wrapHref(h, who) {
-  if (!who || !/^[\w.-]+\.html$/.test(h) || /^(science7-book|science6-book|komelayeti-6a|monitor|index)/.test(h)) return h;
+  if (!who || !/^[\w.-]+\.html$/.test(h) || /^(science7-book|science6-book|komelayeti-6a|komelayeti-7a-book|monitor|index)/.test(h)) return h;
   return "lesson.html?f=" + encodeURIComponent(h) + "&w=" + who;
 }
 function lessonLink(l, who) {
@@ -547,7 +553,8 @@ var HOMEWORK = { vina: {
   "social-studies": { title: "Social Studies — شۆڕش و ڕاپەڕینێن ١٩١٩-١٩٢٠", href: "komelayeti-6a-shorish-1919-1920-v4.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 },
   ara: {
-  "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v29.html", key: "", plain: true, get: function () { return null; } }
+  "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v29.html", key: "", plain: true, get: function () { return null; } },
+  "social-studies": { title: "Social Studies \u2014 Lesson 4: Kassites (pp. 56\u201357)", href: "komelayeti-7a-book-v2.html", key: "soc7-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var EXAMS = { ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-quiz-unit3-s1-s2-v1.html" } ] };

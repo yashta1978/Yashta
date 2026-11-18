@@ -108,12 +108,12 @@ async function listBooks(){
 var det0=null;
 var SN={arabic:'Arabic',islamic:'Islamic',english:'English',kurdish:'Kurdish',math:'Math',science:'Science','social-studies':'Social Studies','social-value':'Social Value','reading-writing':'Reading & Writing',music:'Music',art:'Art',pe:'PE',ict:'ICT'};
 var EXAMS={ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'}]};
-var LB={vina:{science:'sci6','social-studies':'soc6'},ara:{science:'sci7'}};
+var LB={vina:{science:'sci6','social-studies':'soc6'},ara:{science:'sci7','social-studies':'soc7'}};
 var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','english'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
 ara:{0:['arabic','science','music','math','social-studies','kurdish','english'],1:['science','kurdish','math','reading-writing','social-studies','social-value','english'],2:['arabic','social-value','pe','math','kurdish','english','science'],3:['ict','science','art','english','arabic','kurdish','math'],4:['english','arabic','social-studies','math','science','english','islamic']}};
 var DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 function nextDays(n){var r=[],d=new Date();for(var k=1;k<=10&&r.length<n;k++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+k),wd=x.getDay();if(wd===5||wd===6)continue;r.push({wd:wd,name:DN[wd],label:p2(x.getDate())+'/'+p2(x.getMonth()+1)+'/'+x.getFullYear(),key:dkey(x)})}return r}
-var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - ل.٣١'},{id:'sci7',label:'Science 7 - Book'}];
+var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - ل.٣١'},{id:'sci7',label:'Science 7 - Book'},{id:'soc7',label:'كومەلایەتی ٧ - الكتاب (ل.٥٦–٥٧ واجب ١٩/١١)'}];
 function apiBase(){return (CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports/parent-marks.json'}
 function ghHdr(){return {'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'}}
 async function loadMarks(){
