@@ -68,6 +68,13 @@ function lessonsCard(rep){
   c.appendChild(el('p','note','النتيجة تُقرأ من العدّاد الذي يعرضه الدرس نفسه، وليست كل الدروس تعرض نتيجة. الوقت يُحسب عند النشاط الفعلي فقط.'));
   return c;
 }
+function syncLine(rep){
+  var p=el('p','note');
+  if(!rep||rep.none||!rep.upd){p.textContent='آخر مزامنة: لم يصل أي تقرير من جهازها بعد.';p.style.color='var(--r)';return p}
+  var d=new Date(rep.upd),mins=Math.max(0,Math.round((Date.now()-d.getTime())/60000));
+  var ago=mins<1?'الآن':mins<60?('قبل '+mins+' دقيقة'):mins<1440?('قبل '+Math.floor(mins/60)+' ساعة'):('قبل '+Math.floor(mins/1440)+' يوماً');
+  p.textContent='آخر مزامنة: '+fmtDate(dkey(d))+' '+p2(d.getHours())+':'+p2(d.getMinutes())+' ('+ago+')';
+  if(mins>1440)p.style.color='var(--r)';return p}
 function bookCard(book,rep,err){
   if(rep&&rep.kind==='lessons')return lessonsCard(rep);
   var c=el('div','card');c.appendChild(el('h2',null,book.label||book.id));
@@ -157,7 +164,7 @@ function openDetail(title,rep,ex){
   var old=document.getElementById('dtl');if(old)old.remove();
   var ov=el('div');ov.id='dtl';ov.style.cssText='position:fixed;inset:0;z-index:50;background:#f5f7fa;overflow:auto;padding:14px;-webkit-overflow-scrolling:touch';
   var cl=el('button','pri','إغلاق');cl.style.cssText='min-height:44px;min-width:100px';cl.addEventListener('click',function(){ov.remove()});
-  ov.appendChild(cl);var h=el('h2',null,title);h.style.margin='12px 0';ov.appendChild(h);
+  ov.appendChild(cl);var h=el('h2',null,title);h.style.margin='12px 0';ov.appendChild(h);ov.appendChild(syncLine(rep));
   function sec(t,c){var d=el('div','card');var hh=el('h3',null,t);hh.style.color=c;d.appendChild(hh);ov.appendChild(d);return d}
   function ln(d,t,c){var q=rich(el('p',c||null),t);q.style.margin='6px 0';d.appendChild(q)}
   var ST=(rep&&rep.st)||[];var pos=rep&&rep.pos;
