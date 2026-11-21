@@ -136,9 +136,11 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <a href="math6-divisibility-prime-factorization-1-5-1-6-v1.html">Divisibility and Prime Factorization — Lessons 1-5, 1-6 – v1</a>
     <strong>Vina — Grade 6 · Science</strong>
     <a href="science6-producers-consumers-decomposers.html">Producers, Consumers and Decomposers</a>
-    <a href="science6-book-v5.html">Science 6 Book — Section 2: Vegetative Propagation (pp. 90–102) – v5</a>
+    <a href="science6-book-v6.html">Science 6 Book — Section 2: Vegetative Propagation (pp. 90–102) – v6</a>
+    <a href="science6-book-v5.html">Science 6 Book – v5 (previous)</a>
     <strong>Vina — Grade 6 · Social Studies</strong>
-    <a href="komelayeti-6a-shorish-1919-1920-v4.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v4</a>
+    <a href="komelayeti-6a-shorish-1919-1920-v5.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v5</a>
+    <a href="komelayeti-6a-shorish-1919-1920-v4.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v4 (previous)</a>
     <strong>Vina — Grade 6 · Islamic</strong>
     <a href="islamic6-lessons-1-5-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2</a>
     <strong>Vina — Grade 6 · Art</strong>
@@ -324,12 +326,12 @@ var LESSONS = {
     science: [
       { title: "Producers, Consumers and Decomposers", sub: "Definitions",
         lang: "en", dir: "ltr", tag: "EN", href: "science6-producers-consumers-decomposers.html" },
-      { title: "Science 6 Book — Section 2: Vegetative Propagation – v5", sub: "Book pages 90–102 · daily homework",
-        lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v5.html" }
+      { title: "Science 6 Book — Section 2: Vegetative Propagation – v6", sub: "Book pages 90–102 · daily homework",
+        lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v6.html" }
     ],
     "social-studies": [
-      { title: "شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v4", sub: "ص٣١ · واجب يومي",
-        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-shorish-1919-1920-v4.html" }
+      { title: "شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v5", sub: "ص٣١ · واجب يومي",
+        lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-shorish-1919-1920-v5.html" }
     ],
     islamic: [
       { title: "وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2",
@@ -421,6 +423,12 @@ var LESSONS = {
 /* older versions, shown under "Previous versions" in a subject */
 var PREVIOUS = {
   vina: {
+    science: [
+      { title: "Science 6 Book — Vegetative Propagation – v5", sub: "Book pages 90–102", lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v5.html" }
+    ],
+    "social-studies": [
+      { title: "شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v4", sub: "ص٣١", lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-shorish-1919-1920-v4.html" }
+    ],
     arabic: [
       { title: "كتاب العربية (الوحدة ١ والوحدة ٢) — v1", lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-book-v1.html" },
       { title: "الكتاب (الوحدة ١ والوحدة ٢) — v3", lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-exam-review-20-v3.html" },
@@ -542,8 +550,8 @@ var TIMETABLE = { vina: {
   3: ["ict","science","art","english","arabic","kurdish","math"],
   4: ["english","arabic","social-studies","math","science","english","islamic"] } };
 var HOMEWORK = { vina: {
-  "science": { title: "Science — Vegetative Propagation", href: "science6-book-v5.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
-  "social-studies": { title: "Social Studies — شۆڕش و ڕاپەڕینێن ١٩١٩-١٩٢٠", href: "komelayeti-6a-shorish-1919-1920-v4.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
+  "science": { title: "Science — Vegetative Propagation", href: "science6-book-v6.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
+  "social-studies": { title: "Social Studies — شۆڕش و ڕاپەڕینێن ١٩١٩-١٩٢٠", href: "komelayeti-6a-shorish-1919-1920-v5.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
   "arabic": { title: "Arabic \u2014 \u0627\u062d\u062a\u0631\u0627\u0645 \u0627\u0644\u0635\u063a\u0627\u0631 \u0644\u0644\u0643\u0628\u0627\u0631 (pp. 50\u201351)", href: "arabic6-book-v3.html", key: "ar6-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
 },
   ara: {

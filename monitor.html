@@ -180,7 +180,7 @@ function openDetail(title,rep,ex){
       if(!(S.m&&S.m.ok))ln(dd,'فحص الدرس','note');R.appendChild(dd)});
     var all=el('details');all.appendChild(rsum('كل التفاصيل صفحة بصفحة'));var cc=bookCard({id:'x',label:title},rep);cc.className='';all.appendChild(cc);ov.appendChild(all);
   }else{
-    ln(A,'التقرير الحالي لا يحمل تفاصيل الخطوات (كتاب قديم). تظهر عندما تفتح البنت النسخة الجديدة.','note');
+    ln(A,'التقرير الحالي لا يحمل تفاصيل الخطوات (كتاب قديم). تظهر عندما تفتح البنت النسخة الجديدة.','note');var dk=Object.keys((rep&&rep.days)||{}).sort().pop();if(dk){var q0=rep.days[dk];ln(A,'آخر نشاط مسجَّل '+fmtDate(dk)+': '+Math.round((q0.sec||0)/60)+' دقيقة — صفحات قرأتها: '+((q0.read||[]).join('، ')||'—')+' — أجابت '+(q0.a||0)+' (أخطاء '+(q0.w||0)+') — «نسيت» '+(q0.f||0)+' — خطوات أتقنتها '+(q0.ms||0))}
     if(pos&&pos.label)ln(W,N(pos.label)+(pos.pg?' — صفحة '+pos.pg:'')+(pos.step?' — '+stepAr(pos.step,pos):'')); else ln(W,'لم تبدأ','note');
     var nw=((rep&&rep.secs)||[]).filter(function(x){return x.s==='new'});if(nw.length){var d2=el('details');d2.appendChild(rsum('دروس لم تبدأ ('+nw.length+')'));nw.forEach(function(x){ln(d2,N(x.n),'note')});R.appendChild(d2)}else ln(R,'—','note');
   }
