@@ -123,8 +123,9 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <a href="arabic6-salah-visit.html" dir="rtl" lang="ar">زِيارَةُ صَلاحٍ</a>
     <a href="arabic6-tale-of-two-friends.html" dir="rtl" lang="ar">حِكايَةُ صَديقَيْنِ – الوَحْدَةُ ١</a>
     <a href="arabic6-my-friend-ex6-7.html" dir="rtl" lang="ar">صَديقي: التَّمْرينانِ السّادِسُ وَالسّابِعُ</a>
-    <a href="arabic6-exam-review-20-v3.html" dir="rtl" lang="ar">مراجعة امتحان ٢٠ درجة (ص ١٠–٤٢) + واجب الوحدة ٢ (ص ٥٠–٥١)</a>
-    <a href="arabic6-unit1-exam-review-20-v2.html" dir="rtl" lang="ar">مراجعة امتحان ٢٠ درجة — الوحدة ١ (ص ١٠–٤٢) — النسخة ٢</a>
+    <a href="arabic6-book-v1.html" dir="rtl" lang="ar">كتاب العربية — الوحدة ١ والوحدة ٢</a>
+    <a href="arabic6-exam-review-20-v3.html" dir="rtl" lang="ar">النسخة السابقة ٣</a>
+    <a href="arabic6-unit1-exam-review-20-v2.html" dir="rtl" lang="ar">النسخة السابقة ٢</a>
     <strong>Vina — Grade 6 · English</strong>
     <a href="english6-exam-classbook-7-25-v1.html">Exam review /20 — Class Book pp. 7–25 – v1</a>
     <strong>Vina — Grade 6 · Math</strong>
@@ -301,8 +302,8 @@ var LESSONS = {
         lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-tale-of-two-friends.html" },
       { title: "صَديقي: التَّمْرينانِ السّادِسُ وَالسّابِعُ",
         lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-my-friend-ex6-7.html" },
-      { title: "مراجعة امتحان ٢٠ درجة (ص ١٠–٤٢) + واجب الوحدة ٢ (ص ٥٠–٥١)",
-        lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-exam-review-20-v3.html" }
+      { title: "كتاب العربية — الوحدة ١ والوحدة ٢",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-book-v1.html" }
     ],
     english: [
       { title: "Exam review /20 — Class Book pp. 7–25 – v1", sub: "Book pages, Summary, Questions, Exam /20",
@@ -419,7 +420,8 @@ var LESSONS = {
 var PREVIOUS = {
   vina: {
     arabic: [
-      { title: "مراجعة امتحان ٢٠ درجة — الوحدة ١ (ص ١٠–٤٢) — v2", lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-unit1-exam-review-20-v2.html" }
+      { title: "الكتاب (الوحدة ١ والوحدة ٢) — v3", lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-exam-review-20-v3.html" },
+      { title: "الوحدة ١ (ص ١٠–٤٢) — v2", lang: "ar", dir: "rtl", tag: "AR", href: "arabic6-unit1-exam-review-20-v2.html" }
     ]
   },
   ara: {
@@ -536,14 +538,14 @@ var TIMETABLE = { vina: {
 var HOMEWORK = { vina: {
   "science": { title: "Science — Vegetative Propagation", href: "science6-book-v5.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
   "social-studies": { title: "Social Studies — شۆڕش و ڕاپەڕینێن ١٩١٩-١٩٢٠", href: "komelayeti-6a-shorish-1919-1920-v4.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
-  "arabic": { title: "Arabic \u2014 \u0627\u062d\u062a\u0631\u0627\u0645 \u0627\u0644\u0635\u063a\u0627\u0631 \u0644\u0644\u0643\u0628\u0627\u0631 (pp. 50\u201351)", href: "arabic6-exam-review-20-v3.html", key: "", plain: true, get: function () { return null; } }
+  "arabic": { title: "Arabic \u2014 \u0627\u062d\u062a\u0631\u0627\u0645 \u0627\u0644\u0635\u063a\u0627\u0631 \u0644\u0644\u0643\u0628\u0627\u0631 (pp. 50\u201351)", href: "arabic6-book-v1.html", key: "", plain: true, first: true, get: function () { return null; } }
 },
   ara: {
   "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v31.html", key: "", plain: true, get: function () { return null; } },
   "social-studies": { title: "Social Studies \u2014 Lesson 5: Medes (pp. 58\u201360)", href: "komelayeti-7a-book-v12.html", key: "soc7-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-var EXAMS = { vina: [ { date: "2026-11-23", sid: "arabic", name: "Arabic exam /20", sub: "Monday 23/11/2026 \u00b7 pp. 10\u201342", href: "arabic6-exam-review-20-v3.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v31.html" } ] };
+var EXAMS = { ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v31.html" } ] };
 function pendingExams(id) {
   var t = new Date(), today = t.getFullYear() + "-" + p2(t.getMonth() + 1) + "-" + p2(t.getDate());
   return (EXAMS[id] || []).filter(function (x) { return x.date >= today; });
@@ -568,6 +570,7 @@ function tasksData(id) {
       if (h) { var r = { sid: sid, h: h, st: hwState(h) }; hw.push(r); rows.push(r); }
       else rows.push({ sid: sid, name: sub ? sub.title : sid });
     });
+    hw.sort(function (a, b) { return (b.h.first ? 1 : 0) - (a.h.first ? 1 : 0); });
     days.push({ key: x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate()), first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, rows: rows });
   }
   return days;
