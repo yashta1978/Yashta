@@ -146,8 +146,9 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <a href="komelayeti-6a-shorish-1919-1920-v5.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v5 (previous)</a>
     <a href="komelayeti-6a-shorish-1919-1920-v4.html" dir="rtl" lang="ku">شۆڕەش و ڕاپەڕینێن ساڵێن ١٩١٩-١٩٢٠ – v4 (previous)</a>
     <strong>Vina — Grade 6 · Islamic</strong>
-    <a href="islamic6-book-v1.html" dir="rtl" lang="ku">پەروەردەیا ئیسلامی ٦ — کتێب (ل.١٨–٢٤) – v1</a>
-    <a href="islamic6-lessons-1-5-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2</a>
+    <a href="islamic6-book-v2.html" dir="rtl" lang="ku">پەروەردەیا ئیسلامی ٦ — کتێب (ل.٧–٢٤) – v2</a>
+    <a href="islamic6-book-v1.html" dir="rtl" lang="ku">پەروەردەیا ئیسلامی ٦ — کتێب (ل.١٨–٢٤) – v1 (previous)</a>
+    <a href="islamic6-lessons-1-5-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2 (previous)</a>
     <strong>Vina — Grade 6 · Art</strong>
     <a href="art6-art-colors-picasso-v2.html">Art, Colors and Picasso – v2</a>
     <strong>Vina — Grade 6 · PE</strong>
@@ -341,10 +342,8 @@ var LESSONS = {
         lang: "ku", dir: "rtl", tag: "KU", href: "komelayeti-6a-book-v2.html" }
     ],
     islamic: [
-      { title: "پەروەردەیا ئیسلامی ٦ — کتێب (ل.١٨–٢٤) – v1",
-        lang: "ku", dir: "rtl", tag: "KU", href: "islamic6-book-v1.html" },
-      { title: "وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2",
-        lang: "ku", dir: "rtl", tag: "KU", href: "islamic6-lessons-1-5-v2.html" }
+      { title: "پەروەردەیا ئیسلامی ٦ — کتێب (ل.٧–٢٤) – v2",
+        lang: "ku", dir: "rtl", tag: "KU", href: "islamic6-book-v2.html" }
     ],
     art: [
       { title: "Art, Colors and Picasso – v2", sub: "Teacher notes, 4 pages · Exam /20",
@@ -432,6 +431,10 @@ var LESSONS = {
 /* older versions, shown under "Previous versions" in a subject */
 var PREVIOUS = {
   vina: {
+    islamic: [
+      { title: "پەروەردەیا ئیسلامی ٦ — کتێب (ل.١٨–٢٤) – v1", lang: "ku", dir: "rtl", tag: "KU", href: "islamic6-book-v1.html" },
+      { title: "وانەیێن ئایینی – وانە ١ تا ٥ (ئەزموون ٢٠ نمرە) – v2", lang: "ku", dir: "rtl", tag: "KU", href: "islamic6-lessons-1-5-v2.html" }
+    ],
     science: [
       { title: "Science 6 Book — Vegetative Propagation – v6", sub: "Book pages 90–102", lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v6.html" },
       { title: "Science 6 Book — Vegetative Propagation – v5", sub: "Book pages 90–102", lang: "en", dir: "ltr", tag: "EN", href: "science6-book-v5.html" }
@@ -569,7 +572,7 @@ var TIMETABLE = { vina: {
 var HOMEWORK = { vina: {
   "science": { title: "Science — Vegetative Propagation", href: "science6-book-v7.html", key: "sci6-vegprop-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
   "social-studies": { title: "Social Studies — دامەزراندنا دەولەتا عێراقێ و حکومەتا دووێ یا شێخ مەحمودی (ل.٣٤–٣٥)", href: "komelayeti-6a-book-v2.html", key: "soc6-p31-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
-  "islamic": { title: "Islamic \u2014 \u0648\u0627\u0646\u06d5\u06cc\u0627 \u0666 \u0648 \u0667 (\u0644.\u0661\u0668\u2013\u0662\u0664)", href: "islamic6-book-v1.html", key: "is6-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } },
+  "islamic": { title: "Islamic \u2014 \u0648\u0627\u0646\u06d5\u06cc\u0627 \u0666 \u0648 \u0667 (\u0644.\u0661\u0668\u2013\u0662\u0664)", href: "islamic6-book-v2.html", key: "is6-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } },
   "arabic": { title: "Arabic \u2014 \u0627\u062d\u062a\u0631\u0627\u0645 \u0627\u0644\u0635\u063a\u0627\u0631 \u0644\u0644\u0643\u0628\u0627\u0631 (pp. 50\u201351)", href: "arabic6-book-v5.html", key: "ar6-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } },
 },
   ara: {
@@ -577,7 +580,7 @@ var HOMEWORK = { vina: {
   "social-studies": { title: "Social Studies \u2014 Lesson 5: Medes (pp. 58\u201360)", href: "komelayeti-7a-book-v14.html", key: "soc7-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v1.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" } ] };
+var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v2.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" } ] };
 function pendingExams(id) {
   var t = new Date(), today = t.getFullYear() + "-" + p2(t.getMonth() + 1) + "-" + p2(t.getDate());
   return (EXAMS[id] || []).filter(function (x) { return x.date >= today; });
