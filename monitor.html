@@ -134,10 +134,12 @@ var det0=null;
 var SN={arabic:'Arabic',islamic:'Islamic',english:'English',kurdish:'Kurdish',math:'Math',science:'Science','social-studies':'Social Studies','social-value':'Social Value','reading-writing':'Reading & Writing',music:'Music',art:'Art',pe:'PE',ict:'ICT'};
 var EXAMS={vina:[{date:'2026-11-23',sid:'islamic',name:'Islamic quiz',sub:'الاثنين 23/11/2026 · الدرسان 6 و7 (ص 18–24)'}],ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'}]};
 var LB={vina:{science:'sci6','social-studies':'soc6',arabic:'ar6',islamic:'is6'},ara:{science:'sci7','social-studies':'soc7'}};
-var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','english'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
+var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','reading-writing'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
 ara:{0:['arabic','science','music','math','social-studies','kurdish','english'],1:['science','kurdish','math','reading-writing','social-studies','social-value','english'],2:['arabic','social-value','pe','math','kurdish','english','science'],3:['ict','science','art','english','arabic','kurdish','math'],4:['english','arabic','social-studies','math','science','english','islamic']}};
 var DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-function nextDays(n){var r=[],d=new Date();for(var k=1;k<=10&&r.length<n;k++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+k),wd=x.getDay();if(wd===5||wd===6)continue;r.push({wd:wd,name:DN[wd],label:p2(x.getDate())+'/'+p2(x.getMonth()+1)+'/'+x.getFullYear(),key:dkey(x)})}return r}
+/* قاعدة 23/11/2026: من 12:00 ظهراً تظهر دروس يوم الدوام التالي إلى 12:00 ظهر اليوم الذي يليه؛ قبل 12:00 يبقى اليوم الحالي (بعد منتصف الليل لا تقفز القائمة). الجمعة والسبت تُتخطّى. */
+function nextDays(n){var r=[],d=new Date(),k0=d.getHours()>=12?1:0,a=new Date(d.getFullYear(),d.getMonth(),d.getDate());for(var k=k0;k<=12&&r.length<n;k++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+k),wd=x.getDay();if(wd===5||wd===6)continue;var df=Math.round((x-a)/86400000);r.push({wd:wd,name:DN[wd],label:p2(x.getDate())+'/'+p2(x.getMonth()+1)+'/'+x.getFullYear(),key:dkey(x),rel:df===0?'اليوم — ':(df===1?'غداً — ':'')})}return r}
+function firstKey(){var d=nextDays(1)[0];return d?d.key:dkey(new Date())}
 var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - الكتاب (ل.٣٤–٣٥ واجب ٢٤/١١)'},{id:'is6',label:'تربية إسلامية ٦ - الكتاب (واجب: ص ١٨–٢٤ حتى ٢٣/١١، ومراجعة ص ٧–١٧)'},{id:'ar6',label:'عربي ٦ - احترام الصغار للكبار (ص ٥٠–٥١)'},{id:'sci7',label:'Science 7 - Book'},{id:'soc7',label:'كومەلایەتی ٧ - الكتاب (ل.٥٨–٦٠ واجب ١٩/١١)'}];
 function apiBase(){return (CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports/parent-marks.json'}
 function ghHdr(){return {'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'}}
@@ -159,7 +161,7 @@ function pgItems(P){var a=[];a.push({t:'القراءة',ok:!!P.r});if(P.rt)a.pus
 function N(t){return '\u2068'+t+'\u2069'}
 function rich(e,t){String(t).split(/(\u2068[^\u2069]*\u2069)/).forEach(function(x){if(!x)return;if(x.charAt(0)==='\u2068'){var bi=document.createElement('bdi');bi.textContent=x.slice(1,-1);e.appendChild(bi)}else e.appendChild(document.createTextNode(x))});return e}
 function rsum(t){return rich(el('summary'),t)}
-function examOf(gid,sid){return (EXAMS[gid]||[]).filter(function(x){return x.sid===sid&&x.date>=dkey(new Date())})[0]||null}
+function examOf(gid,sid){var fk=firstKey();return (EXAMS[gid]||[]).filter(function(x){return x.sid===sid&&x.date>=fk})[0]||null}
 function openDetail(title,rep,ex){
   var old=document.getElementById('dtl');if(old)old.remove();
   var ov=el('div');ov.id='dtl';ov.style.cssText='position:fixed;inset:0;z-index:50;background:#f5f7fa;overflow:auto;padding:14px;-webkit-overflow-scrolling:touch';
@@ -212,7 +214,7 @@ async function render(){
   [['f','vina','فينا'],['a','ara','آرا']].forEach(function(g){
     var c=el('div','card');c.appendChild(el('h2',null,g[2]+' — المهام'));
     var days=nextDays(5);
-    (EXAMS[g[1]]||[]).filter(function(x){return x.date>=dkey(new Date())}).forEach(function(x){
+    (EXAMS[g[1]]||[]).filter(function(x){return x.date>=firstKey()}).forEach(function(x){
       c.appendChild(el('h3',null,'امتحان قريب'));
       var key='exam:'+x.date+':'+g[1]+':'+x.sid,mk=MARKS[key];
       var btn=el('button',mk?null:'pri',mk?'إلغاء':'تمّت');btn.style.cssText='min-width:84px;padding:6px 12px;min-height:40px';
@@ -224,7 +226,7 @@ async function render(){
     days.forEach(function(dy,di){
       var box=di===0?c:null,det=null;
       if(di>0){if(!det0){det0=el('details');det0.appendChild(el('summary',null,'الأيام القادمة'));c.appendChild(det0)}box=det0}
-      box.appendChild(el('h3',null,(di===0?'غداً — ':'')+dy.name+' '+dy.label));
+      box.appendChild(el('h3',null,(di===0?dy.rel:'')+dy.name+' '+dy.label));
       var seen={};
       (TT[g[1]][dy.wd]||[]).forEach(function(sid){if(seen[sid])return;seen[sid]=1;
         var bid=(LB[g[1]]||{})[sid],x=bid?byId[bid]:null,key=dy.key+':'+g[1]+':'+sid,mk=MARKS[key];

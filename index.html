@@ -566,7 +566,7 @@ function viewHome() {
 var TIMETABLE = { vina: {
   0: ["kurdish","science","english","arabic","islamic","math","social-value"],
   1: ["science","english","math","art","pe","islamic","arabic"],
-  2: ["kurdish","english","social-studies","math","ict","science","english"],
+  2: ["kurdish","english","social-studies","math","ict","science","reading-writing"],
   3: ["kurdish","music","pe","science","math","english","arabic"],
   4: ["social-studies","english","arabic","kurdish","science","social-value","math"] },
   ara: {
@@ -587,9 +587,23 @@ var HOMEWORK = { vina: {
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v4.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" } ] };
+/* Rule (23/11/2026): from 12:00 noon the list shows the NEXT school day, and keeps it until 12:00 noon of the following day.
+   Before 12:00 it still shows the current day (so after midnight it does not jump ahead). Fri/Sat are skipped. */
+function firstSchoolDate() {
+  var d = new Date(), k = d.getHours() >= 12 ? 1 : 0;
+  for (; k <= 9; k++) {
+    var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + k), wd = x.getDay();
+    if (wd !== 5 && wd !== 6) return x;
+  }
+}
+function dateKey(x) { return x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate()); }
+function relDay(x) {
+  var t = new Date(), a = new Date(t.getFullYear(), t.getMonth(), t.getDate()), diff = Math.round((x - a) / 86400000);
+  return diff === 0 ? "Today" : (diff === 1 ? "Tomorrow" : "Next");
+}
 function pendingExams(id) {
-  var t = new Date(), today = t.getFullYear() + "-" + p2(t.getMonth() + 1) + "-" + p2(t.getDate());
-  return (EXAMS[id] || []).filter(function (x) { return x.date >= today; });
+  var first = dateKey(firstSchoolDate());
+  return (EXAMS[id] || []).filter(function (x) { return x.date >= first; });
 }
 function p2(n) { return (n < 10 ? "0" : "") + n; }
 function hwState(h) {
@@ -599,8 +613,8 @@ function hwState(h) {
 }
 function tasksData(id) {
   var tt = TIMETABLE[id]; if (!tt) return null;
-  var d = new Date(), shown = 0, days = [];
-  for (var k = 1; k <= 8 && shown < 5; k++) {
+  var d = new Date(), shown = 0, days = [], k0 = d.getHours() >= 12 ? 1 : 0;
+  for (var k = k0; k <= 12 && shown < 5; k++) {
     var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + k), wd = x.getDay();
     if (wd === 5 || wd === 6) continue;
     var first = shown === 0; shown++;
@@ -616,7 +630,7 @@ function tasksData(id) {
       var ka = a.r.h ? (a.r.h.first ? 0 : 1) : 2, kb = b.r.h ? (b.r.h.first ? 0 : 1) : 2;
       return ka !== kb ? ka - kb : a.i - b.i;
     }).map(function (o) { return o.r; });
-    days.push({ key: x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate()), first: first, label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, rows: rows });
+    days.push({ key: x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate()), first: first, rel: relDay(x), label: DAYN[wd] + " " + p2(x.getDate()) + "/" + p2(x.getMonth() + 1) + "/" + x.getFullYear(), hw: hw, rows: rows });
   }
   return days;
 }
@@ -625,7 +639,8 @@ function tasksCard(id) {
   var pend = 0, tot = 0, names = [];
   if (days[0]) days[0].hw.forEach(function (r) { tot++; if (!r.st) { pend++; names.push(r.h.title.split(" \u2014 ")[0]); } });
   var ex = pendingExams(id);
-  var meta = !days[0] ? "Nothing yet" : (tot ? (pend ? "Tomorrow: " + names.join(", ") : "Tomorrow: all done \u2713") : "No homework yet for tomorrow");
+  var rl = days[0] ? days[0].rel : "";
+  var meta = !days[0] ? "Nothing yet" : (tot ? (pend ? rl + ": " + names.join(", ") : rl + ": all done \u2713") : "No homework yet for " + rl.toLowerCase());
   if (ex.length) meta = "Quiz: " + ex[0].name + " \u00b7 " + meta;
   var badge = el("span", { "class": "tbadge" + (tot && !pend && !ex.length ? " ok" : ""), text: ex.length ? String(pend + ex.length) : (tot ? (pend ? String(pend) : "\u2713") : "\u2013") });
   return el("a", { "class": "card subject tcard", href: "#" + id + "/tasks" }, [
@@ -683,7 +698,7 @@ function viewTasks(id) {
       if (!more) { more = el("details", { "class": "tmore" }, [el("summary", { text: "Upcoming days" })]); wrap.appendChild(more); }
       box = more;
     }
-    box.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: "Tomorrow" }) : null].filter(Boolean)));
+    box.appendChild(el("div", { "class": "day" }, [document.createTextNode(dy.label), dy.first ? el("small", { text: dy.rel }) : null].filter(Boolean)));
     var g = el("div", { "class": "tgrid" }, []);
     dy.rows.forEach(function (r) {
       if (!r.h) {
