@@ -109,7 +109,7 @@ function bookCard(book,rep,err){
   var ex=rep.ext;if(ex){
     (ex.units||[]).forEach(function(u){c.appendChild(el('p','note','اختبار الوحدة '+u.u+': '+(u.n?('محاولات '+u.n+'، الأفضل '+u.best+' من '+u.tot+(u.ok?' ✓ متقن':'')):'لم يُجرَّب بعد')))});
     c.appendChild(el('p','note','تدريب إضافي (غير محتسب): '+(ex.extra&&ex.extra.n?('مرات '+ex.extra.n+'، آخر نتيجة '+ex.extra.last+' من '+ex.extra.tot+'، الأفضل '+ex.extra.best):'لم يُجرَّب بعد')));
-    if(rep.book!=='ar6')c.appendChild(el('p','note','الامتحان: '+(ex.exam&&ex.exam.n?('مرات '+ex.exam.n+'، الأفضل '+ex.exam.best+' من '+ex.exam.tot):'لم يُجرَّب بعد')))}
+    if(rep.book!=='ar6'&&rep.book!=='is6')c.appendChild(el('p','note','الامتحان: '+(ex.exam&&ex.exam.n?('مرات '+ex.exam.n+'، الأفضل '+ex.exam.best+' من '+ex.exam.tot):'لم يُجرَّب بعد')))}
   var days=rep.days||{};FIRST=Object.keys(days).sort()[0]||dkey(new Date());var tk=dkey(new Date()),td=days[tk]||{sec:0,read:[],a:0,w:0,f:0,ms:0};
   c.appendChild(el('h3',null,'اليوم'));
   var v=verdict(td,true,true),line=el('p');var dot=el('span','dot '+v.c);line.appendChild(dot);line.appendChild(document.createTextNode(v.t));c.appendChild(line);
@@ -132,13 +132,13 @@ async function listBooks(){
 }
 var det0=null;
 var SN={arabic:'Arabic',islamic:'Islamic',english:'English',kurdish:'Kurdish',math:'Math',science:'Science','social-studies':'Social Studies','social-value':'Social Value','reading-writing':'Reading & Writing',music:'Music',art:'Art',pe:'PE',ict:'ICT'};
-var EXAMS={ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'}]};
-var LB={vina:{science:'sci6','social-studies':'soc6',arabic:'ar6'},ara:{science:'sci7','social-studies':'soc7'}};
+var EXAMS={vina:[{date:'2026-11-23',sid:'islamic',name:'Islamic quiz',sub:'الاثنين 23/11/2026 · الدرسان 6 و7 (ص 18–24)'}],ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'}]};
+var LB={vina:{science:'sci6','social-studies':'soc6',arabic:'ar6',islamic:'is6'},ara:{science:'sci7','social-studies':'soc7'}};
 var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','english'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
 ara:{0:['arabic','science','music','math','social-studies','kurdish','english'],1:['science','kurdish','math','reading-writing','social-studies','social-value','english'],2:['arabic','social-value','pe','math','kurdish','english','science'],3:['ict','science','art','english','arabic','kurdish','math'],4:['english','arabic','social-studies','math','science','english','islamic']}};
 var DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 function nextDays(n){var r=[],d=new Date();for(var k=1;k<=10&&r.length<n;k++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+k),wd=x.getDay();if(wd===5||wd===6)continue;r.push({wd:wd,name:DN[wd],label:p2(x.getDate())+'/'+p2(x.getMonth()+1)+'/'+x.getFullYear(),key:dkey(x)})}return r}
-var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - الكتاب (ل.٣٤–٣٥ واجب ٢٤/١١)'},{id:'ar6',label:'عربي ٦ - احترام الصغار للكبار (ص ٥٠–٥١)'},{id:'sci7',label:'Science 7 - Book'},{id:'soc7',label:'كومەلایەتی ٧ - الكتاب (ل.٥٨–٦٠ واجب ١٩/١١)'}];
+var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - الكتاب (ل.٣٤–٣٥ واجب ٢٤/١١)'},{id:'is6',label:'تربية إسلامية ٦ - الكتاب (ص ١٨–٢٤ واجب ٢٣/١١)'},{id:'ar6',label:'عربي ٦ - احترام الصغار للكبار (ص ٥٠–٥١)'},{id:'sci7',label:'Science 7 - Book'},{id:'soc7',label:'كومەلایەتی ٧ - الكتاب (ل.٥٨–٦٠ واجب ١٩/١١)'}];
 function apiBase(){return (CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports/parent-marks.json'}
 function ghHdr(){return {'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'}}
 async function loadMarks(){
