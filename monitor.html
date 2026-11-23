@@ -132,15 +132,15 @@ async function listBooks(){
 }
 var det0=null;
 var SN={arabic:'Arabic',islamic:'Islamic',english:'English',kurdish:'Kurdish',math:'Math',science:'Science','social-studies':'Social Studies','social-value':'Social Value','reading-writing':'Reading & Writing',music:'Music',art:'Art',pe:'PE',ict:'ICT'};
-var EXAMS={vina:[{date:'2026-11-23',sid:'islamic',name:'Islamic quiz',sub:'الاثنين 23/11/2026 · الدرسان 6 و7 (ص 18–24)'}],ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'}]};
-var LB={vina:{science:'sci6','social-studies':'soc6',arabic:'ar6',islamic:'is6'},ara:{science:'sci7','social-studies':'soc7'}};
+var EXAMS={vina:[{date:'2026-11-23',sid:'islamic',name:'Islamic quiz',sub:'الاثنين 23/11/2026 · الدرسان 6 و7 (ص 18–24)'}],ara:[{date:'2026-11-23',sid:'science',name:'Science quiz',sub:'الاثنين 23/11/2026 · الوحدة 3 · القسمان 1 و2'},{date:'2026-11-24',sid:'arabic',name:'Arabic exam',sub:'الثلاثاء 24/11/2026 · الوحدة 2 السرد (ص 40–58)'}]};
+var LB={vina:{science:'sci6','social-studies':'soc6',arabic:'ar6',islamic:'is6'},ara:{science:'sci7','social-studies':'soc7',arabic:'ar7'}};
 var TT={vina:{0:['kurdish','science','english','arabic','islamic','math','social-value'],1:['science','english','math','art','pe','islamic','arabic'],2:['kurdish','english','social-studies','math','ict','science','reading-writing'],3:['kurdish','music','pe','science','math','english','arabic'],4:['social-studies','english','arabic','kurdish','science','social-value','math']},
 ara:{0:['arabic','science','music','math','social-studies','kurdish','english'],1:['science','kurdish','math','reading-writing','social-studies','social-value','english'],2:['arabic','social-value','pe','math','kurdish','english','science'],3:['ict','science','art','english','arabic','kurdish','math'],4:['english','arabic','social-studies','math','science','english','islamic']}};
 var DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 /* قاعدة 23/11/2026: من 12:00 ظهراً تظهر دروس يوم الدوام التالي إلى 12:00 ظهر اليوم الذي يليه؛ قبل 12:00 يبقى اليوم الحالي (بعد منتصف الليل لا تقفز القائمة). الجمعة والسبت تُتخطّى. */
 function nextDays(n){var r=[],d=new Date(),k0=d.getHours()>=12?1:0,a=new Date(d.getFullYear(),d.getMonth(),d.getDate());for(var k=k0;k<=12&&r.length<n;k++){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+k),wd=x.getDay();if(wd===5||wd===6)continue;var df=Math.round((x-a)/86400000);r.push({wd:wd,name:DN[wd],label:p2(x.getDate())+'/'+p2(x.getMonth()+1)+'/'+x.getFullYear(),key:dkey(x),rel:df===0?'اليوم — ':(df===1?'غداً — ':'')})}return r}
 function firstKey(){var d=nextDays(1)[0];return d?d.key:dkey(new Date())}
-var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - الكتاب (ل.٣٤–٣٥ واجب ٢٤/١١)'},{id:'is6',label:'تربية إسلامية ٦ - الكتاب (واجب: ص ١٨–٢٤ حتى ٢٣/١١، ومراجعة ص ٧–١٧)'},{id:'ar6',label:'عربي ٦ - احترام الصغار للكبار (ص ٥٠–٥١)'},{id:'sci7',label:'Science 7 - Book'},{id:'soc7',label:'كومەلایەتی ٧ - الكتاب (ل.٥٨–٦٠ واجب ١٩/١١)'}];
+var MARKS={},PLAN=[{id:'sci6',label:'Science 6 - Book'},{id:'soc6',label:'كومەلایەتی ٦ - الكتاب (ل.٣٤–٣٥ واجب ٢٤/١١)'},{id:'is6',label:'تربية إسلامية ٦ - الكتاب (واجب: ص ١٨–٢٤ حتى ٢٣/١١، ومراجعة ص ٧–١٧)'},{id:'ar6',label:'عربي ٦ - احترام الصغار للكبار (ص ٥٠–٥١)'},{id:'sci7',label:'Science 7 - Book'},{id:'soc7',label:'كومەلایەتی ٧ - الكتاب (ل.٥٨–٦٠ واجب ١٩/١١)'},{id:'ar7',label:'عربي ٧ - الوحدة ٢ السرد (ص ٤٠–٥٨، امتحان ٢٤/١١)'}];
 function apiBase(){return (CFG.api||'https://api.github.com')+'/repos/'+CFG.repo+'/contents/reports/parent-marks.json'}
 function ghHdr(){return {'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json'}}
 async function loadMarks(){
