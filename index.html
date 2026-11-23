@@ -162,7 +162,7 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <a href="arabic7-unit1-description.html" dir="rtl" lang="ar">كويز الوحدة الأولى</a>
     <a href="arabic7-unit1-description-pages-v1.html" dir="rtl" lang="ar">الوحدة الأولى: الوصف — ص٢٩ و٣٢ — v1</a>
     <a href="arabic7-taam-alhurriya-v5.html" dir="rtl" lang="ar">طعم الحرية — ص٤٩–٥٤ — v5</a>
-    <a href="arabic7-book-v1.html" dir="rtl" lang="ar">كتاب العربية — الوحدة ٢: السرد — v1</a>
+    <a href="arabic7-book-v2.html" dir="rtl" lang="ar">كتاب العربية — الوحدة ٢: السرد — v2</a>
     <strong>Ara — Grade 7 · Math</strong>
     <a href="math7-mental-math-1-1-v1.html">Mental Math — Lesson 1-1 – v1</a>
     <a href="math7-powers-1-2-v1.html">Powers — Lesson 1-2 – v1</a>
@@ -378,8 +378,8 @@ var LESSONS = {
         lang: "ar", dir: "rtl", tag: "AR", href: "arabic7-unit1-description-pages-v1.html" },
       { title: "طعم الحرية — v5", sub: "ص٤٩–٥٤ · مفردات وأسئلة الشاعر",
         lang: "ar", dir: "rtl", tag: "AR", href: "arabic7-taam-alhurriya-v5.html" },
-      { title: "كتاب العربية — الوحدة ٢: السرد — v1", sub: "ص٤٠–٥٨ · امتحان ٢٤/١١/٢٠٢٦",
-        lang: "ar", dir: "rtl", tag: "AR", href: "arabic7-book-v1.html" }
+      { title: "كتاب العربية — الوحدة ٢: السرد — v2", sub: "ص٤٠–٥٨ · امتحان ٢٤/١١/٢٠٢٦",
+        lang: "ar", dir: "rtl", tag: "AR", href: "arabic7-book-v2.html" }
     ],
     kurdish: [
       { title: "دەنگ و پیت · برگە · پەیڤ · گرێ — v2", sub: "Lessons 1–5 + Reading · pp. 10–29, 84–96",
@@ -587,10 +587,10 @@ var HOMEWORK = { vina: {
   ara: {
   "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v32.html", key: "", plain: true, get: function () { return null; } },
   "social-studies": { title: "Social Studies \u2014 Lesson 5: Medes (pp. 58\u201360)", href: "komelayeti-7a-book-v14.html", key: "soc7-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
-  "arabic": { title: "Arabic \u2014 \u0627\u0644\u0648\u062d\u062f\u0629 \u0662 \u0627\u0644\u0633\u0631\u062f (pp. 40\u201358)", href: "arabic7-book-v1.html", key: "ar7-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } }
+  "arabic": { title: "Arabic \u2014 \u0627\u0644\u0648\u062d\u062f\u0629 \u0662 \u0627\u0644\u0633\u0631\u062f (pp. 40\u201358)", href: "arabic7-book-v2.html", key: "ar7-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v4.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" }, { date: "2026-11-24", sid: "arabic", name: "Arabic exam", sub: "Tuesday 24/11/2026 \u00b7 Unit 2 (pp. 40\u201358)", href: "arabic7-book-v1.html" } ] };
+var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v4.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" }, { date: "2026-11-24", sid: "arabic", name: "Arabic exam", sub: "Tuesday 24/11/2026 \u00b7 Unit 2 (pp. 40\u201358)", href: "arabic7-book-v2.html" } ] };
 /* Rule (23/11/2026): from 12:00 noon the list shows the NEXT school day, and keeps it until 12:00 noon of the following day.
    Before 12:00 it still shows the current day (so after midnight it does not jump ahead). Fri/Sat are skipped. */
 function firstSchoolDate() {
