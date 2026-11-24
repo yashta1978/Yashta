@@ -194,6 +194,7 @@ a.task.now .st{color:#b45309;border:1.5px solid #f59e0b}a.task.done .st{color:#1
     <strong>Ara — Grade 7 · Kurdish</strong>
     <a href="kurdish7-deng-pit-birge-v2.html" dir="rtl" lang="ku">دەنگ و پیت · برگە · پەیڤ · گرێ — v2</a>
     <a href="kurdish7-deng-pit-birge-v1.html" dir="rtl" lang="ku">دەنگ و پیت · برگە — v1</a>
+    <a href="kurdish7-book-v1.html" dir="rtl" lang="ku">کتێبا کوردی ٧ — ڕستەیا ڕاگەهاندنێ و پرس (ل.٣٠–٣٩) — v1</a>
     <strong>Ara — Grade 7 · Islamic</strong>
     <a href="religion-lesson.html" dir="rtl" lang="ku">وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ</a>
     <a href="lesson-v2.html" dir="rtl" lang="ku">وانەیێن ئایینی — v2</a>
@@ -385,7 +386,9 @@ var LESSONS = {
     ],
     kurdish: [
       { title: "دەنگ و پیت · برگە · پەیڤ · گرێ — v2", sub: "Lessons 1–5 + Reading · pp. 10–29, 84–96",
-        lang: "ku", dir: "rtl", tag: "KU", href: "kurdish7-deng-pit-birge-v2.html" }
+        lang: "ku", dir: "rtl", tag: "KU", href: "kurdish7-deng-pit-birge-v2.html" },
+      { title: "کتێبا کوردی ٧ — ڕستەیا ڕاگەهاندنێ و پرس — v1", sub: "pp. 30–39 · کویز ٢٥/١١/٢٠٢٦",
+        lang: "ku", dir: "rtl", tag: "KU", href: "kurdish7-book-v1.html" }
     ],
     islamic: [
       { title: "وانەیێن ئایینی – ڕاهێنانێن ئاڤاکرنێ",
@@ -534,7 +537,7 @@ function backLink(href, label) {
   return el("a", { "class": "back", href: href, text: "← " + label });
 }
 function wrapHref(h, who) {
-  if (!who || !/^[\w.-]+\.html$/.test(h) || /^(science7-book|science6-book|komelayeti-6a|komelayeti-7a-book|arabic6-book|arabic7-book|monitor|index)/.test(h)) return h;
+  if (!who || !/^[\w.-]+\.html$/.test(h) || /^(science7-book|science6-book|komelayeti-6a|komelayeti-7a-book|kurdish7-book|arabic6-book|arabic7-book|monitor|index)/.test(h)) return h;
   return "lesson.html?f=" + encodeURIComponent(h) + "&w=" + who;
 }
 function lessonLink(l, who) {
@@ -602,10 +605,11 @@ var HOMEWORK = { vina: {
   ara: {
   "science": { title: "Science \u2014 Units 1\u20133", href: "science7-book-v32.html", key: "", plain: true, get: function () { return null; } },
   "social-studies": { title: "Social Studies \u2014 Lesson 5: Medes (pp. 58\u201360)", href: "komelayeti-7a-book-v14.html", key: "soc7-book-progress-v1", get: function (o) { return o && o.PS && o.PS.hw; } },
-  "arabic": { title: "Arabic \u2014 \u0627\u0644\u0648\u062d\u062f\u0629 \u0662 \u0627\u0644\u0633\u0631\u062f (pp. 40\u201358)", href: "arabic7-book-v7.html", key: "ar7-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } }
+  "arabic": { title: "Arabic \u2014 \u0627\u0644\u0648\u062d\u062f\u0629 \u0662 \u0627\u0644\u0633\u0631\u062f (pp. 40\u201358)", href: "arabic7-book-v7.html", key: "ar7-book-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } },
+  "kurdish": { title: "Kurdish \u2014 \u0695\u0633\u062a\u06d5\u06cc\u0627 \u0695\u0627\u06af\u06d5\u0647\u0627\u0646\u062f\u0646\u06ce \u0648 \u067e\u0631\u0633 (pp. 30\u201339)", href: "kurdish7-book-v1.html", key: "kur7-p30-progress-v1", first: true, get: function (o) { return o && o.PS && o.PS.hw; } }
 } };
 var DAYN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v4.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" }, { date: "2026-11-24", sid: "arabic", name: "Arabic exam", sub: "Tuesday 24/11/2026 \u00b7 Unit 2 (pp. 40\u201358)", href: "arabic7-book-v2.html" } ] };
+var EXAMS = { vina: [ { date: "2026-11-23", sid: "islamic", name: "Islamic quiz", sub: "Monday 23/11/2026 \u00b7 Lessons 6\u20137 (pp. 18\u201324)", href: "islamic6-book-v4.html" } ], ara: [ { date: "2026-11-23", sid: "science", name: "Science quiz", sub: "Monday 23/11/2026 \u00b7 Unit 3, Sections 1\u20132", href: "science7-book-v32.html" }, { date: "2026-11-24", sid: "arabic", name: "Arabic exam", sub: "Tuesday 24/11/2026 \u00b7 Unit 2 (pp. 40\u201358)", href: "arabic7-book-v2.html" }, { date: "2026-11-25", sid: "kurdish", name: "Kurdish quiz", sub: "Wednesday 25/11/2026 \u00b7 pp. 30\u201339", href: "kurdish7-book-v1.html" } ] };
 /* Rule (23/11/2026): from 12:00 noon the list shows the NEXT school day, and keeps it until 12:00 noon of the following day.
    Before 12:00 it still shows the current day (so after midnight it does not jump ahead). Fri/Sat are skipped. */
 function firstSchoolDate() {
